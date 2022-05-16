@@ -1,4 +1,6 @@
 # Home Assistant Configuration
+[![LICENSE](https://img.shields.io/badge/license-MIT-gold.svg)](LICENSE)
+
 Here's my personal [Home Assistant](https://home-assistant.io/) configuration.
 
 I have installed HA on a [Fujitsu Esprimo Q920](https://www.amazon.it/gp/product/B0854LM164) with 16GB RAM (2x [Patriot PSD38G1600L2S](https://www.amazon.it/gp/product/B009WIW9GE)) as a [VM](https://community.home-assistant.io/t/home-assistant-os-installation-on-proxmox-ve-7-tutorial/335964) on top of [Proxmox VE](https://www.proxmox.com/en/proxmox-ve).

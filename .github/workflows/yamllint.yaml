@@ -1,0 +1,12 @@
+name: Yaml Lint
+on: [push]
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: YAML lint
+        uses: ibiqlik/action-yamllint@master
+        with:
+          config_file: .github/yamllint-config.yaml

@@ -1,0 +1,15 @@
+extends: default
+
+rules:
+  line-length: disable
+  comments: disable
+  comments-indentation: disable
+
+ignore: |
+  custom_components/
+  www/community/
+  zigbee2mqtt/
+  themes/
+  pyscript/
+  .vscode/
+  .github/workflows/yaml-lint.yaml

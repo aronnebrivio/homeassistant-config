@@ -1,0 +1,152 @@
+path: bedroom
+icon: mdi:bed-king
+badges: []
+cards:
+  # Header
+  # - type: picture
+  #   image: /local/images/rooms/bedroom.jpg
+  - type: vertical-stack
+    cards:
+      - type: custom:mushroom-title-card
+        title: Smart home
+      - type: horizontal-stack
+        # Bed
+        cards:
+          - type: custom:mushroom-light-card
+            entity: light.abat_jour_letto_sinistra
+            icon: mdi:floor-lamp
+            primary_info: name
+            secondary_info: state
+            name: Letto Nennè
+            tap_action:
+              action: toggle
+            show_brightness_control: true
+      - type: horizontal-stack
+        # Station
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: switch.work_station
+            icon: mdi:account-hard-hat
+            primary_info: name
+            secondary_info: state
+            name: "Work Station"
+            tap_action:
+              action: toggle
+          - type: custom:mushroom-entity-card
+            entity: switch.gaming_station
+            icon: mdi:google-controller
+            primary_info: name
+            secondary_info: state
+            name: "Gaming Station"
+            tap_action:
+              action: toggle
+  # Work/Gaming station
+  - type: vertical-stack
+    cards:
+      - type: custom:mushroom-title-card
+        title: Scrivania
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-light-card
+            entity: light.luce_scrivania
+            color: yellow
+            icon: mdi:led-strip-variant
+            tap_action:
+              action: toggle
+            name: Luce
+            show_brightness_control: true
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: switch.fisso
+            icon: mdi:desktop-classic
+            tap_action:
+              action: toggle
+            name: PC
+            color: green
+          - type: custom:mushroom-entity-card
+            entity: switch.casse_pc
+            icon: mdi:speaker
+            tap_action:
+              action: toggle
+            name: Casse
+            color: purple
+  - type: vertical-stack
+    cards:
+      - type: custom:mushroom-title-card
+        title: Sensori
+      # Temperature
+      - type: custom:mini-graph-card
+        entities:
+          - entity: sensor.termometro_camera_temperature
+            show_legend: false
+          - entity: sun.sun
+            color: gray
+            name: Night
+            show_line: false
+            show_points: false
+            show_legend: false
+            y_axis: secondary
+        name: Temperatura
+        animate: true
+        show:
+          labels: true
+          labels_secondary: true
+        state_map:
+          - value: below_horizon
+            label: Night
+          - value: above_horizon
+            label: Day
+        color_thresholds:
+          - value: 20
+            color: "#f39c12"
+          - value: 21
+            color: "#d35400"
+          - value: 21.5
+            color: "#c0392b"
+        hours_to_show: 168
+        points_per_hour: 0.25
+      # Umidity
+      - type: custom:mini-graph-card
+        entities:
+          - entity: sensor.termometro_camera_humidity
+            show_legend: false
+            color: "#89cff0"
+          - entity: sun.sun
+            color: gray
+            name: Night
+            show_line: false
+            show_points: false
+            show_legend: false
+            y_axis: secondary
+        name: Umidità
+        animate: true
+        show:
+          labels: true
+          labels_secondary: true
+        state_map:
+          - value: below_horizon
+            label: Night
+          - value: above_horizon
+            label: Day
+        hours_to_show: 168
+        points_per_hour: 0.25
+  - type: vertical-stack
+    cards:
+      - type: custom:mushroom-title-card
+        title: Media player
+      # Echo Dot
+      - type: media-control
+        entity: media_player.echo_dot_camera
+  # Other
+  - type: vertical-stack
+    cards:
+      - type: custom:mushroom-title-card
+        title: Extra
+      - type: entities
+        title: Circadian Lighting
+        entities:
+          - entity: switch.circadian_lighting_studio
+            name: Scrivania
+          - entity: switch.circadian_lighting_abat_jour_letto_sinistra
+            name: Luce Nennè

@@ -1,0 +1,30 @@
+!*.yaml
+!.gitignore
+!.gitkeep
+!*.md
+
+# Ignore folders.
+.storage
+.cloud
+.google.token
+.ssh
+image
+**/__pycache__
+tts
+blueprints
+
+# Ensure these YAML files are ignored, otherwise your secret data/credentials will leak.
+ip_bans.yaml
+secrets.yaml
+known_devices.yaml
+
+# Logs, DBs and BKPs
+*.log*
+*.db*
+*.bk
+*.bkp
+**/log.txt
+**/log
+
+.shopping_list.json
+google_calendars.yaml

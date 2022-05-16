@@ -1,0 +1,9 @@
+title: Casa
+views:
+  - !include lovelace/000_home_view.yaml
+  - !include lovelace/002_livingroom_view.yaml
+  - !include lovelace/003_bedroom_view.yaml
+  - !include lovelace/004_kitchen_view.yaml
+  - !include lovelace/005_entrance_view.yaml
+  - !include lovelace/099_services_view.yaml
+  # - !include lovelace/999_test_view.yaml

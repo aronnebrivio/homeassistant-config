@@ -1,0 +1,3 @@
+daily_energy:
+  source: sensor.frient_energy_monitor_energy
+  cycle: daily

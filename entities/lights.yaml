@@ -1,0 +1,34 @@
+# Master Sword
+- platform: switch
+  name: "Spada Suprema"
+  entity_id: switch.smart_plug_1
+# Piantana Sala
+- platform: group
+  name: "Piantana Sala"
+  entities:
+    - light.piantana_sala_luce_grande
+    - light.piantana_sala_luce_piccola
+# Vetrina ingresso
+- platform: switch
+  name: "Vetrina Ingresso"
+  entity_id: switch.smart_plug_2
+# Group livingroom
+- platform: group
+  name: "Livingroom"
+  entities:
+    - light.piantana_sala
+# Group entrance
+- platform: group
+  name: "Entrance"
+  entities:
+    - light.vetrina_ingresso
+# Group bedroom
+- platform: group
+  name: "Bed"
+  entities:
+    - light.abat_jour_letto_sinistra
+- platform: group
+  name: "Bedroom"
+  entities:
+    - light.bed
+    - light.luce_scrivania

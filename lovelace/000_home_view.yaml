@@ -1,0 +1,187 @@
+path: default_view
+icon: mdi:home-assistant
+badges:
+  - type: state-label
+    entity: person.aronne
+    name: ""
+  - type: state-label
+    entity: person.valentina
+    name: ""
+  - type: state-label
+    entity: sensor.home_temperature
+    name: ""
+  - type: state-label
+    entity: sensor.home_humidity
+    name: ""
+  - type: state-label
+    entity: sensor.frient_energy_monitor_power
+    name: ""
+  - type: state-label
+    entity: sensor.daily_energy
+    name: ""
+cards:
+  # Forecast
+  - type: weather-forecast
+    entity: weather.casa
+    show_forecast: true
+  # Rooms
+  - type: vertical-stack
+    cards:
+      - type: custom:mushroom-title-card
+        title: Soggiorno
+      - type: custom:mushroom-chips-card
+        chips:
+          - type: template
+            icon: mdi:arrow-right
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/livingroom
+          - type: entity
+            entity: sensor.termometro_sala_temperature
+          - type: entity
+            entity: sensor.termometro_sala_humidity
+          - type: entity
+            entity: media_player.echo_sala
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-light-card
+            entity: light.livingroom
+            name: Luce
+            primary_info: name
+            secondary_info: state
+            tap_action:
+              action: toggle
+            icon_color: yellow
+          - type: custom:mushroom-entity-card
+            entity: switch.livingroom_tv
+            icon: mdi:television-classic
+            primary_info: name
+            secondary_info: state
+            tap_action:
+              action: toggle
+  - type: vertical-stack
+    cards:
+      - type: custom:mushroom-title-card
+        title: Camera da letto
+      - type: custom:mushroom-chips-card
+        chips:
+          - type: template
+            icon: mdi:arrow-right
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/bedroom
+          - type: entity
+            entity: sensor.termometro_camera_temperature
+          - type: entity
+            entity: sensor.termometro_camera_humidity
+          - type: entity
+            entity: media_player.echo_dot_camera
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-light-card
+            entity: light.bedroom
+            name: Luce
+            primary_info: name
+            secondary_info: state
+            tap_action:
+              action: toggle
+            icon_color: yellow
+          - type: custom:mushroom-entity-card
+            entity: switch.gaming_station
+            icon: mdi:desktop-classic
+            name: PC
+            primary_info: name
+            secondary_info: state
+            tap_action:
+              action: toggle
+  - type: vertical-stack
+    cards:
+      - type: custom:mushroom-title-card
+        title: Cucina
+      - type: custom:mushroom-chips-card
+        chips:
+          - type: template
+            icon: mdi:arrow-right
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/kitchen
+          - type: entity
+            entity: media_player.echo_show_cucina
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-entity-card
+            entity: calendar.garbage_collection
+            icon: mdi:trash-can
+            primary_info: name
+            secondary_info: state
+            name: Raccolta rifiuti domani
+            icon_color: red
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/kitchen
+          - type: custom:mushroom-entity-card
+            entity: sensor.frient_energy_monitor_power
+            primary_info: name
+            secondary_info: state
+            name: Consumo istantaneo
+            icon_color: purple
+  - type: vertical-stack
+    cards:
+      - type: custom:mushroom-title-card
+        title: Ingresso
+      - type: custom:mushroom-chips-card
+        chips:
+          - type: template
+            icon: mdi:arrow-right
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/entrance
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-light-card
+            entity: light.entrance
+            primary_info: name
+            secondary_info: state
+            name: Luce
+            icon_color: yellow
+            tap_action:
+              action: toggle
+  - type: vertical-stack
+    cards:
+      - type: custom:mushroom-title-card
+        title: Home lab
+      - type: custom:mushroom-chips-card
+        chips:
+          - type: template
+            icon: mdi:arrow-right
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/services
+          - type: entity
+            entity: sensor.proxmox_cpu_usage
+            icon: mdi:memory
+          - type: entity
+            entity: sensor.proxmox_memory_usage
+            icon: mdi:chip
+          - type: entity
+            entity: sensor.speedtest_download
+            icon: mdi:download
+      - type: horizontal-stack
+        cards:
+          - type: custom:mushroom-template-card
+            entity: switch.dummy_switch
+            icon: mdi:monitor-dashboard
+            primary: Dashy
+            icon_color: green
+            tap_action:
+              action: url
+              url_path: !secret dashy.url
+  # Spotify
+  - type: vertical-stack
+    cards:
+      - type: custom:mushroom-title-card
+        title: Media player
+      - type: horizontal-stack
+        cards:
+          - type: media-control
+            entity: media_player.spotify_aronne_brivio

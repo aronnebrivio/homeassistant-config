@@ -1,0 +1,43 @@
+# AdGuard home
+- platform: template
+  sensors:
+    adguard_protection:
+      friendly_name: "AdGuard Home"
+      value_template: "{{ states('switch.adguard_protection') }}"
+      device_class: power
+# Transmission
+- platform: template
+  sensors:
+    transmission_switch:
+      friendly_name: "Transmission"
+      value_template: "{{ states('switch.transmission_switch') }}"
+      device_class: power
+# Internet connection
+- platform: ping
+  host: 8.8.8.8
+  count: 2
+  scan_interval: 60
+  name: internet_connection
+# Proxmox running
+- platform: template
+  sensors:
+    proxmox_is_running:
+      friendly_name: "Proxmox"
+      value_template: "{{ states('sensor.proxmox_cpu_usage') | float > 0.0 }}"
+      device_class: power
+# Garbage collection tomorrow
+- platform: template
+  sensors:
+    garbage_collection_tomorrow:
+      friendly_name: "Garbage collection tomorrow"
+      value_template: >-
+        {{ is_state_attr('sensor.garbage_collection_glass_and_metal', 'days', 1)
+        or is_state_attr('sensor.garbage_collection_organic', 'days', 1)
+        or is_state_attr('sensor.garbage_collection_paper', 'days', 1)
+        or is_state_attr('sensor.garbage_collection_plastic', 'days', 1)
+        or is_state_attr('sensor.garbage_collection_trash', 'days', 1) }}
+# Late Morning
+- platform: tod
+  name: Late Morning
+  after: "11:00"
+  before: "13:00"

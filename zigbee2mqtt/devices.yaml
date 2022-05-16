@@ -1,0 +1,30 @@
+'0x001788010b24a1d4':
+  friendly_name: Piantana Sala luce grande
+'0xf0d1b80000199ea2':
+  friendly_name: Luce Scrivania
+'0xc4988600000f931d':
+  friendly_name: Smart Plug 1
+'0xc4988600000ef92f':
+  friendly_name: Casse PC
+'0x001788010961e382':
+  friendly_name: Piantana Sala luce piccola
+'0x00124b0024ccfc38':
+  friendly_name: Termometro Sala
+  temperature_precision: 1
+  humidity_precision: 1
+'0x00124b0024cce16f':
+  friendly_name: Termometro Camera
+  temperature_precision: 1
+  humidity_precision: 1
+  humidity_calibration: 0
+'0x588e81fffef78a9f':
+  friendly_name: Abat Jour Letto Sinistra
+  transition: 1
+'0x0015bc001b0226ac':
+  friendly_name: Frient Energy Monitor
+'0x84fd27fffe9c5b51':
+  friendly_name: Smart Plug 2
+'0x00124b0022ea5144':
+  friendly_name: Button 1
+'0x00124b0022eae493':
+  friendly_name: Button 2

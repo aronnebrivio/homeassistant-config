@@ -1,0 +1,32 @@
+livingroom:
+  name: Soggiorno
+  entities:
+    - switch.livingroom_tv
+    - light.spada_suprema
+    - light.piantana_sala
+    - media_player.echo_sala
+    - sensor.termometro_sala_temperature
+    - sensor.termometro_sala_humidity
+bedroom:
+  name: Camera da letto
+  entities:
+    - switch.fisso
+    - light.luce_scrivania
+    - switch.casse_pc
+    - media_player.echo_dot_camera
+    - light.abat_jour_letto_sinistra
+    - sensor.termometro_camera_temperature
+    - sensor.termometro_camera_humidity
+bathroom:
+  name: Bagno
+  entities:
+    - switch.water_heater
+kitchen:
+  name: Cucina
+  entities:
+    - media_player.echo_show_cucina
+    - sensor.frient_energy_monitor_energy
+entrance:
+  name: Ingresso
+  entities:
+    - light.vetrina_ingresso

@@ -1,0 +1,96 @@
+# PC Fisso
+- platform: wake_on_lan
+  name: Fisso
+  mac: !secret switch.fisso.mac
+  host: !secret switch.fisso.ip
+  turn_off:
+    service: hassio.addon_stdin
+    data:
+      addon: core_rpc_shutdown
+      input: fisso
+# TV
+- platform: template
+  switches:
+    livingroom_tv:
+      friendly_name: TV
+      turn_on:
+        service: rest_command.switchbot_device_command
+        data:
+          deviceId: !secret switchbot.livingroom_tv.device_id
+          command: "turnOn"
+      turn_off:
+        service: rest_command.switchbot_device_command
+        data:
+          deviceId: !secret switchbot.livingroom_tv.device_id
+          command: "turnOff"
+# Circadian Lighting
+# Scrivania
+- platform: circadian_lighting
+  name: "Studio"
+  lights_ct:
+    - light.luce_scrivania
+  min_brightness: 10
+  max_brightness: 100
+# Piantana luce piccola
+- platform: circadian_lighting
+  name: "Piantana luce piccola"
+  lights_ct:
+    - light.piantana_sala_luce_piccola
+  min_brightness: 1
+  max_brightness: 100
+# Piantana luce grande
+- platform: circadian_lighting
+  name: "Piantana luce grande"
+  lights_ct:
+    - light.piantana_sala_luce_grande
+  min_brightness: 1
+  max_brightness: 100
+# Abat Jour Letto Sinistra
+- platform: circadian_lighting
+  name: "Abat Jour Letto Sinistra"
+  lights_ct:
+    - light.abat_jour_letto_sinistra
+  min_brightness: 1
+  max_brightness: 100
+# Dummy switch
+- platform: template
+  switches:
+    dummy_switch:
+      friendly_name: "Dummy Switch"
+      turn_on:
+      turn_off:
+# Work Station
+- platform: template
+  switches:
+    work_station:
+      friendly_name: "Work Station"
+      turn_on:
+        service: script.work_station_on
+      turn_off:
+        service: script.work_station_off
+      value_template: "{{ is_state('light.luce_scrivania', 'on') and is_state('switch.casse_pc', 'on') and is_state('switch.fisso', 'off') }}"
+# Gaming Station
+- platform: template
+  switches:
+    gaming_station:
+      friendly_name: "Gaming Station"
+      turn_on:
+        service: script.gaming_station_on
+      turn_off:
+        service: script.gaming_station_off
+      value_template: "{{ is_state('light.luce_scrivania', 'on') and is_state('switch.casse_pc', 'on') and is_state('switch.fisso', 'on') }}"
+# Water Heater
+- platform: template
+  switches:
+    water_heater:
+      friendly_name: Boiler
+      turn_on:
+        service: rest_command.switchbot_device_command
+        data:
+          deviceId: !secret switchbot.bot_1.device_id
+          command: "turnOn"
+      turn_off:
+        service: rest_command.switchbot_device_command
+        data:
+          deviceId: !secret switchbot.bot_1.device_id
+          command: "turnOff"

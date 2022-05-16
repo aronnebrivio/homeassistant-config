@@ -1,0 +1,7 @@
+path: shopping_list
+icon: mdi:basket
+type: panel
+badges: []
+cards:
+  - type: shopping-list
+    title: Lista della spesa

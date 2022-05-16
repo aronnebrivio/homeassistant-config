@@ -1,0 +1,234 @@
+path: services
+icon: mdi:server-network
+badges: []
+cards:
+  # Internet speed
+  - cards:
+      - type: custom:slider-button-card
+        entity: switch.dummy_switch
+        show_state: false
+        slider:
+          direction: left-right
+          toggle_on_click: false
+        icon:
+          icon: mdi:router-wireless
+          tap_action:
+            action: more-info
+          show: true
+          use_state_color: false
+        action_button:
+          mode: custom
+          show: true
+          icon: mdi:open-in-new
+          tap_action:
+            action: url
+            url_path: !secret modem.url
+        name: Modem
+        compact: true
+      - cards:
+          - type: custom:mini-graph-card
+            name: Download
+            line_width: 8
+            font_size: 75
+            icon: mdi:download
+            line_color: green
+            animate: true
+            entities:
+              - sensor.speedtest_download
+          - type: custom:mini-graph-card
+            name: Upload
+            entities:
+              - sensor.speedtest_upload
+            icon: mdi:upload
+            line_color: orange
+            line_width: 8
+            font_size: 75
+            animate: true
+        type: horizontal-stack
+    type: vertical-stack
+  # Proxmox
+  - cards:
+      - type: custom:slider-button-card
+        entity: switch.dummy_switch
+        show_state: false
+        slider:
+          direction: left-right
+          toggle_on_click: false
+        icon:
+          icon: mdi:server-network
+          tap_action:
+            action: more-info
+          show: true
+          use_state_color: false
+        action_button:
+          mode: custom
+          show: true
+          icon: mdi:open-in-new
+          tap_action:
+            action: url
+            url_path: !secret proxmox.url
+        name: Proxmox
+        compact: true
+      - cards:
+          - type: gauge
+            entity: sensor.proxmox_cpu_usage
+            unit: "%"
+            name: CPU Usage
+            min: 0
+            max: 100
+            severity:
+              green: 0
+              yellow: 45
+              red: 85
+          - type: gauge
+            entity: sensor.proxmox_memory_usage
+            unit: "GB"
+            name: RAM Usage
+            min: 0
+            max: 15.52
+            severity:
+              green: 0
+              yellow: 10
+              red: 13.5
+        type: horizontal-stack
+      - type: entities
+        entities:
+          - entity: sensor.proxmox_cpu_usage
+            name: CPU Usage
+            icon: mdi:memory
+          - entity: sensor.proxmox_memory_usage
+            name: RAM Usage
+            icon: mdi:chip
+    type: vertical-stack
+  # AdGuard Home
+  - cards:
+      - type: custom:slider-button-card
+        entity: switch.adguard_protection
+        slider:
+          direction: left-right
+          background: solid
+          toggle_on_click: true
+        icon:
+          icon: mdi:shield-check
+          tap_action:
+            action: more-info
+          show: true
+          use_state_color: false
+        action_button:
+          mode: custom
+          show: true
+          icon: mdi:open-in-new
+          tap_action:
+            action: url
+            url_path: !secret adguard.url
+        name: AdGuard Home
+        compact: true
+      - cards:
+          - type: custom:mini-graph-card
+            name: Requests
+            entities:
+              - sensor.adguard_dns_queries
+            line_width: 8
+            font_size: 75
+            animate: true
+          - type: custom:mini-graph-card
+            name: Blocked
+            line_width: 8
+            font_size: 75
+            animate: true
+            line_color: "#e74c3c"
+            entities:
+              - sensor.adguard_dns_queries_blocked_ratio
+        type: horizontal-stack
+      - type: entities
+        entities:
+          - entity: sensor.adguard_average_processing_speed
+            name: Average Processing Speed
+          - entity: sensor.adguard_parental_control_blocked
+            name: Parental Control Blocked
+          - entity: sensor.adguard_safe_browsing_blocked
+            name: Safe Browsing Blocked
+          - entity: sensor.adguard_safe_searches_enforced
+            name: Safe Searches Enforced
+          - type: divider
+          - entity: switch.adguard_filtering
+            name: Filtering
+            icon: mdi:filter-check
+          - entity: switch.adguard_protection
+            name: Protection
+          - entity: switch.adguard_parental_control
+            name: Parental Control
+            icon: mdi:human-male-girl
+          - entity: switch.adguard_safe_browsing
+            name: Safe Browsing
+            icon: mdi:shield-half-full
+          - entity: switch.adguard_safe_search
+            name: Safe Search
+            icon: mdi:shield-search
+    type: vertical-stack
+  # Transmission
+  - cards:
+      - type: custom:slider-button-card
+        entity: switch.transmission_switch
+        slider:
+          direction: left-right
+          background: solid
+          toggle_on_click: true
+        icon:
+          icon: mdi:light-switch
+          tap_action:
+            action: more-info
+          show: true
+          use_state_color: false
+        action_button:
+          mode: custom
+          show: true
+          icon: mdi:open-in-new
+          tap_action:
+            action: url
+            url_path: !secret transmission.url
+        name: Transmission
+        compact: true
+      - cards:
+          - type: custom:mini-graph-card
+            icon: mdi:progress-download
+            name: Download
+            entities:
+              - sensor.transmission_down_speed
+            line_width: 8
+            font_size: 75
+            animate: true
+            line_color: green
+          - type: custom:mini-graph-card
+            icon: mdi:progress-upload
+            name: Upload
+            line_width: 8
+            font_size: 75
+            animate: true
+            line_color: orange
+            entities:
+              - sensor.transmission_up_speed
+        type: horizontal-stack
+      - type: entities
+        entities:
+          - entity: sensor.transmission_active_torrents
+            name: Active
+            icon: mdi:download
+          - entity: sensor.transmission_completed_torrents
+            name: Completed
+            icon: mdi:check
+          - entity: sensor.transmission_paused_torrents
+            name: Paused
+            icon: mdi:pause
+          - entity: sensor.transmission_started_torrents
+            name: Started
+            icon: mdi:play
+          - type: divider
+          - entity: switch.transmission_switch
+            name: Transmission
+            icon: mdi:light-switch
+          - entity: switch.transmission_turtle_mode
+            name: Turtle Mode
+            icon: mdi:tortoise
+        state_color: false
+    type: vertical-stack

@@ -1,0 +1,64 @@
+- platform: influxdb
+  host: !secret influxdb.ip
+  queries:
+    # Raw Proxmox CPU load
+    - name: proxmox.raw_cpu_usage
+      field: cpu
+      where: "time > now() - 5m fill(null)"
+      group_function: mean
+      value_template: "{{ value | float * 100.0 }}"
+      database: proxmox_data
+      measurement: cpustat
+    # Raw Proxmox memory usage
+    - name: proxmox.raw_memory_usage
+      field: memused
+      where: "time > now() - 5m fill(null)"
+      group_function: mean
+      value_template: "{{ value | float / 1073741824 }}"
+      database: proxmox_data
+      measurement: memory
+# Proxmox CPU load
+- platform: template
+  sensors:
+    proxmox_cpu_usage:
+      unit_of_measurement: "%"
+      value_template: "{{ '%.2f' | format(states('sensor.proxmox_raw_cpu_usage') | float ) }}"
+      friendly_name: "Proxmox CPU Usage"
+# Proxmox Memory usage
+- platform: template
+  sensors:
+    proxmox_memory_usage:
+      unit_of_measurement: "GB"
+      value_template: "{{ '%.2f' | format(states('sensor.proxmox_raw_memory_usage') | float ) }}"
+      friendly_name: "Proxmox Memory Usage"
+# Mean temperature
+- platform: template
+  sensors:
+    home_temperature:
+      unit_of_measurement: "°C"
+      value_template: "{{ '%.1f' | format(((float(states('sensor.termometro_sala_temperature')) + float(states('sensor.termometro_camera_temperature'))) / 2) | float) }}"
+      friendly_name: "Home Temperature"
+# Mean humidity
+- platform: template
+  sensors:
+    home_humidity:
+      unit_of_measurement: "%"
+      value_template: "{{ '%.1f' | format(((float(states('sensor.termometro_sala_humidity')) + float(states('sensor.termometro_camera_humidity'))) / 2) | float) }}"
+      friendly_name: "Home Humidity"
+      icon_template: mdi:water-percent
+# Switchbot Bot 1 status sensor
+- platform: rest
+  name: "Switchbot Bot 1 status"
+  resource: !secret switchbot.bot_1.status_url
+  method: GET
+  scan_interval: 10000
+  headers:
+    Authorization: !secret switchbot.api_key
+    content_type: "application/json"
+  json_attributes_path: "$.body"
+  value_template: '{{ value_json.body.power }}'
+  json_attributes:
+    - deviceId
+    - deviceType
+    - hubDeviceId
+    - power

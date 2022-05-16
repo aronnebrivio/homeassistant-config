@@ -4,12 +4,12 @@ rules:
   line-length: disable
   comments: disable
   comments-indentation: disable
+  document-start: disable
 
 ignore: |
   custom_components/
   www/community/
   zigbee2mqtt/
   themes/
+  blueprints/
   pyscript/
-  .vscode/
-  .github/workflows/yaml-lint.yaml

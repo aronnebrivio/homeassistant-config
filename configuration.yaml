@@ -42,10 +42,6 @@ circadian_lighting:
   interval: 600
   transition: 3
 
-spotify:
-  client_id: !secret spotify.client_id
-  client_secret: !secret spotify.client_secret
-
 spotcast:
   sp_dc: !secret spotify.dc
   sp_key: !secret spotify.key
@@ -55,12 +51,6 @@ influxdb:
   database: !secret influxdb.database
   exclude:
     entity_globs: "*"
-
-google:
-  client_id: !secret google.oauth_client.id
-  client_secret: !secret google.oauth_client.secret
-  calendar_access: read_write
-  track_new_calendar: false
 
 telegram_bot:
   - platform: polling

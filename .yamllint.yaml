@@ -13,3 +13,5 @@ ignore: |
   themes/
   blueprints/
   pyscript/
+  automations.yaml
+  scenes.yaml

@@ -1,12 +1,12 @@
 name: Yaml Lint
-on: [push] # yamllint disable-line rule:truthy
+on: [push, pull_request] # yamllint disable-line rule:truthy
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: YAML lint
+      - name: ⤵️ Check out configuration from GitHub
+        uses: actions/checkout@v3.0.2
+      - name: 🚀 Run yamllint
         uses: ibiqlik/action-yamllint@v3
         with:
           config_file: .yamllint.yaml

@@ -220,7 +220,8 @@
   description: Perform a Manual Speed Test When SEnsor goes offline
   trigger:
   - platform: state
-    entity_id: sensor.speedtest_download
+    entity_id:
+    - sensor.speedtest_download
     to: unavailable
   condition: []
   action:

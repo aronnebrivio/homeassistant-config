@@ -217,7 +217,7 @@
       mobile_app_device: 905677963a9b6082d24810268358ebec
 - id: '1658824207858'
   alias: Re-Load Speed Test
-  description: Perform a Manual Speed Test When SEnsor goes offline
+  description: Perform a Manual Speed Test when sensor goes offline
   trigger:
   - platform: state
     entity_id:
@@ -226,4 +226,5 @@
   condition: []
   action:
   - service: speedtestdotnet.speedtest
+    data: {}
   mode: single

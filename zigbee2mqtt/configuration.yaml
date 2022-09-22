@@ -11,8 +11,8 @@
   "mqtt": {
     "base_topic": "zigbee2mqtt",
     "server": "mqtt://core-mosquitto",
-    "user": "addons",
-    "password": "wofei6mu0Gaawei1boosheeBeedenee1EiweFoc8Iezusieceongahr2eFia9cik"
+    "user": "user",
+    "password": "passwd"
   },
   "serial": {
     "port": "/dev/ttyACM0",

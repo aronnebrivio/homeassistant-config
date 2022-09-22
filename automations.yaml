@@ -225,6 +225,8 @@
     to: unavailable
   condition: []
   action:
-  - service: speedtestdotnet.speedtest
+  - service: homeassistant.update_entity
     data: {}
+    target:
+      entity_id: sensor.speedtest_download
   mode: single

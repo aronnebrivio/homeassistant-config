@@ -56,7 +56,7 @@
       hours: 0
       minutes: 0
       seconds: 20
-    above: '3100'
+    above: 4600
   condition:
   - condition: state
     entity_id: switch.water_heater
@@ -65,7 +65,7 @@
   - service: notify.aronne
     data:
       title: ⚡️ *Sto consumando troppo!*
-      message: I consumi hanno superato i 3.1kW per 20 secondi e il boiler è già spento,
+      message: I consumi hanno superato i 4.6kW per 20 secondi e il boiler è già spento,
         se non spegni qualcosa salterà la corrente!
   mode: single
 - id: '1644421047593'
@@ -162,7 +162,7 @@
   trigger:
   - platform: numeric_state
     entity_id: sensor.frient_energy_monitor_power
-    above: '3100'
+    above: 4600
   condition:
   - condition: state
     entity_id: switch.water_heater
@@ -175,7 +175,7 @@
   - service: notify.aronne
     data:
       title: "\U0001F6BF *Ho spento il boiler per limitare i consumi*"
-      message: I consumi istantanei hanno superato i 3.1kW, cosí ho spento il boiler
+      message: I consumi istantanei hanno superato i 4.6kW, cosí ho spento il boiler
         per cercare di limitarli. [Dettagli](https://iqf2y6yscdio5ilo35kpfrxbyqfpreyl.ui.nabu.casa/lovelace/kitchen)
   mode: single
 - id: '1651526561767'

@@ -68,3 +68,6 @@ http:
   trusted_proxies:
     - !secret network.local.subnet
     - !secret nginx_proxy_manager.ip
+
+ifttt:
+  key: !secret ifttt.api_key

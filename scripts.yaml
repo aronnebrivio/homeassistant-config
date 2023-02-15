@@ -1,89 +1,89 @@
 start_netflix:
   alias: Start Netflix
   sequence:
-  - service: media_player.select_source
-    target:
-      entity_id: media_player.firestick
-    data:
-      source: com.netflix.ninja
+    - service: media_player.select_source
+      target:
+        entity_id: media_player.firestick
+      data:
+        source: com.netflix.ninja
 stop_netflix:
   alias: Stop Netflix
   sequence:
-  - service: media_player.select_source
-    target:
-      entity_id: media_player.firestick
-    data:
-      source: '!com.netflix.ninja'
+    - service: media_player.select_source
+      target:
+        entity_id: media_player.firestick
+      data:
+        source: "!com.netflix.ninja"
 gaming_station_on:
   alias: Gaming Station - On
   sequence:
-  - service: light.turn_on
-    target:
-      entity_id: light.luce_scrivania
-  - service: switch.turn_on
-    target:
-      entity_id: switch.casse_pc
-  - service: switch.turn_on
-    target:
-      entity_id: switch.fisso
+    - service: light.turn_on
+      target:
+        entity_id: light.luce_scrivania
+    - service: switch.turn_on
+      target:
+        entity_id: switch.casse_pc
+    - service: switch.turn_on
+      target:
+        entity_id: switch.fisso
   mode: single
   icon: mdi:desktop-classic
 gaming_station_off:
   alias: Gaming Station - Off
   sequence:
-  - service: light.turn_off
-    target:
-      entity_id: light.luce_scrivania
-  - service: switch.turn_off
-    target:
-      entity_id: switch.casse_pc
-  - service: switch.turn_off
-    target:
-      entity_id: switch.fisso
+    - service: light.turn_off
+      target:
+        entity_id: light.luce_scrivania
+    - service: switch.turn_off
+      target:
+        entity_id: switch.casse_pc
+    - service: switch.turn_off
+      target:
+        entity_id: switch.fisso
   mode: single
   icon: mdi:desktop-classic
 work_station_on:
   alias: Work Station - On
   sequence:
-  - service: light.turn_on
-    target:
-      entity_id: light.luce_scrivania
-  - service: switch.turn_on
-    target:
-      entity_id: switch.casse_pc
+    - service: light.turn_on
+      target:
+        entity_id: light.luce_scrivania
+    - service: switch.turn_on
+      target:
+        entity_id: switch.casse_pc
   mode: single
   icon: mdi:account-hard-hat
 work_station_off:
   alias: Work Station - Off
   sequence:
-  - service: light.turn_off
-    target:
-      entity_id: light.luce_scrivania
-  - service: switch.turn_off
-    target:
-      entity_id: switch.casse_pc
+    - service: light.turn_off
+      target:
+        entity_id: light.luce_scrivania
+    - service: switch.turn_off
+      target:
+        entity_id: switch.casse_pc
   mode: single
   icon: mdi:account-hard-hat
 piantana_sala_on:
   alias: Piantana Sala - On
   sequence:
-  - service: light.turn_on
-    target:
-      entity_id: light.piantana_sala_luce_grande
-  - service: light.turn_on
-    target:
-      entity_id: light.piantana_sala_luce_piccola
+    - service: light.turn_on
+      target:
+        entity_id: light.piantana_sala_luce_grande
+    - service: light.turn_on
+      target:
+        entity_id: light.piantana_sala_luce_piccola
   mode: single
   icon: mdi:floor-lamp-dual
 piantana_sala_off:
   alias: Piantana Sala - Off
   sequence:
-  - service: light.turn_off
-    target:
-      entity_id: light.piantana_sala_luce_grande
-  - service: light.turn_off
-    target:
-      entity_id: light.piantana_sala_luce_piccola
+    - service: light.turn_off
+      target:
+        entity_id: light.piantana_sala_luce_grande
+    - service: light.turn_off
+      target:
+        entity_id: light.piantana_sala_luce_piccola
   mode: single
   icon: mdi:floor-lamp-dual-outline
 piantana_sala_set_level:
@@ -94,48 +94,48 @@ piantana_sala_set_level:
       description: Brightness
       default: 100
   sequence:
-  - service: light.turn_on
-    target:
-      entity_id: light.piantana_sala_luce_grande
-    data:
-      brightness: '{{ brightness }}'
-  - service: light.turn_on
-    target:
-      entity_id: light.piantana_sala_luce_piccola
-    data:
-      brightness: '{{ brightness }}'
+    - service: light.turn_on
+      target:
+        entity_id: light.piantana_sala_luce_grande
+      data:
+        brightness: "{{ brightness }}"
+    - service: light.turn_on
+      target:
+        entity_id: light.piantana_sala_luce_piccola
+      data:
+        brightness: "{{ brightness }}"
   mode: single
   icon: mdi:floor-lamp-dual
 pc_default:
   alias: PC - Default
   sequence:
-  - service: ifttt.trigger
-    data:
-      event: webhook_pc_default_profile
-  - service: scene.turn_on
-    target:
-      entity_id: scene.pc_default
-    metadata: {}
+    - service: ifttt.trigger
+      data:
+        event: webhook_pc_default_profile
+    - service: scene.turn_on
+      target:
+        entity_id: scene.pc_default
+      metadata: {}
   mode: single
 pc_zarro:
   alias: PC - Zarro
   sequence:
-  - service: ifttt.trigger
-    data:
-      event: webhook_pc_zarro_profile
-  - service: scene.turn_on
-    target:
-      entity_id: scene.pc_zarro
-    metadata: {}
+    - service: ifttt.trigger
+      data:
+        event: webhook_pc_zarro_profile
+    - service: scene.turn_on
+      target:
+        entity_id: scene.pc_zarro
+      metadata: {}
   mode: single
 pc_showcase:
   alias: PC - Showcase
   sequence:
-  - service: ifttt.trigger
-    data:
-      event: webhook_pc_showcase_profile
-  - service: scene.turn_on
-    target:
-      entity_id: scene.pc_showcase
-    metadata: {}
+    - service: ifttt.trigger
+      data:
+        event: webhook_pc_showcase_profile
+    - service: scene.turn_on
+      target:
+        entity_id: scene.pc_showcase
+      metadata: {}
   mode: single

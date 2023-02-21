@@ -40,7 +40,7 @@ circadian_lighting:
   max_colortemp: 5000
   min_colortemp: 2857
   interval: 600
-  transition: 3
+  transition: 60
 
 spotcast:
   sp_dc: !secret spotify.dc

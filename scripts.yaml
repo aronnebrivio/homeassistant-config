@@ -106,36 +106,3 @@ piantana_sala_set_level:
         brightness: "{{ brightness }}"
   mode: single
   icon: mdi:floor-lamp-dual
-pc_default:
-  alias: PC - Default
-  sequence:
-    - service: ifttt.trigger
-      data:
-        event: webhook_pc_default_profile
-    - service: scene.turn_on
-      target:
-        entity_id: scene.pc_default
-      metadata: {}
-  mode: single
-pc_zarro:
-  alias: PC - Zarro
-  sequence:
-    - service: ifttt.trigger
-      data:
-        event: webhook_pc_zarro_profile
-    - service: scene.turn_on
-      target:
-        entity_id: scene.pc_zarro
-      metadata: {}
-  mode: single
-pc_showcase:
-  alias: PC - Showcase
-  sequence:
-    - service: ifttt.trigger
-      data:
-        event: webhook_pc_showcase_profile
-    - service: scene.turn_on
-      target:
-        entity_id: scene.pc_showcase
-      metadata: {}
-  mode: single

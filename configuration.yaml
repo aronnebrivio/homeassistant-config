@@ -36,6 +36,8 @@ pyscript: !include pyscript/config.yaml
 
 python_script:
 
+api:
+
 circadian_lighting:
   max_colortemp: 5000
   min_colortemp: 2857

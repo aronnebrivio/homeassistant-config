@@ -1,232 +1,295 @@
-- id: '1638712108991'
+- id: "1638712108991"
   alias: Sync shopping list
-  description: ''
+  description: ""
   trigger:
-  - platform: webhook
-    webhook_id: sync_shopping_list
-    id: sync_shopping_list
+    - platform: webhook
+      webhook_id: sync_shopping_list
+      id: sync_shopping_list
   condition: []
   action:
-  - service: pyscript.sync_shopping_list
+    - service: pyscript.sync_shopping_list
   mode: single
-- id: '1642168718601'
+- id: "1642168718601"
   alias: Sync TV state with Fire TV - ON
-  description: ''
+  description: ""
   trigger:
-  - platform: state
-    entity_id: media_player.firestick
-    to: playing
-  - platform: state
-    entity_id: media_player.firestick
-    to: idle
-  - platform: state
-    entity_id: media_player.firestick
-    to: paused
-  - platform: state
-    entity_id: media_player.firestick
-    to: standby
+    - platform: state
+      entity_id: media_player.firestick
+      to: playing
+    - platform: state
+      entity_id: media_player.firestick
+      to: idle
+    - platform: state
+      entity_id: media_player.firestick
+      to: paused
+    - platform: state
+      entity_id: media_player.firestick
+      to: standby
   condition: []
   action:
-  - service: python_script.set_state
-    data_template:
-      entity_id: switch.livingroom_tv
-      state: 'on'
+    - service: python_script.set_state
+      data_template:
+        entity_id: switch.livingroom_tv
+        state: "on"
   mode: single
-- id: '1642168802081'
+- id: "1642168802081"
   alias: Sync TV state with Fire TV - OFF
-  description: ''
+  description: ""
   trigger:
-  - platform: state
-    entity_id: media_player.firestick
-    to: 'off'
+    - platform: state
+      entity_id: media_player.firestick
+      to: "off"
   condition: []
   action:
-  - service: python_script.set_state
-    data_template:
-      entity_id: switch.livingroom_tv
-      state: 'off'
+    - service: python_script.set_state
+      data_template:
+        entity_id: switch.livingroom_tv
+        state: "off"
   mode: single
-- id: '1644331745972'
-  alias: '[Notify][Energy] High Consumption'
-  description: ''
+- id: "1644331745972"
+  alias: "[Notify][Energy] High Consumption"
+  description: ""
   trigger:
-  - platform: numeric_state
-    entity_id: sensor.frient_energy_monitor_power
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 20
-    above: 4600
+    - platform: numeric_state
+      entity_id: sensor.frient_energy_monitor_power
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 20
+      above: 4600
   condition:
-  - condition: state
-    entity_id: switch.water_heater
-    state: 'off'
+    - condition: state
+      entity_id: switch.water_heater
+      state: "off"
   action:
-  - service: notify.aronne
-    data:
-      title: ⚡️ *Sto consumando troppo!*
-      message: I consumi hanno superato i 4.6kW per 20 secondi e il boiler è già spento,
-        se non spegni qualcosa salterà la corrente!
+    - service: notify.aronne
+      data:
+        title: ⚡️ *Sto consumando troppo!*
+        message:
+          I consumi hanno superato i 4.6kW per 20 secondi e il boiler è già spento,
+          se non spegni qualcosa salterà la corrente!
   mode: single
-- id: '1644421047593'
-  alias: '[Notify][HA] Update Available'
-  description: ''
+- id: "1644421047593"
+  alias: "[Notify][HA] Update Available"
+  description: ""
   trigger:
-  - platform: state
-    entity_id: binary_sensor.updater
-    from: unavailable
-    to: available
-  - platform: state
-    entity_id: update.home_assistant_core_update
-    attribute: 'off'
-    from: 'on'
-  - platform: state
-    entity_id: update.home_assistant_operating_system_update
-    attribute: 'off'
-    from: 'on'
-  - platform: state
-    entity_id: update.home_assistant_supervisor_update
-    attribute: 'off'
-    from: 'on'
+    - platform: state
+      entity_id: binary_sensor.updater
+      from: unavailable
+      to: available
+    - platform: state
+      entity_id: update.home_assistant_core_update
+      attribute: "off"
+      from: "on"
+    - platform: state
+      entity_id: update.home_assistant_operating_system_update
+      attribute: "off"
+      from: "on"
+    - platform: state
+      entity_id: update.home_assistant_supervisor_update
+      attribute: "off"
+      from: "on"
   condition: []
   action:
-  - service: notify.aronne
-    data:
-      title: "\U0001F199 *Aggiornamento disponibile*"
-      message: C'è un aggiornamento di Home Assistant disponibile
+    - service: notify.aronne
+      data:
+        title: "\U0001F199 *Aggiornamento disponibile*"
+        message: C'è un aggiornamento di Home Assistant disponibile
   mode: single
-- id: '1644433874893'
-  alias: '[Notify][Proxmox] High Memory Usage'
-  description: ''
+- id: "1644433874893"
+  alias: "[Notify][Proxmox] High Memory Usage"
+  description: ""
   trigger:
-  - platform: numeric_state
-    entity_id: sensor.proxmox_memory_usage
-    above: '13'
+    - platform: numeric_state
+      entity_id: sensor.proxmox_memory_usage
+      above: "13"
   condition: []
   action:
-  - service: notify.aronne
-    data:
-      title: ⚠️ *Proxmox high memory usage*
-      message: Superati i 13GB di RAM occupata
+    - service: notify.aronne
+      data:
+        title: ⚠️ *Proxmox high memory usage*
+        message: Superati i 13GB di RAM occupata
   mode: single
-- id: '1650365699588'
-  alias: '[Notify][Garbage Collection] Tomorrow garbage collection'
+- id: "1650365699588"
+  alias: "[Notify][Garbage Collection] Tomorrow garbage collection"
   description: Send Telegram notification for garbage collection in late morning
   trigger:
-  - platform: state
-    entity_id: binary_sensor.late_morning
-    to: 'on'
-    from: 'off'
+    - platform: state
+      entity_id: binary_sensor.late_morning
+      to: "on"
+      from: "off"
   condition:
-  - condition: state
-    entity_id: binary_sensor.garbage_collection_tomorrow
-    state: 'on'
+    - condition: state
+      entity_id: binary_sensor.garbage_collection_tomorrow
+      state: "on"
   action:
-  - service: notify.aronne
-    data:
-      title: "\U0001F6AE *Raccolta rifiuti*"
-      message: Domani passano a ritirare la spazzatura! [Dettagli](https://iqf2y6yscdio5ilo35kpfrxbyqfpreyl.ui.nabu.casa/lovelace/kitchen)
+    - service: notify.aronne
+      data:
+        title: "\U0001F6AE *Raccolta rifiuti*"
+        message: Domani passano a ritirare la spazzatura! [Dettagli](https://iqf2y6yscdio5ilo35kpfrxbyqfpreyl.ui.nabu.casa/lovelace/kitchen)
   mode: single
-- id: '1650473639566'
+- id: "1650473639566"
   alias: Button 1 manage Piantana Sala
-  description: ''
+  description: ""
   trigger:
-  - platform: mqtt
-    topic: zigbee2mqtt/Button 1/action
-    payload: single
+    - platform: mqtt
+      topic: zigbee2mqtt/Button 1/action
+      payload: single
   condition: []
   action:
-  - service: light.toggle
-    data: {}
-    target:
-      entity_id: light.piantana_sala
+    - service: light.toggle
+      data: {}
+      target:
+        entity_id: light.piantana_sala
   mode: single
-- id: '1650473927334'
+- id: "1650473927334"
   alias: Button 2 manage Luce Letto
-  description: ''
+  description: ""
   trigger:
-  - platform: mqtt
-    topic: zigbee2mqtt/Button 2/action
-    payload: single
+    - platform: mqtt
+      topic: zigbee2mqtt/Button 2/action
+      payload: single
   condition: []
   action:
-  - service: light.toggle
-    data: {}
-    target:
-      entity_id: light.bed
+    - service: light.toggle
+      data: {}
+      target:
+        entity_id: light.bed
   mode: single
-- id: '1651408183906'
-  alias: '[Energy] High consumption -> turn water heater off'
-  description: If energy consumption go below a threshold, turn the boiler off and
+- id: "1651408183906"
+  alias: "[Energy] High consumption -> turn water heater off"
+  description:
+    If energy consumption go below a threshold, turn the boiler off and
     send a notification
   trigger:
-  - platform: numeric_state
-    entity_id: sensor.frient_energy_monitor_power
-    above: 4600
+    - platform: numeric_state
+      entity_id: sensor.frient_energy_monitor_power
+      above: 4600
   condition:
-  - condition: state
-    entity_id: switch.water_heater
-    state: 'on'
-  action:
-  - service: switch.turn_off
-    data: {}
-    target:
+    - condition: state
       entity_id: switch.water_heater
-  - service: notify.aronne
-    data:
-      title: "\U0001F6BF *Ho spento il boiler per limitare i consumi*"
-      message: I consumi istantanei hanno superato i 4.6kW, cosí ho spento il boiler
-        per cercare di limitarli. [Dettagli](https://iqf2y6yscdio5ilo35kpfrxbyqfpreyl.ui.nabu.casa/lovelace/kitchen)
+      state: "on"
+  action:
+    - service: switch.turn_off
+      data: {}
+      target:
+        entity_id: switch.water_heater
+    - service: notify.aronne
+      data:
+        title: "\U0001F6BF *Ho spento il boiler per limitare i consumi*"
+        message:
+          I consumi istantanei hanno superato i 4.6kW, cosí ho spento il boiler
+          per cercare di limitarli. [Dettagli](https://iqf2y6yscdio5ilo35kpfrxbyqfpreyl.ui.nabu.casa/lovelace/kitchen)
   mode: single
-- id: '1651526561767'
-  alias: '[Boiler] Turn on at 6:00 AM on working days'
+- id: "1651526561767"
+  alias: "[Boiler] Turn on at 6:00 AM on working days"
   description: Turn on boiler at 6:00 AM on working days if it was off
   trigger:
-  - platform: time
-    at: 06:00:00
+    - platform: time
+      at: 06:00:00
   condition:
-  - condition: state
-    entity_id: switch.water_heater
-    state: 'off'
-  - condition: time
-    before: '10:00:00'
-    weekday:
-    - mon
-    - tue
-    - wed
-    - thu
-    - fri
-    after: 01:00:00
-  action:
-  - service: switch.turn_on
-    data: {}
-    target:
+    - condition: state
       entity_id: switch.water_heater
+      state: "off"
+    - condition: time
+      before: "10:00:00"
+      weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+      after: 01:00:00
+  action:
+    - service: switch.turn_on
+      data: {}
+      target:
+        entity_id: switch.water_heater
   mode: single
-- id: '1652082753955'
-  alias: '[Notify] HA Update'
-  description: ''
+- id: "1652082753955"
+  alias: "[Notify] HA Update"
+  description: ""
   use_blueprint:
     path: mdegat01/update_notifications.yaml
     input:
-      reminder_hours: '3'
+      reminder_hours: "3"
       update_entities:
-      - update.home_assistant_supervisor_update
-      - update.home_assistant_core_update
-      - update.home_assistant_operating_system_update
+        - update.home_assistant_supervisor_update
+        - update.home_assistant_core_update
+        - update.home_assistant_operating_system_update
       mobile_app_device: 905677963a9b6082d24810268358ebec
-- id: '1658824207858'
+- id: "1658824207858"
   alias: Re-Load Speed Test
   description: Perform a Manual Speed Test when sensor goes offline
   trigger:
-  - platform: state
-    entity_id:
-    - sensor.speedtest_download
-    to: unavailable
+    - platform: state
+      entity_id:
+        - sensor.speedtest_download
+      to: unavailable
   condition: []
   action:
-  - service: homeassistant.update_entity
-    data: {}
-    target:
-      entity_id: sensor.speedtest_download
+    - service: homeassistant.update_entity
+      data: {}
+      target:
+        entity_id: sensor.speedtest_download
+  mode: single
+- id: "1677317734499"
+  alias: Tag Test is scanned
+  description: ""
+  trigger:
+    - platform: tag
+      tag_id: 47303df8-67a6-4f83-8c66-c4198583bb2e
+  condition: []
+  action:
+    - service: switch.turn_on
+      data: {}
+      target:
+        entity_id: switch.gaming_station
+  mode: single
+- id: "1677318448444"
+  alias: "[NFC][Door] Exit"
+  description: Turn off all lights if any is on
+  trigger:
+    - platform: tag
+      tag_id: d9cce178-68e9-4c85-a716-3d541422e054
+  condition:
+    - condition: template
+      value_template:
+        "{{ states.light|selectattr('state','equalto','on')|list|length
+        > 0 }}"
+  action:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: all
+  mode: single
+- id: "1677323384344"
+  alias: "[NFC][Door] Enter"
+  description: "Turn on entrance lights if none are on "
+  trigger:
+    - platform: tag
+      tag_id: d9cce178-68e9-4c85-a716-3d541422e054
+  condition:
+    - condition: template
+      value_template:
+        "{{ states.light|selectattr('state','equalto','on')|list|length
+        == 0 }}"
+  action:
+    - service: light.turn_on
+      data: {}
+      target:
+        entity_id: light.piantana_sala
+  mode: single
+- id: "1677479754729"
+  alias: "[NFC][Bed] Lights off"
+  description: Turn off bed lights
+  trigger:
+    - platform: tag
+      tag_id: 515ace01-e5e2-41fc-bc5f-1b138fb30c35
+  condition: []
+  action:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id: light.bed
   mode: single

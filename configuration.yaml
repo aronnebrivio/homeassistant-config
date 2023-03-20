@@ -73,3 +73,7 @@ http:
 
 ifttt:
   key: !secret ifttt.api_key
+
+duckdns:
+  domain: duckdns.subdomain
+  access_token: duckdns.access_token

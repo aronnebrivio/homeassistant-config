@@ -45,15 +45,25 @@ alexa:
         - alarm_control_panel
         - alert
         - automation
+        - climate
         - device_tracker
+        - group
+        - input_boolean
+        - input_button
+        - input_datetime
+        - input_number
+        - input_select
         - lock
+        - media_player
         - number
         - person
         - remote
-        - scene
         - script
+        - select
         - siren
+        - timer
         - weather
+        - zone
 
 circadian_lighting:
   max_colortemp: 5000

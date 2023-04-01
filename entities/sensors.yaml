@@ -1,39 +1,50 @@
 - platform: influxdb
+  api_version: 2
+  ssl: false
   host: !secret influxdb.ip
-  queries:
-    # Raw Proxmox CPU load
+  port: !secret influxdb.port
+  token: !secret influxdb.token
+  organization: !secret influxdb.organization_id
+  bucket: !secret influxdb.bucket
+  queries_flux:
+    # Proxmox CPU load
     - name: proxmox.raw_cpu_usage
-      field: cpu
-      where: "time > now() - 5m fill(null)"
       group_function: mean
-      value_template: "{{ value | float * 100.0 }}"
-      database: proxmox_data
-      measurement: cpustat
-    # Raw Proxmox memory usage
+      range_start: -5m
+      query: >
+        filter(fn: (r) => r._measurement == "cpustat")
+        |> filter(fn: (r) => r._field == "cpu")
+        |> map(fn: (r) => ({_time: r._time, _value: r._value * 100.0}))
+      unit_of_measurement: "%"
+      value_template: "{{ value | float }}"
+    # Proxmox memory usage
     - name: proxmox.raw_memory_usage
-      field: memused
-      where: "time > now() - 5m fill(null)"
-      group_function: mean
-      value_template: "{{ value | float / 1073741824 }}"
-      database: proxmox_data
-      measurement: memory
-    # Raw Proxmox storage usage
+      group_function: last
+      range_start: -5m
+      query: >
+        filter(fn: (r) => r._measurement == "memory" and r._field == "memused")
+        |> map(fn: (r) => ({r with _value: float(v: r._value) / 1073741824.0}))
+      unit_of_measurement: "GB"
+      value_template: "{{ value | float }}"
+    # Proxmox storage usage
     - name: proxmox.raw_storage_usage
-      field: used
-      where: "time > now() - 5m fill(null)"
       group_function: mean
+      range_start: -5m
+      query: >
+        filter(fn: (r) => r._measurement == "system")
+        |> filter(fn: (r) => r._field == "used")
+      unit_of_measurement: "GB"
       value_template: "{{ value | float }}"
-      database: proxmox_data
-      measurement: system
-    # Raw Proxmox storage total
+    # Proxmox storage total
     - name: proxmox.raw_storage_total
-      field: total
-      where: "time > now() - 5m fill(null)"
       group_function: mean
+      range_start: -5m
+      query: >
+        filter(fn: (r) => r._measurement == "system")
+        |> filter(fn: (r) => r._field == "total")
+      unit_of_measurement: "GB"
       value_template: "{{ value | float }}"
-      database: proxmox_data
-      measurement: system
-# Proxmox CPU load
+# Proxmox CPU usage
 - platform: template
   sensors:
     proxmox_cpu_usage:

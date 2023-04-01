@@ -23,7 +23,7 @@
   sensors:
     proxmox_is_running:
       friendly_name: "Proxmox"
-      value_template: "{{ states('sensor.proxmox_cpu_usage') | float > 0.0 }}"
+      value_template: "{{ states('sensor.proxmox_cpu_usage') | float(0.0) > 0.0 }}"
       device_class: power
 # Garbage collection tomorrow
 - platform: template

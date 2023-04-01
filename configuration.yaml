@@ -38,6 +38,23 @@ python_script:
 
 api:
 
+alexa:
+  smart_home:
+    filter:
+      exclude_domains:
+        - alarm_control_panel
+        - alert
+        - automation
+        - device_tracker
+        - lock
+        - number
+        - person
+        - remote
+        - scene
+        - script
+        - siren
+        - weather
+
 circadian_lighting:
   max_colortemp: 5000
   min_colortemp: 2857
@@ -49,8 +66,13 @@ spotcast:
   sp_key: !secret spotify.key
 
 influxdb:
+  api_version: 2
+  ssl: false
   host: !secret influxdb.ip
-  database: !secret influxdb.database
+  port: !secret influxdb.port
+  token: !secret influxdb.token
+  organization: !secret influxdb.organization_id
+  bucket: !secret influxdb.bucket
   exclude:
     entity_globs: "*"
 
@@ -75,5 +97,5 @@ ifttt:
   key: !secret ifttt.api_key
 
 duckdns:
-  domain: duckdns.subdomain
-  access_token: duckdns.access_token
+  domain: !secret duckdns.subdomain
+  access_token: !secret duckdns.access_token

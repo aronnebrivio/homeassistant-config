@@ -9,43 +9,6 @@
   action:
     - service: pyscript.sync_shopping_list
   mode: single
-- id: "1642168718601"
-  alias: Sync TV state with Fire TV - ON
-  description: ""
-  trigger:
-    - platform: state
-      entity_id: media_player.firestick
-      to: playing
-    - platform: state
-      entity_id: media_player.firestick
-      to: idle
-    - platform: state
-      entity_id: media_player.firestick
-      to: paused
-    - platform: state
-      entity_id: media_player.firestick
-      to: standby
-  condition: []
-  action:
-    - service: python_script.set_state
-      data_template:
-        entity_id: switch.livingroom_tv
-        state: "on"
-  mode: single
-- id: "1642168802081"
-  alias: Sync TV state with Fire TV - OFF
-  description: ""
-  trigger:
-    - platform: state
-      entity_id: media_player.firestick
-      to: "off"
-  condition: []
-  action:
-    - service: python_script.set_state
-      data_template:
-        entity_id: switch.livingroom_tv
-        state: "off"
-  mode: single
 - id: "1644331745972"
   alias: "[Notify][Energy] High Consumption"
   description: ""
@@ -68,33 +31,6 @@
         message:
           I consumi hanno superato i 4.6kW per 20 secondi e il boiler è già spento,
           se non spegni qualcosa salterà la corrente!
-  mode: single
-- id: "1644421047593"
-  alias: "[Notify][HA] Update Available"
-  description: ""
-  trigger:
-    - platform: state
-      entity_id: binary_sensor.updater
-      from: unavailable
-      to: available
-    - platform: state
-      entity_id: update.home_assistant_core_update
-      attribute: "off"
-      from: "on"
-    - platform: state
-      entity_id: update.home_assistant_operating_system_update
-      attribute: "off"
-      from: "on"
-    - platform: state
-      entity_id: update.home_assistant_supervisor_update
-      attribute: "off"
-      from: "on"
-  condition: []
-  action:
-    - service: notify.aronne
-      data:
-        title: "\U0001F199 *Aggiornamento disponibile*"
-        message: C'è un aggiornamento di Home Assistant disponibile
   mode: single
 - id: "1644433874893"
   alias: "[Notify][Proxmox] High Memory Usage"
@@ -234,7 +170,7 @@
         entity_id: sensor.speedtest_download
   mode: single
 - id: "1677317734499"
-  alias: Tag Test is scanned
+  alias: "[NFC][PC] On"
   description: ""
   trigger:
     - platform: tag

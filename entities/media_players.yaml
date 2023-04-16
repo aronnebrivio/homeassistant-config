@@ -1,0 +1,5 @@
+- platform: smartir
+  name: TV
+  device_code: 1020
+  controller_data: remote.broadlink_sala
+  power_sensor: binary_sensor.firestick_state

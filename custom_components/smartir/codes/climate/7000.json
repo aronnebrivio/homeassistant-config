@@ -1,0 +1,52 @@
+{
+  "manufacturer": "AirNova",
+  "supportedModels": [
+    "AirNova"
+  ],
+  "supportedController": "Broadlink",
+  "commandsEncoding": "Base64",
+  "minTemperature": 15,
+  "maxTemperature": 30,
+  "precision": 0.5,
+  "operationModes": [
+    "heat",
+    "cool"
+  ],
+  "fanModes": [
+    "low",
+    "mid",
+    "high",
+    "auto"
+  ],
+  "commands": {
+    "off": "JgAiAB0iDhENIQ8gEB8PIQ4hDhEOEg4RDiEOIQ4gDiEPIA8ADQU=",
+    "heat": {
+      "low": {
+        "15": "JgBAAB0iDhENIQ4iDSEPIQ4QDyAPIQ4gDxEOEg0SDRIOIQ8gDRMOIA4RDhMNIQ4RDiENIg4SDRIPHw4SDiEOIQ4ADQU="
+      },
+      "mid": {
+        "15": "JgBAAB0iDhENIQ4iDSEPIQ4QDyAPIQ4gDxEOEg0SDRIOIQ8gDRMOIA4RDhMNIQ4RDiENIg4SDRIPHw4SDiEOIQ4ADQU="
+      },
+      "high": {
+        "15": "JgBAAB0iDhENIQ4iDSEPIQ4QDyAPIQ4gDxEOEg0SDRIOIQ8gDRMOIA4RDhMNIQ4RDiENIg4SDRIPHw4SDiEOIQ4ADQU="
+      },
+      "auto": {
+        "15": "JgBAAB0iDhENIQ4iDSEPIQ4QDyAPIQ4gDxEOEg0SDRIOIQ8gDRMOIA4RDhMNIQ4RDiENIg4SDRIPHw4SDiEOIQ4ADQU="
+      }
+    },
+    "cool": {
+      "low": {
+        "15": "JgBAAB0iDhENIQ4iDSEPIQ4QDyAPIQ4gDxEOEg0SDRIOIQ8gDRMOIA4RDhMNIQ4RDiENIg4SDRIPHw4SDiEOIQ4ADQU="
+      },
+      "mid": {
+        "15": "JgBAAB0iDhENIQ4iDSEPIQ4QDyAPIQ4gDxEOEg0SDRIOIQ8gDRMOIA4RDhMNIQ4RDiENIg4SDRIPHw4SDiEOIQ4ADQU="
+      },
+      "high": {
+        "15": "JgBAAB0iDhENIQ4iDSEPIQ4QDyAPIQ4gDxEOEg0SDRIOIQ8gDRMOIA4RDhMNIQ4RDiENIg4SDRIPHw4SDiEOIQ4ADQU="
+      },
+      "auto": {
+        "15": "JgBAAB0iDhENIQ4iDSEPIQ4QDyAPIQ4gDxEOEg0SDRIOIQ8gDRMOIA4RDhMNIQ4RDiENIg4SDRIPHw4SDiEOIQ4ADQU="
+      }
+    }
+  }
+}

@@ -41,3 +41,12 @@
   name: Late Morning
   after: "11:00"
   before: "13:00"
+# Firestick state (on/off)
+- platform: template
+  sensors:
+    firestick_state:
+      value_template: >-
+        {% if states('media_player.firestick') == 'off' %} off
+        {% else %} on
+        {% endif %}
+      device_class: power

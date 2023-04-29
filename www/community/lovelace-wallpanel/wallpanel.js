@@ -108,7 +108,7 @@ class ScreenWakeLock {
 	}
 }
 
-const version = "4.10.1";
+const version = "4.10.3";
 const defaultConfig = {
 	enabled: false,
 	enabled_on_tabs: [],
@@ -315,6 +315,9 @@ function isActive() {
 
 
 function imageSourceType() {
+	if (!config.image_url) {
+		return "";
+	}
 	if (config.image_url.startsWith("media-entity://")) return "media-entity";
 	if (config.image_url.startsWith("media-source://media_source")) return "media-source";
 	if (config.image_url.startsWith("https://api.unsplash")) return "unsplash-api";
@@ -360,6 +363,23 @@ function getCurrentView() {
 
 
 function setSidebarHidden(hidden) {
+	try {
+		const haIconButton = elHaMain.shadowRoot
+			.querySelector("ha-panel-lovelace").shadowRoot
+			.querySelector("hui-root").shadowRoot
+			.querySelector("div.toolbar")
+			.querySelector("ha-menu-button").shadowRoot
+			.querySelector("ha-icon-button");
+		if (hidden) {
+			haIconButton.style.display = "none";
+		}
+		else {
+			haIconButton.style.removeProperty("display");
+		}
+	}
+	catch (e) {
+		if (config.debug) console.debug(e);
+	}
 	try {
 		let sidebar = elHaMain.shadowRoot.querySelector("ha-sidebar");
 		if (sidebar) {
@@ -562,6 +582,7 @@ class WallpanelView extends HuiView {
 		this.translateInterval = null;
 		this.lastClickTime = 0; 
 		this.clickCount = 0;
+		this.energyCollectionUpdateEnabled = false;
 		this.energyCollectionUpdateInterval = 60;
 		this.lastEnergyCollectionUpdate = 0;
 
@@ -929,6 +950,7 @@ class WallpanelView extends HuiView {
 		this.infoBoxContent.innerHTML = '';
 		this.__badges = [];
 		this.__cards = [];
+		this.energyCollectionUpdateEnabled = false;
 
 		this.shadowRoot.querySelectorAll(".wp-card").forEach(card => {
 			card.parentElement.removeChild(card);
@@ -958,7 +980,10 @@ class WallpanelView extends HuiView {
 					style = cardConfig.wp_style;
 					delete cardConfig.wp_style;
 				}
-				cardConfig.collection_key = "energy_wallpanel";
+				if (cardConfig.type && cardConfig.type.includes("energy")) {
+					cardConfig.collection_key = "energy_wallpanel";
+					this.energyCollectionUpdateEnabled = true;
+				}
 				const cardElement = this.createCardElement(cardConfig);
 				cardElement.hass = this.hass;
 				this.__cards.push(cardElement);
@@ -1140,30 +1165,32 @@ class WallpanelView extends HuiView {
 			}
 		});
 
-		[this.imageOne, this.imageTwo].forEach(function(img) {
-			if (!img) return;
-			img.addEventListener('load', function() {
-				img.setAttribute('data-loading', false);
-				if (config.show_image_info && img.imagePath && /.*\.jpe?g$/i.test(img.imagePath)) {
-					wp.fetchEXIFInfo(img);
-				}
-			});
-			img.addEventListener('error', function() {
-				img.setAttribute('data-loading', false);
-				console.error(`Failed to load image: ${img.src}`);
-				if (img.imagePath) {
-					const idx = wp.imageList.indexOf(img.imagePath);
-					if (idx > -1) {
-						if (config.debug) console.debug(`Removing image from list: ${img.imagePath}`);
-						wp.imageList.splice(idx, 1);
+		if (config.image_url) {
+			[this.imageOne, this.imageTwo].forEach(function(img) {
+				if (!img) return;
+				img.addEventListener('load', function() {
+					img.setAttribute('data-loading', false);
+					if (config.show_image_info && img.imagePath && /.*\.jpe?g$/i.test(img.imagePath)) {
+						wp.fetchEXIFInfo(img);
 					}
-					wp.updateImage(img);
-				}
-				else {
-					wp.displayMessage(`Failed to load image: ${img.src}`, 5000)
-				}
-			})
-		});
+				});
+				img.addEventListener('error', function() {
+					img.setAttribute('data-loading', false);
+					console.error(`Failed to load image: ${img.src}`);
+					if (img.imagePath) {
+						const idx = wp.imageList.indexOf(img.imagePath);
+						if (idx > -1) {
+							if (config.debug) console.debug(`Removing image from list: ${img.imagePath}`);
+							wp.imageList.splice(idx, 1);
+						}
+						wp.updateImage(img);
+					}
+					else {
+						wp.displayMessage(`Failed to load image: ${img.src}`, 5000)
+					}
+				})
+			});
+		}
 	}
 
 	fetchEXIFInfo(img) {
@@ -1686,7 +1713,7 @@ class WallpanelView extends HuiView {
 		let currentDate = new Date();
 		let now = currentDate.getTime();
 
-		if (now - this.lastEnergyCollectionUpdate >= this.energyCollectionUpdateInterval * 1000) {
+		if (this.energyCollectionUpdateEnabled && now - this.lastEnergyCollectionUpdate >= this.energyCollectionUpdateInterval * 1000) {
 			if (this.hass.connection._energy_wallpanel) {
 				this.hass.connection._energy_wallpanel.refresh();
 			}

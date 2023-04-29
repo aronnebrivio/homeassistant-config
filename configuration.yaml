@@ -92,11 +92,15 @@ alexa:
         - weather
         - zone
 
-circadian_lighting:
-  max_colortemp: 5000
-  min_colortemp: 2857
-  interval: 600
-  transition: 60
+adaptive_lighting:
+  lights:
+    - light.bed
+    - light.luce_scrivania
+    - light.livingroom
+  min_brightness: 10
+  max_brightness: 100
+  min_color_temp: 2000
+  max_color_temp: 5500
 
 spotcast:
   sp_dc: !secret spotify.dc

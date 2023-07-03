@@ -91,6 +91,68 @@ alexa:
         - update
         - weather
         - zone
+        
+google_assistant:
+  project_id: !secret google_assistant.project_id
+  service_account: !include service_account.json
+  report_state: true
+  exposed_domains:
+    - switch
+    - light
+    - media_player
+    - climate
+    
+homekit:
+  filter:
+    exclude_entities:
+      - light.piantana_sala_luce_grande
+      - light.piantana_sala_luce_piccola
+      - media_player.fire_tv
+      - media_player.firestick
+      - media_player.ovunque
+      - switch.abat_jour_letto_sinistra_do_not_disturb
+      - switch.bedroom_air_conditioner
+      - switch.dummy_switch
+    exclude_entity_globs:
+      - light.patriot_viper_steel_rgb*
+      - light.nzxt_smart_device*
+      - light.asus_tuf_gaming_b460_plus*
+      - media_player.echo*
+      - media_player.spotify*
+      - switch.adguard*
+      - switch.aronne*
+      - switch.bandabrivio*
+      - switch.echo*
+      - switch.circadian_lighting*
+      - switch.fire_tv*
+      - switch.ovunque*
+      - switch.smart_plug*
+      - switch.transmission*
+    exclude_domains:
+      - alarm_control_panel
+      - alert
+      - automation
+      - binary_sensor
+      - calendar
+      - device_tracker
+      - group
+      - input_boolean
+      - input_button
+      - input_datetime
+      - input_number
+      - input_select
+      - lock
+      - number
+      - person
+      - remote
+      - script
+      - select
+      - sensor
+      - siren
+      - timer
+      - update
+      - weather
+      - zone
 
 adaptive_lighting:
   lights:
@@ -101,6 +163,8 @@ adaptive_lighting:
   max_brightness: 100
   min_color_temp: 2000
   max_color_temp: 5500
+  take_over_control: true
+  detect_non_ha_changes: true
 
 spotcast:
   sp_dc: !secret spotify.dc

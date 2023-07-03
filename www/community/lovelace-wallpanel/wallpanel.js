@@ -108,7 +108,7 @@ class ScreenWakeLock {
 	}
 }
 
-const version = "4.10.3";
+const version = "4.12.1";
 const defaultConfig = {
 	enabled: false,
 	enabled_on_tabs: [],
@@ -125,6 +125,8 @@ const defaultConfig = {
 	control_reactivation_time: 1.0,
 	screensaver_stop_navigation_path: '',
 	screensaver_entity: '',
+	stop_screensaver_on_mouse_move: true,
+	stop_screensaver_on_location_change: true,
 	image_url: "https://picsum.photos/${width}/${height}?random=${timestamp}",
 	image_fit: 'cover', // cover / contain / fill
 	image_list_update_interval: 3600,
@@ -146,6 +148,7 @@ const defaultConfig = {
 	cards: [
 		{type: 'weather-forecast', entity: 'weather.home', show_forecast: true}
 	],
+	card_interaction: false,
 	profile: '',
 	profile_entity: '',
 	profiles: {}
@@ -157,6 +160,7 @@ let activePanelTab = null;
 let fullscreen = false;
 let screenWakeLock = new ScreenWakeLock();
 let wallpanel = null;
+let skipDisableScreensaverOnLocationChanged = false;
 let classStyles = {
 	"wallpanel-screensaver-image-info": {
 		"position": "absolute",
@@ -271,14 +275,11 @@ function updateConfig() {
 			config.image_list_update_interval = 90;
 		}
 	}
-	if (config.exif_info_template) {
-		// Old key => new key
-		config.image_info_template = config.exif_info_template;
+
+	if (config.card_interaction) {
+		config.stop_screensaver_on_mouse_move = false;
 	}
-	if (config.show_exif_info) {
-		// Old key => new key
-		config.show_image_info = config.show_exif_info;
-	}
+	
 	if (!config.enabled) {
 		config.debug = false;
 		config.hide_toolbar = false;
@@ -364,34 +365,47 @@ function getCurrentView() {
 
 function setSidebarHidden(hidden) {
 	try {
-		const haIconButton = elHaMain.shadowRoot
+		const haMenuButton = elHaMain.shadowRoot
 			.querySelector("ha-panel-lovelace").shadowRoot
 			.querySelector("hui-root").shadowRoot
 			.querySelector("div.toolbar")
-			.querySelector("ha-menu-button").shadowRoot
+			.querySelector("ha-menu-button");
+		const haIconButton = haMenuButton.shadowRoot
 			.querySelector("ha-icon-button");
+		const divDot = haMenuButton.shadowRoot
+			.querySelector("div.dot");
 		if (hidden) {
 			haIconButton.style.display = "none";
+			if (divDot) {
+				divDot.style.display = "none";
+			}
 		}
 		else {
 			haIconButton.style.removeProperty("display");
+			if (divDot) {
+				divDot.style.removeProperty("display");
+			}
 		}
 	}
 	catch (e) {
 		if (config.debug) console.debug(e);
 	}
+	
 	try {
 		let sidebar = elHaMain.shadowRoot.querySelector("ha-sidebar");
 		if (sidebar) {
 			sidebar.style.visibility = (hidden ? "hidden" : "visible");
 		}
+		
 		let drawer = elHaMain.shadowRoot.querySelector("ha-drawer");
 		if (drawer) {
 			drawer = drawer.shadowRoot.querySelector(".mdc-drawer");
 		}
 		if (hidden) {
+			
 			elHaMain.style.setProperty("--app-drawer-width", 0);
 			elHaMain.style.setProperty("--mdc-drawer-width", 0);
+			elHaMain.style.setProperty("--mdc-top-app-bar-width", "100%");
 			if (drawer) {
 				drawer.style.setProperty("display", "none");
 			}
@@ -399,6 +413,7 @@ function setSidebarHidden(hidden) {
 		else {
 			elHaMain.style.removeProperty("--app-drawer-width");
 			elHaMain.style.removeProperty("--mdc-drawer-width");
+			elHaMain.style.removeProperty("--mdc-top-app-bar-width");
 			if (drawer) {
 				drawer.style.removeProperty("display");
 			}
@@ -408,8 +423,8 @@ function setSidebarHidden(hidden) {
 	catch (e) {
 		if (config.debug) console.debug(e);
 	}
+	
 }
-
 
 function setToolbarHidden(hidden) {
 	try {
@@ -425,12 +440,14 @@ function setToolbarHidden(hidden) {
 		if (hidden) {
 			appToolbar.style.setProperty("display", "none");
 			view.style.minHeight = "100vh";
-			view.style.marginTop = "0px";
+			view.style.marginTop = "0";
+			view.style.paddingTop = "0";
 		}
 		else {
 			appToolbar.style.removeProperty("display");
 			view.style.removeProperty("min-height");
 			view.style.removeProperty("margin-top");
+			view.style.removeProperty("padding-top");
 		}
 		window.dispatchEvent(new Event('resize'));
 	}
@@ -575,7 +592,6 @@ class WallpanelView extends HuiView {
 		this.screensaverStoppedAt = new Date();
 		this.infoBoxContentCreatedDate;
 		this.idleSince = Date.now();
-		this.bodyOverflowOrig = null;
 		this.lastProfileSet = insertBrowserID(config.profile);
 		this.lastMove = null;
 		this.lastCorner = 0; // 0 - top left, 1 - bottom left, 2 - bottom right, 3 - top right
@@ -585,6 +601,7 @@ class WallpanelView extends HuiView {
 		this.energyCollectionUpdateEnabled = false;
 		this.energyCollectionUpdateInterval = 60;
 		this.lastEnergyCollectionUpdate = 0;
+		this.screensaverStopNavigationPathTimeout = null;
 
 		this.__hass = elHass.__hass;
 		this.__cards = [];
@@ -692,7 +709,7 @@ class WallpanelView extends HuiView {
 		this.messageBox.style.fontSize = '5vh';
 		this.messageBox.style.textAlign = 'center';
 		this.messageBox.style.transition = 'visibility 200ms ease-in-out';
-
+		
 		this.debugBox.removeAttribute('style');
 		this.debugBox.style.position = 'fixed';
 		this.debugBox.style.pointerEvents = "none";
@@ -719,6 +736,7 @@ class WallpanelView extends HuiView {
 
 		this.imageOneContainer.removeAttribute('style');
 		this.imageOneContainer.style.position = 'absolute';
+		this.imageOneContainer.style.pointerEvents = "none";
 		this.imageOneContainer.style.top = 0;
 		this.imageOneContainer.style.left = 0;
 		this.imageOneContainer.style.width = '100%';
@@ -727,12 +745,14 @@ class WallpanelView extends HuiView {
 
 		this.imageOne.removeAttribute('style');
 		this.imageOne.style.position = 'relative';
+		this.imageOne.style.pointerEvents = "none";
 		this.imageOne.style.width = '100%';
 		this.imageOne.style.height = '100%';
 		this.imageOne.style.objectFit = 'contain';
 
 		this.imageOneInfoContainer.removeAttribute('style');
 		this.imageOneInfoContainer.style.position = 'absolute';
+		this.imageOneInfoContainer.style.pointerEvents = "none";
 		this.imageOneInfoContainer.style.top = 0;
 		this.imageOneInfoContainer.style.left = 0;
 		this.imageOneInfoContainer.style.width = '100%';
@@ -740,6 +760,7 @@ class WallpanelView extends HuiView {
 
 		this.imageTwoContainer.removeAttribute('style');
 		this.imageTwoContainer.style.position = 'absolute';
+		this.imageTwoContainer.style.pointerEvents = "none";
 		this.imageTwoContainer.style.top = 0;
 		this.imageTwoContainer.style.left = 0;
 		this.imageTwoContainer.style.width = '100%';
@@ -748,12 +769,14 @@ class WallpanelView extends HuiView {
 
 		this.imageTwo.removeAttribute('style');
 		this.imageTwo.style.position = 'relative';
+		this.imageTwo.style.pointerEvents = "none";
 		this.imageTwo.style.width = '100%';
 		this.imageTwo.style.height = '100%';
 		this.imageTwo.style.objectFit = 'contain';
 
 		this.imageTwoInfoContainer.removeAttribute('style');
 		this.imageTwoInfoContainer.style.position = 'absolute';
+		this.imageTwoInfoContainer.style.pointerEvents = "none";
 		this.imageTwoInfoContainer.style.top = 0;
 		this.imageTwoInfoContainer.style.left = 0;
 		this.imageTwoInfoContainer.style.width = '100%';
@@ -761,6 +784,7 @@ class WallpanelView extends HuiView {
 
 		this.infoContainer.removeAttribute('style');
 		this.infoContainer.style.position = 'absolute';
+		this.infoContainer.style.pointerEvents = "none";
 		this.infoContainer.style.top = 0;
 		this.infoContainer.style.left = 0;
 		this.infoContainer.style.width = '100%';
@@ -770,24 +794,30 @@ class WallpanelView extends HuiView {
 
 		this.fixedInfoContainer.removeAttribute('style');
 		this.fixedInfoContainer.style.position = 'fixed';
+		this.fixedInfoContainer.style.pointerEvents = "none";
 		this.fixedInfoContainer.style.top = 0;
 		this.fixedInfoContainer.style.left = 0;
 		this.fixedInfoContainer.style.width = '100%';
 		this.fixedInfoContainer.style.height = '100%';
 
 		this.infoBox.removeAttribute('style');
+		this.infoBox.style.pointerEvents = "none";
 		this.infoBox.style.width = 'fit-content';
 		this.infoBox.style.height = 'fit-content';
 		this.infoBox.style.borderRadius = '10px';
 		this.infoBox.style.setProperty('--wp-card-width', '500px');
-		this.infoBox.style.setProperty('--wp-card-padding', '0px');
+		this.infoBox.style.setProperty('--wp-card-padding', '0');
 		this.infoBox.style.setProperty('--wp-card-margin', '5px');
 		this.infoBox.style.setProperty('--wp-card-backdrop-filter', 'none');
 
 		this.fixedInfoBox.style.cssText = this.infoBox.style.cssText;
+		this.fixedInfoBox.style.pointerEvents = "none";
 
 		this.screensaverOverlay.removeAttribute('style');
 		this.screensaverOverlay.style.position = 'absolute';
+		if (config.card_interaction) {
+			this.screensaverOverlay.style.pointerEvents = "none";
+		}
 		this.screensaverOverlay.style.top = 0;
 		this.screensaverOverlay.style.left = 0;
 		this.screensaverOverlay.style.width = '100%';
@@ -939,8 +969,8 @@ class WallpanelView extends HuiView {
 			clearInterval(wp.translateInterval);
 		}
 		wp.translateInterval = setInterval(function() {
-			wp.infoBoxPosX.style.transform = `translate3d(${x}px, 0px, 0px)`;
-			wp.infoBoxPosY.style.transform = `translate3d(0px, ${y}px, 0px)`;
+			wp.infoBoxPosX.style.transform = `translate3d(${x}px, 0, 0)`;
+			wp.infoBoxPosY.style.transform = `translate3d(0, ${y}px, 0)`;
 		}, ms);
 	}
 
@@ -986,7 +1016,9 @@ class WallpanelView extends HuiView {
 				}
 				const cardElement = this.createCardElement(cardConfig);
 				cardElement.hass = this.hass;
+				
 				this.__cards.push(cardElement);
+
 				let parent = this.infoBoxContent;
 				const div = document.createElement('div');
 				div.classList.add("wp-card");
@@ -1004,6 +1036,9 @@ class WallpanelView extends HuiView {
 					else {
 						div.style.setProperty(attr, style[attr]);
 					}
+				}
+				if (config.card_interaction) {
+					div.style.pointerEvents = "initial";
 				}
 				div.append(cardElement);
 				parent.appendChild(div);
@@ -1153,7 +1188,11 @@ class WallpanelView extends HuiView {
 		}
 
 		let wp = this;
-		['click', 'touchstart', 'mousemove', 'wheel', 'keydown'].forEach(function(eventName) {
+		let eventNames = ['click', 'touchstart', 'wheel', 'keydown'];
+		if (config.stop_screensaver_on_mouse_move) {
+			eventNames.push('mousemove');
+		}
+		eventNames.forEach(function(eventName) {
 			let click = ['click', 'touchstart'].includes(eventName);
 			window.addEventListener(eventName, event => {
 				wp.handleInteractionEvent(event, click);
@@ -1164,7 +1203,12 @@ class WallpanelView extends HuiView {
 				wp.updateShadowStyle();
 			}
 		});
-
+		window.addEventListener("hass-more-info", event => {
+			if (wp.screensaverStartedAt) {
+				wp.moreInfoDialogToForeground();
+			}
+		});
+		
 		if (config.image_url) {
 			[this.imageOne, this.imageTwo].forEach(function(img) {
 				if (!img) return;
@@ -1191,6 +1235,33 @@ class WallpanelView extends HuiView {
 				})
 			});
 		}
+	}
+
+	getMoreInfoDialog() {
+		const moreInfoDialog = elHass.shadowRoot.querySelector("ha-more-info-dialog");
+		if (!moreInfoDialog) {
+			return;
+		}
+		const dialog = moreInfoDialog.shadowRoot.querySelector("ha-dialog");
+		if (dialog) {
+			return dialog;
+		}
+	}
+
+	moreInfoDialogToForeground() {
+		const wp = this;
+		function showDialog(attempt = 1) {
+			const dialog = wp.getMoreInfoDialog();
+			if (dialog) {
+				dialog.style.position = "absolute";
+				dialog.style.zIndex = wp.style.zIndex + 1;
+				return;
+			}
+			if (attempt < 10) {
+				setTimeout(showDialog, 50, attempt + 1);
+			}
+		}
+		showDialog();
 	}
 
 	fetchEXIFInfo(img) {
@@ -1643,6 +1714,7 @@ class WallpanelView extends HuiView {
 	}
 
 	startScreensaver() {
+		updateConfig();
 		if (config.debug) console.debug("Start screensaver");
 		if (!isActive()) {
 			if (config.debug) console.debug("Wallpanel not active, not starting screensaver");
@@ -1667,11 +1739,8 @@ class WallpanelView extends HuiView {
 		this.lastImageUpdate = Date.now();
 		this.screensaverStartedAt = Date.now();
 		this.screensaverStoppedAt = null;
-		if (document.body.style.overflow != 'hidden') {
-			this.bodyOverflowOrig = document.body.style.overflow;
-			document.body.style.overflow = 'hidden';
-		}
-
+		document.documentElement.style.overflow = 'hidden';
+		
 		this.createInfoBoxContent();
 
 		this.style.visibility = 'visible';
@@ -1680,10 +1749,15 @@ class WallpanelView extends HuiView {
 		this.setScreensaverEntityState();
 
 		if (config.screensaver_stop_navigation_path) {
-			setTimeout(() => {
+			this.screensaverStopNavigationPathTimeout = setTimeout(() => {
+				skipDisableScreensaverOnLocationChanged = true;
 				navigate(config.screensaver_stop_navigation_path);
-			}, (config.fade_in_time+1)*1000);
+				setTimeout(() => {
+					skipDisableScreensaverOnLocationChanged = false;
+				}, 250);
+			}, (config.fade_in_time + 1) * 1000);
 		}
+
 	}
 
 	stopScreensaver() {
@@ -1691,8 +1765,12 @@ class WallpanelView extends HuiView {
 
 		this.screensaverStartedAt = null;
 		this.screensaverStoppedAt = Date.now();
-		document.body.style.overflow = this.bodyOverflowOrig;
-
+		
+		document.documentElement.style.removeProperty("overflow");
+		
+		if (this.screensaverStopNavigationPathTimeout) {
+			clearTimeout(this.screensaverStopNavigationPathTimeout);
+		}
 		this.hideMessage();
 
 		this.style.transition = '';
@@ -1800,39 +1878,67 @@ class WallpanelView extends HuiView {
 	handleInteractionEvent(evt, isClick) {
 		let now = Date.now();
 		this.idleSince = now;
-		if (this.messageBoxTimeout) {
-			// Message on screen
-			this.blockEventsUntil = now + 1000;
-		}
-		if (isClick) {
-			this.hideMessage();
-			this.setupScreensaver();
-		}
-		if (this.screensaverStartedAt || this.blockEventsUntil > now) {
-			if (isClick) {
-				evt.preventDefault();
+		
+		if (! this.screensaverStartedAt) {
+			if (this.blockEventsUntil > now) {
+				if (isClick) {
+					evt.preventDefault();
+				}
+				evt.stopImmediatePropagation();
 			}
-			evt.stopImmediatePropagation();
-		}
-		if (! this.screensaverStartedAt || this.blockEventsUntil > now) {
+			if (isClick) {
+				this.setupScreensaver();
+			}
 			return;
 		}
+
+		// Screensaver is active
+		if (this.messageBoxTimeout) {
+			// Message on screen
+			if (isClick) {
+				this.blockEventsUntil = now + 1000;
+				this.hideMessage();
+			}
+		}
+		
+		let x = evt.clientX;
+		let y = evt.clientY;
+		if (!x && evt.touches && evt.touches[0]) {
+			x = evt.touches[0].clientX;
+		}
+		if (!y && evt.touches && evt.touches[0]) {
+			y = evt.touches[0].clientY;
+		}
+
+		if (config.card_interaction) {
+			if (this.getMoreInfoDialog()) {
+				return;
+			}
+			const boxIds = ["wallpanel-screensaver-info-box-content", "wallpanel-screensaver-fixed-info-box-content"];
+			for (let i=0; i<boxIds.length; i++) {
+				const contentBox = this.shadowRoot.getElementById(boxIds[i]);
+				const pos = contentBox.getBoundingClientRect();
+				//console.log("pos: ", x, y, pos.left, pos.right, pos.top, pos.bottom);
+				if (x >= pos.left && x <= pos.right && y >= pos.top && y <= pos.bottom) {
+					if (config.debug) console.debug(`Event on ${boxIds[i]}`);
+					return;
+				}
+			}
+		}
+
+		if (isClick) {
+			evt.preventDefault();
+		}
+		evt.stopImmediatePropagation();
+		
 		if (evt instanceof MouseEvent || evt instanceof TouchEvent) {
-			let x = evt.clientX;
-			let y = evt.clientY;
 			let right = 0.0;
-			let bootom = 0.0;
-			if (!x && evt.touches && evt.touches[0]) {
-				x = evt.touches[0].clientX;
-			}
-			if (!y && evt.touches && evt.touches[0]) {
-				y = evt.touches[0].clientY;
-			}
+			let bottom = 0.0;
 			if (x) {
 				right = (this.screensaverContainer.clientWidth - x) / this.screensaverContainer.clientWidth;
 			}
 			if (y) {
-				bootom = (this.screensaverContainer.clientHeight - y) / this.screensaverContainer.clientHeight;
+				bottom = (this.screensaverContainer.clientHeight - y) / this.screensaverContainer.clientHeight;
 			}
 			if (right <= 0.15) {
 				if (
@@ -1844,7 +1950,7 @@ class WallpanelView extends HuiView {
 				}
 				return;
 			}
-			else if (right >= 0.40 && right <= 0.60 && bootom <= 0.10) {
+			else if (right >= 0.40 && right <= 0.60 && bottom <= 0.10) {
 				let now = new Date();
 				if (isClick && now - this.lastClickTime < 500) {
 					this.clickCount += 1;
@@ -1866,13 +1972,6 @@ class WallpanelView extends HuiView {
 	}
 }
 
-
-updateConfig();
-customElements.define("wallpanel-view", WallpanelView);
-wallpanel = document.createElement("wallpanel-view");
-document.body.appendChild(wallpanel);
-
-
 function activateWallpanel() {
 	setToolbarHidden(config.hide_toolbar);
 	setSidebarHidden(config.hide_sidebar);
@@ -1887,8 +1986,10 @@ function deactivateWallpanel() {
 	setSidebarHidden(false);
 }
 
-
-window.setInterval(() => {
+function locationChanged() {
+	if (config.stop_screensaver_on_location_change && !skipDisableScreensaverOnLocationChanged) {
+		wallpanel.stopScreensaver();
+	}
 	let pl = getHaPanelLovelace();
 	let changed = false;
 	if (!pl && activePanelUrl) {
@@ -1920,8 +2021,19 @@ window.setInterval(() => {
 			deactivateWallpanel();
 		}
 	}
-}, 1000);
+}
 
+setTimeout(function() {
+	updateConfig();
+	customElements.define("wallpanel-view", WallpanelView);
+	wallpanel = document.createElement("wallpanel-view");
+	elHaMain.shadowRoot.appendChild(wallpanel);
+	locationChanged();
+	window.addEventListener("location-changed", event => {
+		if (config.debug) console.debug("location-changed", event);
+		locationChanged();
+	});
+}, 25);
 
 
 /**

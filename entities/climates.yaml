@@ -4,12 +4,18 @@
   controller_data: remote.broadlink_sala
   temperature_sensor: sensor.termometro_sala_temperature
   humidity_sensor: sensor.termometro_sala_humidity
-- platform: generic_thermostat
+- platform: smartir
   name: Condizionatore Camera
-  min_temp: 16
+  device_code: 7000
+  controller_data: remote.broadlink_camera
+  temperature_sensor: sensor.termometro_camera_temperature
+  humidity_sensor: sensor.termometro_camera_humidity
+- platform: generic_thermostat
+  name: Condizionatore Cucina
+  min_temp: 15
   max_temp: 30
   precision: 0.5
   ac_mode: true
-  target_sensor: sensor.termometro_camera_temperature
+  target_sensor: sensor.termometro_sala_temperature
   initial_hvac_mode: "off"
-  heater: switch.bedroom_air_conditioner
+  heater: switch.kitchen_air_conditioner

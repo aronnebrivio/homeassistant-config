@@ -91,7 +91,7 @@ alexa:
         - update
         - weather
         - zone
-        
+
 google_assistant:
   project_id: !secret google_assistant.project_id
   service_account: !include service_account.json
@@ -101,7 +101,7 @@ google_assistant:
     - light
     - media_player
     - climate
-    
+
 homekit:
   filter:
     exclude_entities:

@@ -80,19 +80,3 @@
       value_template: "{{ '%.1f' | format(((float(states('sensor.termometro_sala_humidity')) + float(states('sensor.termometro_camera_humidity'))) / 2) | float) }}"
       friendly_name: "Home Humidity"
       icon_template: mdi:water-percent
-# Switchbot Bot 1 status sensor
-- platform: rest
-  name: "Switchbot Bot 1 status"
-  resource: !secret switchbot.bot_1.status_url
-  method: GET
-  scan_interval: 10000
-  headers:
-    Authorization: !secret switchbot.api_key
-    content_type: "application/json"
-  json_attributes_path: "$.body"
-  value_template: "{{ value_json.body.power }}"
-  json_attributes:
-    - deviceId
-    - deviceType
-    - hubDeviceId
-    - power

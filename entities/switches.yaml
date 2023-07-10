@@ -41,16 +41,14 @@
     water_heater:
       friendly_name: Boiler
       turn_on:
-        service: rest_command.switchbot_device_command
-        data:
-          deviceId: !secret switchbot.bot_1.device_id
-          command: "turnOn"
+        service: switch.turn_on
+        target:
+          entity_id: switch.bot_81bb
       turn_off:
-        service: rest_command.switchbot_device_command
-        data:
-          deviceId: !secret switchbot.bot_1.device_id
-          command: "turnOff"
-# Bedroom air conditioner
+        service: switch.turn_off
+        target:
+          entity_id: switch.bot_81bb
+# Kitchen air conditioner
 - platform: template
   switches:
     kitchen_air_conditioner:

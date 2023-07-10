@@ -202,6 +202,10 @@
     data: {}
     target:
       entity_id: all
+  - service: climate.turn_off
+    data: {}
+    target:
+      entity_id: all
   mode: single
 - id: '1677323384344'
   alias: '[NFC][Door] Enter'
@@ -257,7 +261,6 @@
     above: 27
   - condition: state
     entity_id: climate.condizionatore_camera
-    attribute: hvac_action
     state: 'off'
   action:
   - service: climate.turn_on
@@ -290,7 +293,6 @@
     below: 25.5
   - condition: state
     entity_id: climate.condizionatore_camera
-    attribute: hvac_action
     state: cool
   action:
   - service: climate.turn_off

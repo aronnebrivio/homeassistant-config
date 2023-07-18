@@ -1,11 +1,13 @@
 - platform: smartir
   name: Condizionatore Sala
+  unique_id: 1d184ea6-2417-11ee-be56-0242ac120002
   device_code: 7000
   controller_data: remote.broadlink_sala
   temperature_sensor: sensor.termometro_sala_temperature
   humidity_sensor: sensor.termometro_sala_humidity
 - platform: smartir
   name: Condizionatore Camera
+  unique_id: d3a07eba-2416-11ee-be56-0242ac120002
   device_code: 7000
   controller_data: remote.broadlink_camera
   temperature_sensor: sensor.termometro_camera_temperature

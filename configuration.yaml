@@ -8,20 +8,10 @@ tts:
 frontend:
   themes: !include_dir_merge_named themes
 
-rest_command:
-  switchbot_device_command:
-    url: "https://api.switch-bot.com/v1.0/devices/{{ deviceId }}/commands"
-    method: post
-    content_type: "application/json"
-    headers:
-      Authorization: !secret switchbot.api_key
-    payload: '{"command": "{{ command }}"}'
-
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
-
 switch: !include entities/switches.yaml
 media_player: !include entities/media_players.yaml
 device_tracker: !include entities/device_trackers.yaml
@@ -37,132 +27,20 @@ python_script:
 
 api:
 
-alexa:
-  smart_home:
-    filter:
-      exclude_entities:
-        - light.piantana_sala_luce_grande
-        - light.piantana_sala_luce_piccola
-        - media_player.fire_tv
-        - media_player.firestick
-        - media_player.ovunque
-        - switch.abat_jour_letto_sinistra_do_not_disturb
-        - switch.bedroom_air_conditioner
-        - switch.dummy_switch
-      exclude_entity_globs:
-        - light.patriot_viper_steel_rgb*
-        - light.nzxt_smart_device*
-        - light.asus_tuf_gaming_b460_plus*
-        - media_player.echo*
-        - media_player.spotify*
-        - switch.adguard*
-        - switch.aronne*
-        - switch.bandabrivio*
-        - switch.echo*
-        - switch.circadian_lighting*
-        - switch.fire_tv*
-        - switch.ovunque*
-        - switch.smart_plug*
-        - switch.transmission*
-      exclude_domains:
-        - alarm_control_panel
-        - alert
-        - automation
-        - binary_sensor
-        - calendar
-        - device_tracker
-        - group
-        - input_boolean
-        - input_button
-        - input_datetime
-        - input_number
-        - input_select
-        - lock
-        - number
-        - person
-        - remote
-        - script
-        - select
-        - sensor
-        - siren
-        - timer
-        - update
-        - weather
-        - zone
+smartir:
 
-google_assistant:
-  project_id: !secret google_assistant.project_id
-  service_account: {
-    "type": "service_account",
-    "project_id": !secret google_assistant.project_id,
-    "private_key_id": !secret google_assistant.private_key_id,
-    "private_key": !secret google_assistant.private_key,
-    "client_email": !secret google_assistant.client_email,
-    "client_id": !secret google_assistant.client_id,
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": !secret google_assistant.client_x509_cert_url,
-    "universe_domain": "googleapis.com"
-  }
-  report_state: true
-  exposed_domains:
-    - switch
-    - light
-    - media_player
-    - climate
+alexa: !include voice_assistants/alexa.yaml
+google_assistant: !include voice_assistants/google_assistant.yaml
+homekit: !include voice_assistants/homekit.yaml
 
-homekit:
-  filter:
-    exclude_entities:
-      - light.piantana_sala_luce_grande
-      - light.piantana_sala_luce_piccola
-      - media_player.fire_tv
-      - media_player.firestick
-      - media_player.ovunque
-      - switch.abat_jour_letto_sinistra_do_not_disturb
-      - switch.bedroom_air_conditioner
-      - switch.dummy_switch
-    exclude_entity_globs:
-      - light.patriot_viper_steel_rgb*
-      - light.nzxt_smart_device*
-      - light.asus_tuf_gaming_b460_plus*
-      - media_player.echo*
-      - media_player.spotify*
-      - switch.adguard*
-      - switch.aronne*
-      - switch.bandabrivio*
-      - switch.echo*
-      - switch.circadian_lighting*
-      - switch.fire_tv*
-      - switch.ovunque*
-      - switch.smart_plug*
-      - switch.transmission*
-    exclude_domains:
-      - alarm_control_panel
-      - alert
-      - automation
-      - binary_sensor
-      - calendar
-      - device_tracker
-      - group
-      - input_boolean
-      - input_button
-      - input_datetime
-      - input_number
-      - input_select
-      - lock
-      - number
-      - person
-      - remote
-      - script
-      - select
-      - sensor
-      - siren
-      - timer
-      - update
-      - weather
-      - zone
+rest_command:
+  switchbot_device_command:
+    url: "https://api.switch-bot.com/v1.0/devices/{{ deviceId }}/commands"
+    method: post
+    content_type: "application/json"
+    headers:
+      Authorization: !secret switchbot.api_key
+    payload: '{"command": "{{ command }}"}'
 
 adaptive_lighting:
   lights:
@@ -214,5 +92,3 @@ ifttt:
 duckdns:
   domain: !secret duckdns.subdomain
   access_token: !secret duckdns.access_token
-
-smartir:

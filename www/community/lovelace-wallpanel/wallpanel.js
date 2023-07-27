@@ -108,7 +108,7 @@ class ScreenWakeLock {
 	}
 }
 
-const version = "4.16.0";
+const version = "4.17.0";
 const defaultConfig = {
 	enabled: false,
 	enabled_on_tabs: [],
@@ -159,6 +159,7 @@ const defaultConfig = {
 	profiles: {}
 };
 
+let dashboardConfig = {};
 let config = {};
 let activePanelUrl = null;
 let activePanelTab = null;
@@ -257,7 +258,11 @@ function updateConfig() {
 
 	config = {};
 	mergeConfig(config, defaultConfig);
-	mergeConfig(config, getHaPanelLovelaceConfig());
+
+	if (Object.keys(dashboardConfig).length === 0) {
+		dashboardConfig = getHaPanelLovelaceConfig();
+	}
+	mergeConfig(config, dashboardConfig);
 
 	let paramConfig = {}
 	for (let [key, value] of params) {
@@ -288,7 +293,15 @@ function updateConfig() {
 		if (config.debug) console.debug(`Profile set from entity state: ${profile}`);
 	}
 
-	if (config.show_images) {
+	if (config.card_interaction) {
+		config.stop_screensaver_on_mouse_move = false;
+	}
+	
+	if (params.get("edit") == "1") {
+		config.enabled = false;
+	}
+
+	if (config.image_url) {
 		if (config.image_url.startsWith("/")) {
 			config.image_url = `media-source://media_source${config.image_url}`;
 		}
@@ -304,22 +317,15 @@ function updateConfig() {
 		config.show_images = false;
 	}
 
-	if (config.card_interaction) {
-		config.stop_screensaver_on_mouse_move = false;
-	}
-	
-	if (params.get("edit") == "1") {
-		config.enabled = false;
-	}
-
 	if (!config.enabled) {
 		config.debug = false;
 		config.hide_toolbar = false;
 		config.hide_sidebar = false;
 		config.hide_toolbar_action_icons = false;
 		config.fullscreen = false;
-		config.idle_time = 0;
+		config.show_images = false;
 	}
+
 	if (config.debug) console.debug(`Wallpanel config is now: ${JSON.stringify(config)}`);
 
 	if (wallpanel) {
@@ -394,73 +400,46 @@ function getCurrentView() {
 
 function setSidebarHidden(hidden) {
 	try {
-		const haMenuButton = elHaMain.shadowRoot
+		const menuButton = elHaMain.shadowRoot
 			.querySelector("ha-panel-lovelace").shadowRoot
 			.querySelector("hui-root").shadowRoot
-			.querySelector("div.toolbar")
 			.querySelector("ha-menu-button");
-		const haIconButton = haMenuButton.shadowRoot
-			.querySelector("ha-icon-button");
-		const divDot = haMenuButton.shadowRoot
-			.querySelector("div.dot");
 		if (hidden) {
-			haIconButton.style.display = "none";
-			if (divDot) {
-				divDot.style.display = "none";
-			}
+			menuButton.style.display = "none";
 		}
 		else {
-			haIconButton.style.removeProperty("display");
-			if (divDot) {
-				divDot.style.removeProperty("display");
-			}
+			menuButton.style.removeProperty("display");
 		}
 	}
 	catch (e) {
-		if (config.debug) console.debug(e);
+		if (config.debug) console.warn(e);
 	}
 	
 	try {
-		let sidebar = elHaMain.shadowRoot.querySelector("ha-sidebar");
+		const sidebar = elHaMain.shadowRoot.querySelector("ha-sidebar");
 		if (sidebar) {
-			sidebar.style.visibility = (hidden ? "hidden" : "visible");
-		}
-		
-		let drawer = elHaMain.shadowRoot.querySelector("ha-drawer");
-		if (drawer) {
-			drawer = drawer.shadowRoot.querySelector(".mdc-drawer");
+			sidebar.style.display = (hidden ? "none" : "");
 		}
 		if (hidden) {
-			
-			elHaMain.style.setProperty("--app-drawer-width", 0);
-			elHaMain.style.setProperty("--mdc-drawer-width", 0);
-			elHaMain.style.setProperty("--mdc-top-app-bar-width", "100%");
-			if (drawer) {
-				drawer.style.setProperty("display", "none");
-			}
+			elHaMain.style.setProperty("--mdc-drawer-width", "env(safe-area-inset-left)");
 		}
 		else {
-			elHaMain.style.removeProperty("--app-drawer-width");
 			elHaMain.style.removeProperty("--mdc-drawer-width");
-			elHaMain.style.removeProperty("--mdc-top-app-bar-width");
-			if (drawer) {
-				drawer.style.removeProperty("display");
-			}
 		}
 		window.dispatchEvent(new Event('resize'));
 	}
 	catch (e) {
-		if (config.debug) console.debug(e);
+		if (config.debug) console.warn(e);
 	}
-	
 }
+
 
 function setToolbarHidden(hidden) {
 	try {
-		let huiRoot = elHaMain.shadowRoot
+		const huiRoot = elHaMain.shadowRoot
 			.querySelector("ha-panel-lovelace").shadowRoot
 			.querySelector("hui-root").shadowRoot;
-		let view = huiRoot.querySelector("#view");
+		const view = huiRoot.querySelector("#view");
 		let appToolbar = huiRoot.querySelector("app-toolbar");
 		if (!appToolbar) {
 			// Changed with 2023.04
@@ -477,7 +456,7 @@ function setToolbarHidden(hidden) {
 			view.style.removeProperty("min-height");
 			view.style.removeProperty("margin-top");
 			view.style.removeProperty("padding-top");
-			let actionItems = appToolbar.querySelector("div.action-items");
+			const actionItems = appToolbar.querySelector("div.action-items");
 			if (config.hide_toolbar_action_icons) {
 				actionItems.style.setProperty("display", "none");
 			}
@@ -488,7 +467,7 @@ function setToolbarHidden(hidden) {
 		window.dispatchEvent(new Event('resize'));
 	}
 	catch (e) {
-		if (config.debug) console.debug(e);
+		if (config.debug) console.warn(e);
 	}
 }
 
@@ -1271,7 +1250,7 @@ class WallpanelView extends HuiView {
 		this.setDefaultStyle();
 		this.updateStyle();
 
-		if (config.show_images && config.idle_time > 0) {
+		if (config.show_images) {
 			if (imageSourceType() == "url" || imageSourceType() == "media-entity") {
 				this.preloadImages();
 			}
@@ -1511,7 +1490,7 @@ class WallpanelView extends HuiView {
 	}
 
 	reconfigure() {
-		if (config.show_images && config.idle_time > 0 && this.currentImageUrl != config.image_url) {
+		if (config.show_images && this.currentImageUrl != config.image_url) {
 			this.currentImageUrl = config.image_url;
 			if (imageSourceType() == "url" || imageSourceType() == "media-entity") {
 				this.preloadImages();
@@ -2102,6 +2081,18 @@ function deactivateWallpanel() {
 	setSidebarHidden(false);
 }
 
+
+function reconfigure() {
+	updateConfig();
+	if (isActive()) {
+		activateWallpanel();
+	}
+	else {
+		deactivateWallpanel();
+	}
+}
+
+
 function locationChanged() {
 	if (config.stop_screensaver_on_location_change && !skipDisableScreensaverOnLocationChanged) {
 		wallpanel.stopScreensaver();
@@ -2118,6 +2109,7 @@ function locationChanged() {
 		let tab = window.location.pathname.split("/").slice(-1)[0];
 		if (activePanelUrl != pl.panel.url_path) {
 			if (config.debug) console.debug(`Active panel switched from '${activePanelUrl}' to '${pl.panel.url_path}'`);
+			dashboardConfig = {};
 			activePanelUrl = pl.panel.url_path;
 			activePanelTab = tab;
 			changed = true;
@@ -2129,13 +2121,7 @@ function locationChanged() {
 		}
 	}
 	if (changed) {
-		updateConfig();
-		if (isActive()) {
-			activateWallpanel();
-		}
-		else {
-			deactivateWallpanel();
-		}
+		reconfigure();
 	}
 }
 
@@ -2149,6 +2135,29 @@ setTimeout(function() {
 		if (config.debug) console.debug("location-changed", event);
 		locationChanged();
 	});
+	elHass.__hass.connection.subscribeEvents(
+		function(event) {
+			if (config.debug) console.debug("lovelace_updated", event);
+			if (event.data.url_path == activePanelUrl) {
+				elHass.__hass.connection.sendMessagePromise({
+					type: "lovelace/config",
+					url_path: activePanelUrl
+				})
+				.then((data) => {
+					dashboardConfig = {};
+					if (data.wallpanel) {
+						for (let key in data.wallpanel) {
+							if (key in defaultConfig) {
+								dashboardConfig[key] = data.wallpanel[key];
+							}
+						}
+					}
+					reconfigure();
+				});
+			}
+		},
+		"lovelace_updated"
+	);
 }, 25);
 
 

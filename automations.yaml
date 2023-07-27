@@ -237,7 +237,7 @@
       entity_id: light.bed
   mode: single
 - id: '1686580227765'
-  alias: '[Climate] Turn Bedroom AC on during night if temp above 27'
+  alias: '[Climate] Turn Bedroom AC on during night if temp above 26.2'
   description: ''
   trigger:
   - platform: state
@@ -258,7 +258,7 @@
   - condition: numeric_state
     entity_id: sensor.termometro_camera_temperature
     attribute: temperature
-    above: 27
+    above: 26.2
   - condition: state
     entity_id: climate.condizionatore_camera
     state: 'off'
@@ -269,7 +269,7 @@
       entity_id: climate.condizionatore_camera
   mode: single
 - id: '1687416869637'
-  alias: '[Climate] Turn Bedroom AC off during night if temp under 25.5'
+  alias: '[Climate] Turn Bedroom AC off during night if temp under 25.0'
   description: ''
   trigger:
   - platform: state
@@ -290,11 +290,13 @@
   - condition: numeric_state
     entity_id: sensor.termometro_camera_temperature
     attribute: temperature
-    below: 25.5
+    below: 25
   - condition: state
     entity_id: climate.condizionatore_camera
     state: cool
   action:
   - service: climate.turn_off
     data: {}
+    target:
+      entity_id: climate.condizionatore_camera
   mode: single

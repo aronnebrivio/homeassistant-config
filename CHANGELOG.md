@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.4.0...v2.5.0) (2023-07-27)
+
+
+### Features
+
+* update climate automations for bedroom ([a07308f](https://github.com/aronnebrivio/homeassistant-config/commit/a07308f3b46d4a37a4b32e26f899b0938cd75c69))
+
 ## [2.4.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.3.0...v2.4.0) (2023-07-21)
 
 

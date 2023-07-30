@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.1](https://github.com/aronnebrivio/homeassistant-config/compare/v2.6.0...v2.6.1) (2023-07-30)
+
+
+### Bug Fixes
+
+* update Pyscript via HACS, fix test against HA dev and beta ([87e5366](https://github.com/aronnebrivio/homeassistant-config/commit/87e53663d3c7363d3bf9cfc7def1c538c9302c8c))
+
 ## [2.6.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.5.0...v2.6.0) (2023-07-30)
 
 

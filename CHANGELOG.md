@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.6.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.5.0...v2.6.0) (2023-07-30)
+
+
+### Features
+
+* update AC SmartIR codes to support up to 25°C ([8b39ab7](https://github.com/aronnebrivio/homeassistant-config/commit/8b39ab7335faae4e56de64351fcced115c1a8224))
+* update climate automations for bedroom v2 ([285d4af](https://github.com/aronnebrivio/homeassistant-config/commit/285d4afe70ebf2a5360387d70787d6d447e99add))
+
 ## [2.5.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.4.0...v2.5.0) (2023-07-27)
 
 

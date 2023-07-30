@@ -269,7 +269,7 @@
       entity_id: climate.condizionatore_camera
   mode: single
 - id: '1687416869637'
-  alias: '[Climate] Turn Bedroom AC off during night if temp under 25.0'
+  alias: '[Climate] Turn Bedroom AC off during night if temp under 25.2'
   description: ''
   trigger:
   - platform: state
@@ -290,7 +290,7 @@
   - condition: numeric_state
     entity_id: sensor.termometro_camera_temperature
     attribute: temperature
-    below: 25
+    below: 25.2
   - condition: state
     entity_id: climate.condizionatore_camera
     state: cool

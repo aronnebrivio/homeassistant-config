@@ -12,43 +12,31 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 264
-Number of sensors | 105
+Number of entities | {{states | count}}
+Number of sensors | {{states.sensor | count}}
 
 
 ## My installed extensions:
 
 ### Add-ons
-- Advanced SSH & Web Terminal
-- File editor
-- Home Assistant Google Drive Backup
-- Mosquitto broker
-- RPC Shutdown
-- Samba share
-- Zigbee2MQTT
+{%- for addon in addons | sort(attribute='name') %}
+- {{addon.name}}
+{%- endfor %}
 
 ### Custom integrations
-- [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting)
-- [Alexa Media Player](https://github.com/custom-components/alexa_media_player)
-- [Generate Readme](https://github.com/custom-components/readme)
-- [HACS](https://github.com/hacs/integration)
-- [Openrgb](https://github.com/koying/openrgb_ha)
-- [Pyscript](https://github.com/custom-components/pyscript)
-- [Smartir](https://github.com/smartHomeHub/SmartIR)
-- [Spotcast](https://github.com/fondberg/spotcast)
+{%- for component in hacs_components | selectattr('category', 'equalto', 'integration') | sort(attribute='name') %}
+- [{{component.name}}]({{component.documentation}})
+{%- endfor %}
 
 ### Lovelace plugins
-- [Garbage Collection Card](https://github.com/amaximus/garbage-collection-card)
-- [Layout Card](https://github.com/thomasloven/lovelace-layout-card)
-- [Mini Graph Card](https://github.com/kalkih/mini-graph-card)
-- [Mushroom](https://github.com/piitaya/lovelace-mushroom)
-- [Simple Weather Card](https://github.com/kalkih/simple-weather-card)
-- [Spotify Lovelace Card](https://github.com/custom-cards/spotify-card)
-- [State Switch](https://github.com/thomasloven/lovelace-state-switch)
-- [Wallpanel](https://github.com/j-a-n/lovelace-wallpanel)
+{%- for component in hacs_components | selectattr('category', 'equalto', 'plugin') | sort(attribute='name') %}
+- [{{component.name}}]({{component.documentation}})
+{%- endfor %}
 
 ### Themes
-- [Mushroom Themes](https://github.com/piitaya/lovelace-mushroom-themes)
+{%- for component in hacs_components | selectattr('category', 'equalto', 'theme') | sort(attribute='name') %}
+- [{{component.name}}]({{component.documentation}})
+{%- endfor %}
 
 
 ## Lovelace

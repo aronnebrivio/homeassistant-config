@@ -92,3 +92,6 @@ ifttt:
 duckdns:
   domain: !secret duckdns.subdomain
   access_token: !secret duckdns.access_token
+
+readme:
+  convert_lovelace: true

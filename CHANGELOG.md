@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.7.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.6.1...v2.7.0) (2023-08-06)
+
+
+### Features
+
+* update Adaptive Lighting via HACS ([5769e25](https://github.com/aronnebrivio/homeassistant-config/commit/5769e25af87a2dc6c78711bbe0f57ab8cfb4ec4c))
+* update HA version to 2023.8.1 ([a28804b](https://github.com/aronnebrivio/homeassistant-config/commit/a28804bba239e11ccc4a4ae045036a96a5277f6e))
+
 ## [2.6.1](https://github.com/aronnebrivio/homeassistant-config/compare/v2.6.0...v2.6.1) (2023-07-30)
 
 

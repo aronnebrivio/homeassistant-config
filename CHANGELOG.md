@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.9.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.8.0...v2.9.0) (2023-08-25)
+
+
+### Features
+
+* add Waste Collection Schedule via HACS ([2e8df65](https://github.com/aronnebrivio/homeassistant-config/commit/2e8df6596991741688700b6c81f57636b7138304))
+* bump HA_VERSION to 2023.8.2 ([6e13f34](https://github.com/aronnebrivio/homeassistant-config/commit/6e13f34ed9cb3c98de98a835fc41ffc768d4b160))
+* update adaptive lighting via HACS ([242ea45](https://github.com/aronnebrivio/homeassistant-config/commit/242ea45bc1b3072c3e053d56d161101221389dc0))
+* update HA version to 2023.8.4 ([6623cb5](https://github.com/aronnebrivio/homeassistant-config/commit/6623cb5a41109baf274b41828f35a1659c5d7e28))
+* update readme ([9be04b2](https://github.com/aronnebrivio/homeassistant-config/commit/9be04b2dc0dc86b2632e3bd634a7b4fe793a88fc))
+
 ## [2.8.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.7.0...v2.8.0) (2023-08-06)
 
 

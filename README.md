@@ -36,6 +36,7 @@ Number of sensors | 105
 - [Pyscript](https://github.com/custom-components/pyscript)
 - [Smartir](https://github.com/smartHomeHub/SmartIR)
 - [Spotcast](https://github.com/fondberg/spotcast)
+- [Waste Collection Schedule](https://github.com/mampfes/hacs_waste_collection_schedule)
 
 ### Lovelace plugins
 - [Garbage Collection Card](https://github.com/amaximus/garbage-collection-card)

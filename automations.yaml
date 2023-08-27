@@ -50,10 +50,15 @@
   description: Send Telegram notification at 6:00PM for garbage collection occurring
     the next day
   trigger:
-  - platform: calendar
-    event: start
-    offset: '-6:00:0'
-    entity_id: calendar.garbage_collection
+  - platform: state
+    entity_id:
+    - binary_sensor.garbage_collection_tomorrow
+    from: 'off'
+    to: 'on'
+    for:
+      hours: 18
+      minutes: 0
+      seconds: 0
   condition: []
   action:
   - service: notify.aronne

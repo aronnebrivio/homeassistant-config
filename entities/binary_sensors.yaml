@@ -29,16 +29,16 @@
 - platform: template
   sensors:
     garbage_collection_tomorrow:
-      friendly_name: "Garbage collection tomorrow"
+      friendly_name: "Raccolta rifiuti domani"
       value_template: >-
-        {{ is_state_attr('sensor.garbage_collection_glass_and_metal', 'days', 1)
-        or is_state_attr('sensor.garbage_collection_organic', 'days', 1)
-        or is_state_attr('sensor.garbage_collection_paper', 'days', 1)
-        or is_state_attr('sensor.garbage_collection_plastic', 'days', 1)
-        or is_state_attr('sensor.garbage_collection_trash', 'days', 1) }}
+        {{ is_state_attr('sensor.garbage_collection_glass_and_metal', 'daysTo', 1)
+        or is_state_attr('sensor.garbage_collection_organic', 'daysTo', 1)
+        or is_state_attr('sensor.garbage_collection_paper', 'daysTo', 1)
+        or is_state_attr('sensor.garbage_collection_plastic', 'daysTo', 1)
+        or is_state_attr('sensor.garbage_collection_trash', 'daysTo', 1) }}
 # Late Morning
 - platform: tod
-  name: Late Morning
+  name: Tarda mattinata
   after: "11:00"
   before: "13:00"
 # Firestick state (on/off)

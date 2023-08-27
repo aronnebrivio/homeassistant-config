@@ -80,3 +80,34 @@
       value_template: "{{ '%.1f' | format(((float(states('sensor.termometro_sala_humidity')) + float(states('sensor.termometro_camera_humidity'))) / 2) | float) }}"
       friendly_name: "Home Humidity"
       icon_template: mdi:water-percent
+# Garbage collection
+- platform: waste_collection_schedule
+  name: garbage_collection_trash
+  add_days_to: true
+  value_template: 'Tra {{value.daysTo}} giorni'
+  types:
+    - Indifferenziato
+- platform: waste_collection_schedule
+  name: garbage_collection_organic
+  add_days_to: true
+  value_template: 'Tra {{value.daysTo}} giorni'
+  types:
+    - Organico
+- platform: waste_collection_schedule
+  name: garbage_collection_glass_and_metal
+  add_days_to: true
+  value_template: 'Tra {{value.daysTo}} giorni'
+  types:
+    - Vetro e Metallo
+- platform: waste_collection_schedule
+  name: garbage_collection_paper
+  add_days_to: true
+  value_template: 'Tra {{value.daysTo}} giorni'
+  types:
+    - Carta
+- platform: waste_collection_schedule
+  name: garbage_collection_plastic
+  add_days_to: true
+  value_template: 'Tra {{value.daysTo}} giorni'
+  types:
+    - Plastica

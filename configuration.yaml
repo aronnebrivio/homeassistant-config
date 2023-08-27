@@ -95,3 +95,10 @@ duckdns:
 
 readme:
   convert_lovelace: true
+
+waste_collection_schedule:
+  sources:
+    - name: ics
+      args:
+        file: calendars/garbage_collection.ics
+      calendar_title: Garbage Collection

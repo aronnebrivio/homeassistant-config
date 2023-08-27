@@ -533,16 +533,6 @@ views:
         type: custom:mushroom-light-card
         use_light_color: true
       type: horizontal-stack
-    - entities:
-      - entity: sensor.cpu_load
-        name: CPU Load
-      - entity: sensor.gpu_load
-        name: GPU Load
-      - entity: sensor.ram_usage
-        name: RAM Usage
-      show_header_toggle: true
-      title: PC
-      type: entities
     type: vertical-stack
   - cards:
     - title: Sensori
@@ -633,18 +623,27 @@ views:
     - cards:
       - entity: sensor.garbage_collection_trash
         icon_color: brown
+        name: Indifferenziato
         type: custom:mushroom-entity-card
       - entity: sensor.garbage_collection_organic
+        icon: mdi:sprout
         icon_color: green
+        name: Organico
         type: custom:mushroom-entity-card
       - entity: sensor.garbage_collection_paper
+        icon: mdi:note-multiple
         icon_color: disabled
+        name: Carta
         type: custom:mushroom-entity-card
       - entity: sensor.garbage_collection_plastic
+        icon: mdi:spray-bottle
         icon_color: orange
+        name: Plastica
         type: custom:mushroom-entity-card
       - entity: sensor.garbage_collection_glass_and_metal
+        icon: mdi:glass-fragile
         icon_color: cyan
+        name: Vetro e Metallo
         type: custom:mushroom-entity-card
       columns: 2
       square: false

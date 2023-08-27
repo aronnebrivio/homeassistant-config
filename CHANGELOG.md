@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.10.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.9.0...v2.10.0) (2023-08-27)
+
+
+### Features
+
+* configure Garbage Collection calendar, integration and sensors ([9c0480a](https://github.com/aronnebrivio/homeassistant-config/commit/9c0480aa09a9ef5d77346e9ef3c0a8d1876c3d29))
+* review Garbage Collection Tomorrow automation with new binary sensor ([954f0d9](https://github.com/aronnebrivio/homeassistant-config/commit/954f0d9906f844777ab3cb17787743a802766cc7))
+* update README and ui-lovelace.yaml via service ([240d711](https://github.com/aronnebrivio/homeassistant-config/commit/240d711c88f49ccb8b0097fb3dee44ab25ea0b5d))
+* update readme template and Lovelace screenshots ([22e9070](https://github.com/aronnebrivio/homeassistant-config/commit/22e907006f020d480f7d6b164ef2e3065a552ffd))
+
 ## [2.9.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.8.0...v2.9.0) (2023-08-25)
 
 

@@ -13,7 +13,7 @@ I regularly update my configuration files. You can check my current Home Assista
 Description | value
 -- | --
 Number of entities | 279
-Number of sensors | 111
+Number of sensors | 112
 
 
 ## My installed extensions:
@@ -33,7 +33,6 @@ Number of sensors | 111
 - [Generate Readme](https://github.com/custom-components/readme)
 - [HACS](https://github.com/hacs/integration)
 - [Openrgb](https://github.com/koying/openrgb_ha)
-- [Pyscript](https://github.com/custom-components/pyscript)
 - [Smartir](https://github.com/smartHomeHub/SmartIR)
 - [Spotcast](https://github.com/fondberg/spotcast)
 - [Waste Collection Schedule](https://github.com/mampfes/hacs_waste_collection_schedule)

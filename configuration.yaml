@@ -21,10 +21,6 @@ light: !include entities/lights.yaml
 utility_meter: !include entities/utility_meters.yaml
 climate: !include entities/climates.yaml
 
-pyscript: !include pyscript/config.yaml
-
-python_script:
-
 api:
 
 smartir:

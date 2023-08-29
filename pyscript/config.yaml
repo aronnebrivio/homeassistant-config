@@ -1,6 +1,0 @@
-allow_all_imports: true
-hass_is_global: true
-apps:
-  shopping_list_sync:
-    todoist_token: !secret todoist.token
-    todoist_project_id: !secret todoist.project_id

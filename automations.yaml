@@ -1,14 +1,3 @@
-- id: '1638712108991'
-  alias: Sync shopping list
-  description: ''
-  trigger:
-  - platform: webhook
-    webhook_id: sync_shopping_list
-    id: sync_shopping_list
-  condition: []
-  action:
-  - service: pyscript.sync_shopping_list
-  mode: single
 - id: '1644331745972'
   alias: '[Notify][Energy] High Consumption'
   description: ''

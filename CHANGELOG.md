@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.11.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.10.0...v2.11.0) (2023-08-29)
+
+
+### Features
+
+* add Todoist Shopping List custom integration ([2a678f2](https://github.com/aronnebrivio/homeassistant-config/commit/2a678f2debc6642603525a6030ae33d2639c6f88))
+* remote pyscript and manual script to sync shopping list with Todoist ([fae5445](https://github.com/aronnebrivio/homeassistant-config/commit/fae54450ba1e13d1592bce7aaaefc3a08f7bfe98))
+* remove old automation to sync shopping list with Todoist ([2249692](https://github.com/aronnebrivio/homeassistant-config/commit/224969244e5c7f550f2b46fbfad8ecbfca238cd5))
+
 ## [2.10.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.9.0...v2.10.0) (2023-08-27)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.12.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.11.0...v2.12.0) (2023-09-01)
+
+
+### Features
+
+* update Waster Collection Schedule via HACS ([cbd543e](https://github.com/aronnebrivio/homeassistant-config/commit/cbd543edc79f7891f204961e6851d8b10aec973c))
+
 ## [2.11.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.10.0...v2.11.0) (2023-08-29)
 
 

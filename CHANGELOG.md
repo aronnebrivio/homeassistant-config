@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.13.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.12.0...v2.13.0) (2023-09-07)
+
+
+### Features
+
+* update HA version to 2023.9.0 ([1290f17](https://github.com/aronnebrivio/homeassistant-config/commit/1290f171540a8d3b059634d9134449f7457ff437))
+* update lovelace-mushroom via HACS ([0b0d92e](https://github.com/aronnebrivio/homeassistant-config/commit/0b0d92e38fcf7a12090460fd346fa88f14f5d698))
+
 ## [2.12.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.11.0...v2.12.0) (2023-09-01)
 
 

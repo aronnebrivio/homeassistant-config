@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.14.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.13.0...v2.14.0) (2023-09-12)
+
+
+### Features
+
+* update HA version to 2023.9.1 ([664eb3d](https://github.com/aronnebrivio/homeassistant-config/commit/664eb3d25e611240663581de46d25e88bbe702e6))
+* update spotcast via HACS ([7e61710](https://github.com/aronnebrivio/homeassistant-config/commit/7e61710a3b113c8c17448b7acb93ce14396e9cdd))
+
 ## [2.13.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.12.0...v2.13.0) (2023-09-07)
 
 

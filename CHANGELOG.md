@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.16.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.15.0...v2.16.0) (2023-09-15)
+
+
+### Features
+
+* update alexa media player via HACS ([b21a89f](https://github.com/aronnebrivio/homeassistant-config/commit/b21a89fb0a8b0e2cd11525f12a0ad180b862613a))
+* update README via service ([fb408f4](https://github.com/aronnebrivio/homeassistant-config/commit/fb408f40e4cdf690a4634b8b2c15c110f8819b41))
+
 ## [2.15.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.14.0...v2.15.0) (2023-09-13)
 
 

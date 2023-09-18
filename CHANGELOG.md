@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.17.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.16.0...v2.17.0) (2023-09-18)
+
+
+### Features
+
+* update alexa media player via HACS ([375d9e1](https://github.com/aronnebrivio/homeassistant-config/commit/375d9e1937f3f04522a553cdcf7cd040d4bae7c1))
+* update lovelace wallpanel via HACS ([a3afca3](https://github.com/aronnebrivio/homeassistant-config/commit/a3afca3f07ac01a0914998cd2d122203308b19b6))
+
 ## [2.16.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.15.0...v2.16.0) (2023-09-15)
 
 

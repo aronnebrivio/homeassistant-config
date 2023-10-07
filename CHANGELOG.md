@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.18.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.17.0...v2.18.0) (2023-10-07)
+
+
+### Features
+
+* update Alexa Media Player via HACS ([0d87461](https://github.com/aronnebrivio/homeassistant-config/commit/0d87461d1666e9d769d8a2d7cddc3a494b3955af))
+* update HA version to 2023.10.1 ([1f7d356](https://github.com/aronnebrivio/homeassistant-config/commit/1f7d3567fdbee2fd3f0783fd51bddad19d610ca7))
+* update Hacs via Hacs ([559da59](https://github.com/aronnebrivio/homeassistant-config/commit/559da59fa9bec9fabd5a29f1c69d5b27e74b7330))
+* update SmartIR via HACS ([3faa8ad](https://github.com/aronnebrivio/homeassistant-config/commit/3faa8ad25b409a22465ba17c3845a01e8035acc5))
+
 ## [2.17.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.16.0...v2.17.0) (2023-09-18)
 
 

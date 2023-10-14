@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.19.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.18.0...v2.19.0) (2023-10-14)
+
+
+### Features
+
+* update Alexa Media Player via HACS ([b98ce97](https://github.com/aronnebrivio/homeassistant-config/commit/b98ce9714c66812be1039e964d1a1f10f8c6be28))
+* update HA version to 2023.10.3 ([b894b93](https://github.com/aronnebrivio/homeassistant-config/commit/b894b938bb72cbd5d30d197b31499522295583d1))
+
 ## [2.18.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.17.0...v2.18.0) (2023-10-07)
 
 

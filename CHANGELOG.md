@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.20.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.19.0...v2.20.0) (2023-10-18)
+
+
+### Features
+
+* revert DuckDNS removal, keep both DuckDNS and Cloudflare Tunnel ([b9f8f80](https://github.com/aronnebrivio/homeassistant-config/commit/b9f8f80e886dd5710946afc7aacf26b9cbc99868))
+* switch from DuckDNS to Cloudflare ([1c6075a](https://github.com/aronnebrivio/homeassistant-config/commit/1c6075a4b8ac2c9c56964529cabe774315f89645))
+* update Waster Collection Schedule via HACS ([74ea7c2](https://github.com/aronnebrivio/homeassistant-config/commit/74ea7c2b32123fe007cbcc4415e5dd2eb0bc1bb1))
+
 ## [2.19.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.18.0...v2.19.0) (2023-10-14)
 
 

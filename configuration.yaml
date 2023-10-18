@@ -80,10 +80,15 @@ http:
   use_x_forwarded_for: true
   trusted_proxies:
     - !secret network.local.subnet
+    - !secret nginx_proxy_manager.ip
     - 172.30.33.0/24
 
 ifttt:
   key: !secret ifttt.api_key
+
+duckdns:
+  domain: !secret duckdns.subdomain
+  access_token: !secret duckdns.access_token
 
 readme:
   convert_lovelace: true

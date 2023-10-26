@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.21.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.20.0...v2.21.0) (2023-10-26)
+
+
+### Features
+
+* update HA version to 2023.10.5 ([3a51d30](https://github.com/aronnebrivio/homeassistant-config/commit/3a51d30e885df59d67c24cb896c60e4e5e697d3e))
+
 ## [2.20.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.19.0...v2.20.0) (2023-10-18)
 
 

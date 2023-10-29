@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.22.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.21.0...v2.22.0) (2023-10-29)
+
+
+### Features
+
+* **smartir:** add heat codes for Air Nova from 20C to 30C ([beaeffa](https://github.com/aronnebrivio/homeassistant-config/commit/beaeffa85b9bf581471f8a173ffedc9e60f3240b))
+
 ## [2.21.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.20.0...v2.21.0) (2023-10-26)
 
 

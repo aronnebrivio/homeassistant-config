@@ -108,7 +108,7 @@ class ScreenWakeLock {
 	}
 }
 
-const version = "4.18.0";
+const version = "4.20.0";
 const defaultConfig = {
 	enabled: false,
 	enabled_on_tabs: [],
@@ -135,6 +135,7 @@ const defaultConfig = {
 	image_order: 'sorted', // sorted / random
 	image_excludes: [],
 	image_background: 'color', // color / image
+	touch_zone_size_next_image: 15,
 	show_progress_bar: false,
 	show_image_info: false,
 	fetch_address_data: false,
@@ -173,7 +174,7 @@ let classStyles = {
 		"filter": "blur(15px)",
 		"background": "#00000000",
 		"background-position": "center",
-		"backgroundSize": "cover"
+		"background-size": "cover"
 	},
 	"wallpanel-screensaver-image-info": {
 		"position": "absolute",
@@ -848,6 +849,17 @@ class WallpanelView extends HuiView {
 		this.imageTwoInfoContainer.style.width = '100%';
 		this.imageTwoInfoContainer.style.height = '100%';
 
+		this.screensaverImageOverlay.removeAttribute('style');
+		this.screensaverImageOverlay.style.position = 'absolute';
+		if (config.card_interaction) {
+			this.screensaverImageOverlay.style.pointerEvents = 'none';
+		}
+		this.screensaverImageOverlay.style.top = 0;
+		this.screensaverImageOverlay.style.left = 0;
+		this.screensaverImageOverlay.style.width = '100%';
+		this.screensaverImageOverlay.style.height = '100%';
+		this.screensaverImageOverlay.style.background = '#00000000';
+
 		this.infoContainer.removeAttribute('style');
 		this.infoContainer.style.position = 'absolute';
 		this.infoContainer.style.pointerEvents = 'none';
@@ -1023,17 +1035,22 @@ class WallpanelView extends HuiView {
 	moveInfoBox(x, y) {
 		this.lastMove = Date.now();
 		if (config.info_move_fade_duration > 0) {
-			let keyframes = [
-				{ opacity: 1 },
-				{ opacity: 0, offset: 0.5 },
-				{ opacity: 1 }
-			];
-			this.infoBox.animate(
-				keyframes, {
-					duration: Math.round(config.info_move_fade_duration * 1000),
-					iterations: 1
-				}
-			);
+			if (this.infoBox.animate) {
+				let keyframes = [
+					{ opacity: 1 },
+					{ opacity: 0, offset: 0.5 },
+					{ opacity: 1 }
+				];
+				this.infoBox.animate(
+					keyframes, {
+						duration: Math.round(config.info_move_fade_duration * 1000),
+						iterations: 1
+					}
+				);
+			}
+			else {
+				console.warn("This browser does not support the animate() method, please set info_move_fade_duration to 0");
+			}
 		}
 		let wp = this;
 		let ms = Math.round(config.info_move_fade_duration * 500);
@@ -1123,25 +1140,14 @@ class WallpanelView extends HuiView {
 		setTimeout(this.updateShadowStyle.bind(this), 500);
 	}
 
-	createProgressbarDiv(wrapper) {
-		const div = document.createElement('div');
-		div.className = 'wallpanel-progress';
-		const inner = document.createElement('div');
-		inner.className = 'wallpanel-progress-inner';
-		inner.id = 'wallpanel-progress-inner';
-		inner.style.animation = `horizontalProgress ${config.display_time}s linear`;
-		div.appendChild(inner);
-		wrapper.appendChild(div);
-	}
-
 	restartProgressBarAnimation() {
-		if (!config.show_progress_bar) {
+		if ((!config.show_progress_bar) || (!this.progressBarContainer)) {
 			return;
 		}
 		// Restart CSS animation.
-		const oldDiv = this.shadowRoot.getElementById('wallpanel-progress-inner');
-		const newDiv = oldDiv.cloneNode(true);
-		oldDiv.parentNode.replaceChild(newDiv, oldDiv);
+		const progressBarContainer = this.progressBarContainer.cloneNode(true);
+		this.screensaverContainer.replaceChild(progressBarContainer, this.progressBarContainer);
+		this.progressBarContainer = progressBarContainer;
 	}
 
 	restartKenBurnsEffect() {
@@ -1229,10 +1235,22 @@ class WallpanelView extends HuiView {
 		this.imageTwoContainer.appendChild(this.imageTwoInfoContainer);
 		this.screensaverContainer.appendChild(this.imageTwoContainer);
 
-		if (config.show_progress_bar) {
-			this.createProgressbarDiv(this.screensaverContainer);
-		}
+		this.screensaverImageOverlay = document.createElement('div');
+		this.screensaverImageOverlay.id = 'wallpanel-screensaver-image-overlay';
+		this.screensaverContainer.appendChild(this.screensaverImageOverlay);
 
+		this.progressBarContainer = document.createElement('div');
+		this.progressBarContainer.className = 'wallpanel-progress';
+		this.progressBar = document.createElement('div');
+		this.progressBar.className = 'wallpanel-progress-inner';
+		this.progressBar.id = 'wallpanel-progress-inner';
+		this.progressBar.style.animation = `horizontalProgress ${config.display_time}s linear`;
+		this.progressBarContainer.appendChild(this.progressBar);
+
+		if (config.show_progress_bar) {
+			this.screensaverContainer.appendChild(this.progressBarContainer);
+		}
+	
 		this.infoContainer = document.createElement('div');
 		this.infoContainer.id = 'wallpanel-screensaver-info-container';
 
@@ -1273,7 +1291,6 @@ class WallpanelView extends HuiView {
 
 		this.screensaverOverlay = document.createElement('div');
 		this.screensaverOverlay.id = 'wallpanel-screensaver-overlay';
-
 		this.screensaverContainer.appendChild(this.screensaverOverlay);
 
 		this.shadowStyle = document.createElement('style');
@@ -2082,7 +2099,7 @@ class WallpanelView extends HuiView {
 			if (y) {
 				bottom = (this.screensaverContainer.clientHeight - y) / this.screensaverContainer.clientHeight;
 			}
-			if (right <= 0.15) {
+			if ((config.touch_zone_size_next_image > 0) && (right <= config.touch_zone_size_next_image / 100)) {
 				if (
 					isClick && (now - this.lastImageUpdate > 500) &&
 					(this.imageOne.getAttribute('data-loading') == "false") &&

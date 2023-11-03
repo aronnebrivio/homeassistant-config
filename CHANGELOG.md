@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.23.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.22.0...v2.23.0) (2023-11-03)
+
+
+### Features
+
+* update HA version to 2023.11.0 ([4d95730](https://github.com/aronnebrivio/homeassistant-config/commit/4d957305d7d7cdc91b10e0860bc4353b6965bfc8))
+* update Lovelace Mushroom via HACS ([a0da721](https://github.com/aronnebrivio/homeassistant-config/commit/a0da721b8e0ce3a7d0502f3a967f52b269c00e8c))
+* update Lovelace Wallpanel via HACS ([119c078](https://github.com/aronnebrivio/homeassistant-config/commit/119c0787e4829b8da331d953da789f9624a1e026))
+
 ## [2.22.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.21.0...v2.22.0) (2023-10-29)
 
 

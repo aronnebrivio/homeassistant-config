@@ -1,0 +1,17 @@
+- sensor:
+  # Home absolute humidity
+  - name: "Home absolute humidity"
+    state: >-
+      {% from 'tools.jinja' import absolute_humidity %}
+      {{ absolute_humidity('sensor.home_temperature', 'sensor.home_humidity') }}
+    unit_of_measurement: 'g/m³'
+    icon: mdi:water-outline
+    state_class: measurement
+  # External absolute humidity
+  - name: "External absolute humidity"
+    state: >-
+      {% from 'tools.jinja' import absolute_humidity %}
+      {{ absolute_humidity('sensor.weather_temperature', 'sensor.weather_humidity') }}
+    unit_of_measurement: 'g/m³'
+    icon: mdi:water-outline
+    state_class: measurement

@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.24.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.23.0...v2.24.0) (2023-11-14)
+
+
+### Features
+
+* add all new files to configuration ([1746801](https://github.com/aronnebrivio/homeassistant-config/commit/17468011146692808fa44d55db335cd4ff99b92f))
+* add entities to retrieve external temperature and humidity from Met.no ([1bdda52](https://github.com/aronnebrivio/homeassistant-config/commit/1bdda52e64b4b87df38fdaee8e5bb9bcafc55cd6))
+* add Jinja macro to calculate absolute humidity ([80a3aab](https://github.com/aronnebrivio/homeassistant-config/commit/80a3aab6e4fe1a1fb27beaf43cb830c53b2d7526))
+* add template to calculate internal and external absolute humidity and provide it as sensor ([3e49689](https://github.com/aronnebrivio/homeassistant-config/commit/3e49689e8c1e94a37174ede618917bc8aea4e247))
+* update Alexa Media Player via HACS ([13572d4](https://github.com/aronnebrivio/homeassistant-config/commit/13572d41944f6f2d05ead753164d990ffca5746a))
+* update Garbage Collection Card via HACS ([260a1d7](https://github.com/aronnebrivio/homeassistant-config/commit/260a1d76bd48be147ca72cccc158e4339e44a80f))
+* update HA to 2023.11.2 ([879b0ab](https://github.com/aronnebrivio/homeassistant-config/commit/879b0abd655a3641f76017bbb5b6b2c5bdc94200))
+* update Lovelace Wallpanel via HACS ([030b9ba](https://github.com/aronnebrivio/homeassistant-config/commit/030b9baf42aa0a9a6698409549dae8da630f79f1))
+* update README and ui-lovelace.yaml via service ([3734b0d](https://github.com/aronnebrivio/homeassistant-config/commit/3734b0da16c7d1fcde108655f9576282a8002c90))
+
+
+### Bug Fixes
+
+* CRLF to LF to pass YAML lint ([e7fbd08](https://github.com/aronnebrivio/homeassistant-config/commit/e7fbd08bb76a5a45abf3bb31a302e587a2149aec))
+
 ## [2.23.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.22.0...v2.23.0) (2023-11-03)
 
 

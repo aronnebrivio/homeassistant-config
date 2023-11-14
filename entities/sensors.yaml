@@ -44,42 +44,48 @@
         |> filter(fn: (r) => r._field == "total")
       unit_of_measurement: "GB"
       value_template: "{{ value | float }}"
-# Proxmox CPU usage
+# Proxmox
 - platform: template
   sensors:
+    # CPU Usage
     proxmox_cpu_usage:
       unit_of_measurement: "%"
       value_template: "{{ '%.2f' | format(states('sensor.proxmox_raw_cpu_usage') | float ) }}"
       friendly_name: "Proxmox CPU Usage"
-# Proxmox Memory usage
-- platform: template
-  sensors:
+    # Memory Usage
     proxmox_memory_usage:
       unit_of_measurement: "GB"
       value_template: "{{ '%.2f' | format(states('sensor.proxmox_raw_memory_usage') | float ) }}"
       friendly_name: "Proxmox Memory Usage"
-# Proxmox Storage usage
-- platform: template
-  sensors:
+    # Storage Usage
     proxmox_storage_usage:
       unit_of_measurement: "%"
       value_template: "{{ '%.2f' | format((states('sensor.proxmox_raw_storage_usage') | float / states('sensor.proxmox_raw_storage_total') | float) * 100) }}"
       friendly_name: "Proxmox Storage Usage"
-# Mean temperature
+# Temperature/Humidity
 - platform: template
   sensors:
+    # Home temperature
     home_temperature:
       unit_of_measurement: "°C"
       value_template: "{{ '%.1f' | format(((float(states('sensor.termometro_sala_temperature')) + float(states('sensor.termometro_camera_temperature'))) / 2) | float) }}"
       friendly_name: "Home Temperature"
-# Mean humidity
-- platform: template
-  sensors:
+    # Home humidity
     home_humidity:
       unit_of_measurement: "%"
       value_template: "{{ '%.1f' | format(((float(states('sensor.termometro_sala_humidity')) + float(states('sensor.termometro_camera_humidity'))) / 2) | float) }}"
       friendly_name: "Home Humidity"
       icon_template: mdi:water-percent
+    # External temperature
+    weather_temperature:
+      friendly_name: "Weather Temperature"
+      unit_of_measurement: '%'
+      value_template: "{{ state_attr('weather.casa', 'temperature') }}"
+    # External humidity
+    weather_humidity:
+      friendly_name: "Weather Humidity"
+      unit_of_measurement: '%'
+      value_template: "{{ state_attr('weather.casa', 'humidity') }}"
 # Garbage collection
 - platform: waste_collection_schedule
   name: garbage_collection_trash

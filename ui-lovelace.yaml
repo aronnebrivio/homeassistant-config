@@ -453,6 +453,9 @@ views:
       type: horizontal-stack
     - collapsible_controls: true
       entity: climate.condizionatore_camera
+      hvac_modes:
+      - heat
+      - cool
       icon: mdi:air-conditioner
       name: Condizionatore
       show_temperature_control: true
@@ -661,25 +664,6 @@ views:
         action: toggle
       type: custom:mushroom-climate-card
     type: vertical-stack
-  - aggregate_func: max
-    animate: true
-    entities:
-    - sensor.daily_energy
-    group_by: date
-    height: 100
-    hours_to_show: 240
-    icon: mdi:pulse
-    line_color: orange
-    line_width: 2
-    name: Consumo elettrico giornaliero
-    points_per_hour: 1
-    show:
-      average: true
-      extrema: true
-      graph: bar
-      labels: false
-    smoothing: true
-    type: custom:mini-graph-card
   - cards:
     - title: Home lab
       type: custom:mushroom-title-card
@@ -794,6 +778,45 @@ views:
     type: vertical-stack
   icon: mdi:door
   path: entrance
+- badges: []
+  cards:
+  - aggregate_func: max
+    animate: true
+    entities:
+    - sensor.daily_energy
+    group_by: date
+    height: 100
+    hours_to_show: 240
+    icon: mdi:pulse
+    line_color: orange
+    line_width: 2
+    name: Consumo elettrico giornaliero
+    points_per_hour: 1
+    show:
+      average: true
+      extrema: true
+      graph: bar
+      labels: false
+    smoothing: true
+    type: custom:mini-graph-card
+  - entities:
+    - entity: sensor.home_temperature
+    - entity: sensor.weather_temperature
+    - entity: sensor.home_humidity
+    - entity: sensor.weather_humidity
+    - entity: sensor.home_absolute_humidity
+    - entity: sensor.external_absolute_humidity
+    title: Weather
+    type: entities
+  - entities:
+    - entity: sensor.home_absolute_humidity
+      name: Interno
+    - entity: sensor.external_absolute_humidity
+      name: Esterno
+    name: Umiditá assoluta
+    type: custom:mini-graph-card
+  icon: mdi:chart-areaspline-variant
+  path: data
 - badges: []
   cards:
   - cards:

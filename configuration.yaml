@@ -20,7 +20,7 @@ binary_sensor: !include entities/binary_sensors.yaml
 light: !include entities/lights.yaml
 utility_meter: !include entities/utility_meters.yaml
 climate: !include entities/climates.yaml
-template: !include_dir_merge_list entities/templates
+template: !include_dir_list entities/templates
 
 api:
 

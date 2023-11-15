@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.24.1](https://github.com/aronnebrivio/homeassistant-config/compare/v2.24.0...v2.24.1) (2023-11-15)
+
+
+### Bug Fixes
+
+* make Home Assistant read template entities correctly ([1186cae](https://github.com/aronnebrivio/homeassistant-config/commit/1186cae9b5bc0e04f9ce123d57c88714ab68254b))
+
 ## [2.24.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.23.0...v2.24.0) (2023-11-14)
 
 

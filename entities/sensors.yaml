@@ -79,7 +79,7 @@
     # External temperature
     weather_temperature:
       friendly_name: "Weather Temperature"
-      unit_of_measurement: '%'
+      unit_of_measurement: "°C"
       value_template: "{{ state_attr('weather.casa', 'temperature') }}"
     # External humidity
     weather_humidity:
@@ -117,3 +117,9 @@
   value_template: 'Tra {{value.daysTo}} giorni'
   types:
     - Plastica
+# Mold indicator
+- platform: mold_indicator
+  indoor_temp_sensor: sensor.home_temperature
+  indoor_humidity_sensor: sensor.home_humidity
+  outdoor_temp_sensor: sensor.weather_temperature
+  calibration_factor: 2.0

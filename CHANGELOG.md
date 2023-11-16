@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.25.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.24.1...v2.25.0) (2023-11-16)
+
+
+### Features
+
+* add mold indicator sensor ([7f14aca](https://github.com/aronnebrivio/homeassistant-config/commit/7f14aca51416ef70c1e107da01a9b9d7a1cfa20b))
+* update README.md and ui-lovelace.yaml via service ([6f8b7f6](https://github.com/aronnebrivio/homeassistant-config/commit/6f8b7f681f54ea0eeb283054907aafaf779f473a))
+
+
+### Bug Fixes
+
+* make notifications for HA updates working again ([e12c564](https://github.com/aronnebrivio/homeassistant-config/commit/e12c5647e4589d96705ea90ac36b9082cff597ea))
+
 ## [2.24.1](https://github.com/aronnebrivio/homeassistant-config/compare/v2.24.0...v2.24.1) (2023-11-15)
 
 

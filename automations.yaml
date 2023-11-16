@@ -143,6 +143,7 @@
       - update.home_assistant_core_update
       - update.home_assistant_operating_system_update
       mobile_app_device: 905677963a9b6082d24810268358ebec
+      mobile_app_device_2: 905677963a9b6082d24810268358ebec
 - id: '1658824207858'
   alias: Re-Load Speed Test
   description: Perform a Manual Speed Test when sensor goes offline

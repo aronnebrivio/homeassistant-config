@@ -815,6 +815,14 @@ views:
       name: Esterno
     name: Umiditá assoluta
     type: custom:mini-graph-card
+  - entity: sensor.mold_indicator
+    name: Rischio muffa
+    needle: false
+    severity:
+      green: 0
+      red: 85
+      yellow: 70
+    type: gauge
   icon: mdi:chart-areaspline-variant
   path: data
 - badges: []

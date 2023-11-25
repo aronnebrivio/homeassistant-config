@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.26.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.25.0...v2.26.0) (2023-11-25)
+
+
+### Features
+
+* update HA to 2023.11.3 ([dbb2904](https://github.com/aronnebrivio/homeassistant-config/commit/dbb2904f65eac41e051e1b240961d9df022d1bc3))
+* update Lovelace Wallpanel via HACS ([d272a61](https://github.com/aronnebrivio/homeassistant-config/commit/d272a61fa5400b1eaf53b8429ee66afbbaa1a6cf))
+
 ## [2.25.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.24.1...v2.25.0) (2023-11-16)
 
 

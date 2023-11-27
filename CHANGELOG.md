@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.27.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.26.0...v2.27.0) (2023-11-27)
+
+
+### Features
+
+* add Christmas Time date sensor ([d68b335](https://github.com/aronnebrivio/homeassistant-config/commit/d68b335f796acdeee385c8505b3402fd64a95f13))
+* add Christmas Tree switch ([eb7711f](https://github.com/aronnebrivio/homeassistant-config/commit/eb7711f5bd870868ebf36fee01d775b5ad69ec87))
+* add new smart plug to Zigbee2MQTT ([38039cc](https://github.com/aronnebrivio/homeassistant-config/commit/38039ccd7b6d7e24d25a7012a14540824d079e2f))
+* update Lovelace Wallpanel via HACS ([0363e9b](https://github.com/aronnebrivio/homeassistant-config/commit/0363e9be3921cd1dc51fa748f1df3494f1de4968))
+* update README and ui-lovelace.yaml via service ([23badf9](https://github.com/aronnebrivio/homeassistant-config/commit/23badf97a8c5a6110fd4f71297b4c97118904c63))
+
 ## [2.26.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.25.0...v2.26.0) (2023-11-25)
 
 

@@ -12,6 +12,10 @@
 - platform: switch
   name: "Vetrina Ingresso"
   entity_id: switch.smart_plug_2
+# Christmas Tree
+- platform: switch
+  name: "Albero di Natale"
+  entity_id: switch.smart_plug_3
 # Group livingroom
 - platform: group
   name: "Livingroom"

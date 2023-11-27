@@ -123,3 +123,14 @@
   indoor_humidity_sensor: sensor.home_humidity
   outdoor_temp_sensor: sensor.weather_temperature
   calibration_factor: 2.0
+# Date and Time
+- platform: time_date
+  display_options:
+    - 'time'
+    - 'date'
+    - 'date_time'
+    - 'date_time_utc'
+    - 'date_time_iso'
+    - 'time_date'
+    - 'time_utc'
+    - 'beat'

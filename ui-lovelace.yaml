@@ -291,6 +291,7 @@ views:
         - volume_buttons
       - entity: light.spada_suprema
         icon: mdi:sword
+        icon_color: cyan
         name: Spada Suprema
         primary_info: name
         secondary_info: state
@@ -317,6 +318,18 @@ views:
       name: Condizionatore
       show_temperature_control: true
       type: custom:mushroom-climate-card
+    - cards:
+      - card:
+          entity: light.albero_di_natale
+          icon: mdi:pine-tree
+          icon_color: green
+          type: custom:mushroom-light-card
+        conditions:
+        - condition: state
+          entity: binary_sensor.christmas_time
+          state: 'on'
+        type: conditional
+      type: horizontal-stack
     type: vertical-stack
   - cards:
     - title: Sensori

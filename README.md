@@ -12,8 +12,8 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 318
-Number of sensors | 142
+Number of entities | 335
+Number of sensors | 152
 
 
 ## My installed extensions:
@@ -30,7 +30,7 @@ Number of sensors | 142
 
 ### Custom integrations
 - [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting)
-- [Alexa Media Player](https://github.com/custom-components/alexa_media_player)
+- [Alexa Media Player](https://github.com/alandtse/alexa_media_player)
 - [Generate Readme](https://github.com/custom-components/readme)
 - [HACS](https://github.com/hacs/integration)
 - [Openrgb](https://github.com/koying/openrgb_ha)

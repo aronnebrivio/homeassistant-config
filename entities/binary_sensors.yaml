@@ -12,12 +12,6 @@
       friendly_name: "Transmission"
       value_template: "{{ states('switch.transmission_switch') }}"
       device_class: power
-# Internet connection
-- platform: ping
-  host: 8.8.8.8
-  count: 2
-  scan_interval: 60
-  name: internet_connection
 # Proxmox running
 - platform: template
   sensors:

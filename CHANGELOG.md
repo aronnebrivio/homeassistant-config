@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.28.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.27.0...v2.28.0) (2023-12-06)
+
+
+### Features
+
+* remove ping sensor from YAML since deprecated and replaced by Ping integration ([86dd469](https://github.com/aronnebrivio/homeassistant-config/commit/86dd4690eb9a20c929a48d1a557b4eb4ff6866b2))
+* update Alexa Media via HACS ([535fc83](https://github.com/aronnebrivio/homeassistant-config/commit/535fc83882d927903f2f68e0e1373573d1f86842))
+* update HA to 2023.12.0 ([49a94d7](https://github.com/aronnebrivio/homeassistant-config/commit/49a94d71664f353af8909981dc42c3c4d3de6e96))
+* update Waste Collection Schedule via HACS ([10c3e75](https://github.com/aronnebrivio/homeassistant-config/commit/10c3e75035ffabe0cdec948904d325e64148bfc8))
+
 ## [2.27.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.26.0...v2.27.0) (2023-11-27)
 
 

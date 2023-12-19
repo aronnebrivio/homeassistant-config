@@ -12,8 +12,8 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 335
-Number of sensors | 152
+Number of entities | 355
+Number of sensors | 172
 
 
 ## My installed extensions:
@@ -36,6 +36,7 @@ Number of sensors | 152
 - [Openrgb](https://github.com/koying/openrgb_ha)
 - [Smartir](https://github.com/smartHomeHub/SmartIR)
 - [Spotcast](https://github.com/fondberg/spotcast)
+- [Thermal Comfort](https://github.com/dolezsa/thermal_comfort)
 - [Waste Collection Schedule](https://github.com/mampfes/hacs_waste_collection_schedule)
 
 ### Lovelace plugins

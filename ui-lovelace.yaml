@@ -143,6 +143,12 @@ views:
         navigation_path: /lovelace/kitchen
       type: custom:mushroom-title-card
     - chips:
+      - entity: sensor.termometro_cucina_temperature
+        icon: ''
+        type: entity
+      - entity: sensor.termometro_cucina_humidity
+        icon: ''
+        type: entity
       - entity: media_player.echo_show_cucina
         icon: ''
         type: entity
@@ -167,7 +173,13 @@ views:
         action: navigate
         navigation_path: /lovelace/bathroom
       type: custom:mushroom-title-card
-    - chips: []
+    - chips:
+      - entity: sensor.termometro_bagno_temperature
+        icon: ''
+        type: entity
+      - entity: sensor.termometro_bagno_humidity
+        icon: ''
+        type: entity
       type: custom:mushroom-chips-card
     - cards:
       - entity: switch.water_heater
@@ -459,6 +471,7 @@ views:
         secondary_info: state
         show_brightness_control: true
         show_color_control: true
+        show_color_temp_control: true
         tap_action:
           action: toggle
         type: custom:mushroom-light-card
@@ -503,6 +516,8 @@ views:
         icon: mdi:led-strip-variant
         name: Luce
         show_brightness_control: true
+        show_color_control: true
+        show_color_temp_control: true
         tap_action:
           action: toggle
         type: custom:mushroom-light-card
@@ -678,6 +693,64 @@ views:
       type: custom:mushroom-climate-card
     type: vertical-stack
   - cards:
+    - title: Sensori
+      type: custom:mushroom-title-card
+    - animate: true
+      color_thresholds:
+      - color: '#f39c12'
+        value: 20
+      - color: '#d35400'
+        value: 21
+      - color: '#c0392b'
+        value: 21.5
+      entities:
+      - entity: sensor.termometro_cucina_temperature
+        show_legend: false
+      - color: gray
+        entity: sun.sun
+        name: Night
+        show_legend: false
+        show_line: false
+        show_points: false
+        y_axis: secondary
+      hours_to_show: 168
+      name: Temperatura
+      points_per_hour: 0.25
+      show:
+        labels: true
+        labels_secondary: true
+      state_map:
+      - label: Night
+        value: below_horizon
+      - label: Day
+        value: above_horizon
+      type: custom:mini-graph-card
+    - animate: true
+      entities:
+      - color: '#89cff0'
+        entity: sensor.termometro_cucina_humidity
+        show_legend: false
+      - color: gray
+        entity: sun.sun
+        name: Night
+        show_legend: false
+        show_line: false
+        show_points: false
+        y_axis: secondary
+      hours_to_show: 168
+      name: Umidità
+      points_per_hour: 0.25
+      show:
+        labels: true
+        labels_secondary: true
+      state_map:
+      - label: Night
+        value: below_horizon
+      - label: Day
+        value: above_horizon
+      type: custom:mini-graph-card
+    type: vertical-stack
+  - cards:
     - title: Home lab
       type: custom:mushroom-title-card
     - chips:
@@ -775,6 +848,64 @@ views:
         action: toggle
       type: custom:mushroom-entity-card
     type: vertical-stack
+  - cards:
+    - title: Sensori
+      type: custom:mushroom-title-card
+    - animate: true
+      color_thresholds:
+      - color: '#f39c12'
+        value: 20
+      - color: '#d35400'
+        value: 21
+      - color: '#c0392b'
+        value: 21.5
+      entities:
+      - entity: sensor.termometro_bagno_temperature
+        show_legend: false
+      - color: gray
+        entity: sun.sun
+        name: Night
+        show_legend: false
+        show_line: false
+        show_points: false
+        y_axis: secondary
+      hours_to_show: 168
+      name: Temperatura
+      points_per_hour: 0.25
+      show:
+        labels: true
+        labels_secondary: true
+      state_map:
+      - label: Night
+        value: below_horizon
+      - label: Day
+        value: above_horizon
+      type: custom:mini-graph-card
+    - animate: true
+      entities:
+      - color: '#89cff0'
+        entity: sensor.termometro_bagno_humidity
+        show_legend: false
+      - color: gray
+        entity: sun.sun
+        name: Night
+        show_legend: false
+        show_line: false
+        show_points: false
+        y_axis: secondary
+      hours_to_show: 168
+      name: Umidità
+      points_per_hour: 0.25
+      show:
+        labels: true
+        labels_secondary: true
+      state_map:
+      - label: Night
+        value: below_horizon
+      - label: Day
+        value: above_horizon
+      type: custom:mini-graph-card
+    type: vertical-stack
   icon: mdi:toilet
   path: bathroom
   theme: Backend-selected
@@ -817,12 +948,14 @@ views:
     - entity: sensor.weather_temperature
     - entity: sensor.home_humidity
     - entity: sensor.weather_humidity
-    - entity: sensor.home_absolute_humidity
+    - entity: sensor.thermal_comfort_absolute_humidity
+      name: Home absolute humidity
     - entity: sensor.external_absolute_humidity
+      icon: mdi:water
     title: Weather
     type: entities
   - entities:
-    - entity: sensor.home_absolute_humidity
+    - entity: sensor.thermal_comfort_absolute_humidity
       name: Interno
     - entity: sensor.external_absolute_humidity
       name: Esterno
@@ -836,6 +969,36 @@ views:
       red: 85
       yellow: 70
     type: gauge
+  - entities:
+    - entity: sensor.thermal_comfort_dew_point
+      name: Dew point
+    - entity: sensor.thermal_comfort_dew_point_perception
+      name: Dew point perception
+    - entity: sensor.thermal_comfort_frost_point
+      name: Frost point
+    - entity: sensor.thermal_comfort_frost_risk
+      name: Frost risk
+    - entity: sensor.thermal_comfort_heat_index
+      name: Heat index
+    - entity: sensor.thermal_comfort_humidex
+      name: Humidex
+    - entity: sensor.thermal_comfort_humidex_perception
+      name: Humidex perception
+    - entity: sensor.thermal_comfort_moist_air_enthalpy
+      name: Moist air enthalpy
+    - entity: sensor.thermal_comfort_relative_strain_perception
+      name: Relative strain perception
+    - entity: sensor.thermal_comfort_summer_scharlau_perception
+      name: Summer Scharlau perception
+    - entity: sensor.thermal_comfort_summer_simmer_perception
+      name: Summer Simmer perception
+    - entity: sensor.thermal_comfort_thoms_discomfort_perception
+      name: Thoms discomfort perception
+    - entity: sensor.thermal_comfort_winter_scharlau_perception
+      name: Winter Scharlau perception
+    state_color: false
+    title: Thermal Comfort
+    type: entities
   icon: mdi:chart-areaspline-variant
   path: data
 - badges: []

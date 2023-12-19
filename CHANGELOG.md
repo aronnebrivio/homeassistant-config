@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.29.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.28.0...v2.29.0) (2023-12-19)
+
+
+### Features
+
+* add temperature and humidity sensors for bathroom and kitchen ([d1cbc4d](https://github.com/aronnebrivio/homeassistant-config/commit/d1cbc4d50229774fa41f236d62bcbc639968c37c))
+* add Thermal Comfort via HACS ([7557a22](https://github.com/aronnebrivio/homeassistant-config/commit/7557a22d9fbcb90700f1aa5bf34ada32c4820757))
+* include kitchen and bathroom temperature and humidity to calculate hom mean values ([2426347](https://github.com/aronnebrivio/homeassistant-config/commit/242634762cc9576d4b841edb3d7334946eea90ce))
+* remove home absolute humidity custom template sensor since the value is now provided by Thermal Comfort integration ([603f577](https://github.com/aronnebrivio/homeassistant-config/commit/603f577ae986556c349df8bf0482d306277c3bcb))
+* update Adaptive Lighting via HACS ([a7f8fe2](https://github.com/aronnebrivio/homeassistant-config/commit/a7f8fe2fa2e6ba3d3d52f0c2192b2c0b17127868))
+* update Alexa Media via HACS ([75027a4](https://github.com/aronnebrivio/homeassistant-config/commit/75027a41351013575e7a81a030a542fdc03ef109))
+* update HA to 2023.12.3 ([f3bd8b8](https://github.com/aronnebrivio/homeassistant-config/commit/f3bd8b8c12bcd3836798e4e80f32821c744a7ae4))
+* update README.md and ui-lovelace.yaml via service ([1908c27](https://github.com/aronnebrivio/homeassistant-config/commit/1908c271b00e765d4bf3833f9349478f1b607ca2))
+* update SmartIR via HACS ([7e80c4c](https://github.com/aronnebrivio/homeassistant-config/commit/7e80c4cd97c721dd837493d1f4a3625c7c897a9c))
+* use new temperature sensor for kitchen air conditioner ([c7c07f8](https://github.com/aronnebrivio/homeassistant-config/commit/c7c07f8eba1f84c1417764ec91015b951e3d4756))
+
 ## [2.28.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.27.0...v2.28.0) (2023-12-06)
 
 

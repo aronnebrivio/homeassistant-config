@@ -68,12 +68,12 @@
     # Home temperature
     home_temperature:
       unit_of_measurement: "°C"
-      value_template: "{{ '%.1f' | format(((float(states('sensor.termometro_sala_temperature')) + float(states('sensor.termometro_camera_temperature'))) / 2) | float) }}"
+      value_template: "{{ '%.1f' | format(((float(states('sensor.termometro_sala_temperature')) + float(states('sensor.termometro_camera_temperature')) + float(states('sensor.termometro_cucina_temperature')) + float(states('sensor.termometro_bagno_temperature'))) / 4) | float) }}"
       friendly_name: "Home Temperature"
     # Home humidity
     home_humidity:
       unit_of_measurement: "%"
-      value_template: "{{ '%.1f' | format(((float(states('sensor.termometro_sala_humidity')) + float(states('sensor.termometro_camera_humidity'))) / 2) | float) }}"
+      value_template: "{{ '%.1f' | format(((float(states('sensor.termometro_sala_humidity')) + float(states('sensor.termometro_camera_humidity')) + float(states('sensor.termometro_cucina_humidity')) + float(states('sensor.termometro_bagno_humidity'))) / 4) | float) }}"
       friendly_name: "Home Humidity"
       icon_template: mdi:water-percent
     # External temperature

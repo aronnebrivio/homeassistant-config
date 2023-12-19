@@ -30,3 +30,11 @@
   friendly_name: Piantana Sala luce grande
 '0xa4c1386521015d5d':
   friendly_name: Smart Plug 3
+'0x00124b0029334a0b':
+  friendly_name: Termometro Cucina
+  temperature_precision: 1
+  humidity_precision: 1
+'0x00124b00292bcb3c':
+  friendly_name: Termometro Bagno
+  humidity_precision: 1
+  temperature_precision: 1

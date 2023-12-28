@@ -12,8 +12,8 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 355
-Number of sensors | 172
+Number of entities | 359
+Number of sensors | 175
 
 
 ## My installed extensions:
@@ -40,6 +40,7 @@ Number of sensors | 172
 - [Waste Collection Schedule](https://github.com/mampfes/hacs_waste_collection_schedule)
 
 ### Lovelace plugins
+- [Comfortable Environment Card](https://github.com/argaar/comfortable-environment-card)
 - [Garbage Collection Card](https://github.com/amaximus/garbage-collection-card)
 - [Layout Card](https://github.com/thomasloven/lovelace-layout-card)
 - [Mini Graph Card](https://github.com/kalkih/mini-graph-card)

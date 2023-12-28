@@ -454,6 +454,11 @@ views:
         type: custom:mushroom-light-card
         use_light_color: false
       type: horizontal-stack
+    - humidity_sensor: sensor.termometro_sala_humidity
+      name: Room Name
+      show_index: ALL
+      temperature_sensor: sensor.termometro_sala_temperature
+      type: custom:comfortable-environment-card
     type: vertical-stack
   icon: mdi:sofa
   path: livingroom
@@ -643,6 +648,15 @@ views:
       - volume_mute
       - volume_set
       - volume_buttons
+    type: vertical-stack
+  - cards:
+    - title: Extra
+      type: custom:mushroom-title-card
+    - humidity_sensor: sensor.termometro_camera_humidity
+      name: Room Name
+      show_index: ALL
+      temperature_sensor: sensor.termometro_camera_temperature
+      type: custom:comfortable-environment-card
     type: vertical-stack
   icon: mdi:bed-king
   path: bedroom
@@ -834,6 +848,15 @@ views:
       - volume_set
       - volume_buttons
     type: vertical-stack
+  - cards:
+    - title: Extra
+      type: custom:mushroom-title-card
+    - humidity_sensor: sensor.termometro_cucina_humidity
+      name: Room Name
+      show_index: ALL
+      temperature_sensor: sensor.termometro_cucina_temperature
+      type: custom:comfortable-environment-card
+    type: vertical-stack
   icon: mdi:chef-hat
   path: kitchen
 - badges: []
@@ -905,6 +928,15 @@ views:
       - label: Day
         value: above_horizon
       type: custom:mini-graph-card
+    type: vertical-stack
+  - cards:
+    - title: Extra
+      type: custom:mushroom-title-card
+    - humidity_sensor: sensor.termometro_bagno_humidity
+      name: Room Name
+      show_index: ALL
+      temperature_sensor: sensor.termometro_bagno_temperature
+      type: custom:comfortable-environment-card
     type: vertical-stack
   icon: mdi:toilet
   path: bathroom

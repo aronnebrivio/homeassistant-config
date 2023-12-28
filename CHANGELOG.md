@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.30.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.29.0...v2.30.0) (2023-12-28)
+
+
+### Features
+
+* add Comfortable Environment Card via HACS ([fa5c6b9](https://github.com/aronnebrivio/homeassistant-config/commit/fa5c6b9efa39ce5b30cc79a7b268446f6aaf949b))
+* update HA to 2023.12.4 ([4048c3e](https://github.com/aronnebrivio/homeassistant-config/commit/4048c3e778433b01a9d935290b4742d744db7997))
+* update Lovelace Wallpanel via HACS ([f053a9b](https://github.com/aronnebrivio/homeassistant-config/commit/f053a9b007b1076b1ea330dbc6c7b743c0dce810))
+* update README and ui-lovelace.yaml via service ([146b6fe](https://github.com/aronnebrivio/homeassistant-config/commit/146b6fec478fb7427bac8d3b7695061675ef658f))
+
 ## [2.29.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.28.0...v2.29.0) (2023-12-19)
 
 

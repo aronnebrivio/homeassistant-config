@@ -12,8 +12,8 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 359
-Number of sensors | 175
+Number of entities | 373
+Number of sensors | 180
 
 
 ## My installed extensions:

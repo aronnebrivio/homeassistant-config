@@ -442,8 +442,9 @@ views:
         primary_info: name
         secondary_info: state
         show_brightness_control: true
+        show_color_temp_control: true
         type: custom:mushroom-light-card
-        use_light_color: false
+        use_light_color: true
       - collapsible_controls: true
         entity: light.piantana_sala_luce_piccola
         icon: mdi:floor-lamp
@@ -451,8 +452,9 @@ views:
         primary_info: name
         secondary_info: state
         show_brightness_control: true
+        show_color_temp_control: true
         type: custom:mushroom-light-card
-        use_light_color: false
+        use_light_color: true
       type: horizontal-stack
     - humidity_sensor: sensor.termometro_sala_humidity
       name: Room Name

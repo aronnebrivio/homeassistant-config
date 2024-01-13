@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.31.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.30.0...v2.31.0) (2024-01-13)
+
+
+### Features
+
+* update Alexa Media Player via HACS ([6da13b8](https://github.com/aronnebrivio/homeassistant-config/commit/6da13b8e044bb839e3191e76713f4edc97792925))
+* update Comfortable Environment Card via HACS ([ee990f5](https://github.com/aronnebrivio/homeassistant-config/commit/ee990f55bdf8f8dc048198659d870bceb1d45fdc))
+* update HA to 2024.1.3 ([b0a7d16](https://github.com/aronnebrivio/homeassistant-config/commit/b0a7d164cd3a9d18ba98d541dda3870105201c48))
+* update Lovelace Mushroom via HACS ([6b76419](https://github.com/aronnebrivio/homeassistant-config/commit/6b764195097b07bbd1b3d5d9f2105d8a062b26cc))
+* update Lovelace Wallpanel via HACS ([289b3cd](https://github.com/aronnebrivio/homeassistant-config/commit/289b3cd7d2b563c212f5514480a616c9843bcd21))
+* update README and ui-lovelace.yaml via service ([6db28d9](https://github.com/aronnebrivio/homeassistant-config/commit/6db28d9bf8cd2586bcd24ccda8cc2266d2078f1e))
+* update Thermal Comfort via HACS ([20bb41d](https://github.com/aronnebrivio/homeassistant-config/commit/20bb41da1cf1b5288cd56d34c1b2e7c97a057c6c))
+
 ## [2.30.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.29.0...v2.30.0) (2023-12-28)
 
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.32.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.31.0...v2.32.0) (2024-02-17)
+
+
+### Features
+
+* remove ddeprecated beat attribute to datetime sensor ([c0eb632](https://github.com/aronnebrivio/homeassistant-config/commit/c0eb63256bc69a23a1d96fceae5768d62b4dca01))
+* update Alexa Media Player via HACS ([c7166ff](https://github.com/aronnebrivio/homeassistant-config/commit/c7166ffb49c3a4f3f7b2e239bbc2f009a6478e84))
+* update Comfortable Environment Card via HACS ([5d5fab0](https://github.com/aronnebrivio/homeassistant-config/commit/5d5fab068d848f54e18c18df04cc2bcd12856881))
+* update HA to 2024.2.2 ([25b6480](https://github.com/aronnebrivio/homeassistant-config/commit/25b6480d164a7c74af7554641e98b01944e450fc))
+* update HACS via HACS ([082751e](https://github.com/aronnebrivio/homeassistant-config/commit/082751e3cdd4f83e4665936a47b9e38cb7f03b4b))
+* update Lovelace Mushroom via HACS ([86bc26c](https://github.com/aronnebrivio/homeassistant-config/commit/86bc26cdbf07f37df9d46a15cc97f0e5e7610a12))
+* update Lovelace Wallpanel via HACS ([e529685](https://github.com/aronnebrivio/homeassistant-config/commit/e529685c8514720d352a11ed54981806f5c584e8))
+* update Mini Graph Card via HACS ([cb87fb8](https://github.com/aronnebrivio/homeassistant-config/commit/cb87fb8fce88313c68dccc9e2960dacf705a0ecb))
+* update Waste Collection Schedule via HACS ([32f8f13](https://github.com/aronnebrivio/homeassistant-config/commit/32f8f13eca7ad47ec28b631287dda60180dc42d1))
+
 ## [2.31.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.30.0...v2.31.0) (2024-01-13)
 
 

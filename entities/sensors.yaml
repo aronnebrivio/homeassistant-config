@@ -70,6 +70,7 @@
       unit_of_measurement: "°C"
       value_template: "{{ '%.1f' | format(((float(states('sensor.termometro_sala_temperature')) + float(states('sensor.termometro_camera_temperature')) + float(states('sensor.termometro_cucina_temperature')) + float(states('sensor.termometro_bagno_temperature'))) / 4) | float) }}"
       friendly_name: "Home Temperature"
+      icon_template: mdi:thermometer
     # Home humidity
     home_humidity:
       unit_of_measurement: "%"

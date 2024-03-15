@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.33.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.32.0...v2.33.0) (2024-03-15)
+
+
+### Features
+
+* update Comfortable Environment Card via HACS ([763a691](https://github.com/aronnebrivio/homeassistant-config/commit/763a691f5248ed060d4e84e14055b1e396db1c83))
+* update HA to 2024.3.1 ([b24adff](https://github.com/aronnebrivio/homeassistant-config/commit/b24adffbb190a47d85ff3bd7dde477de2fb3175b))
+* update Lovelace Layout Card via HACS ([33f1434](https://github.com/aronnebrivio/homeassistant-config/commit/33f1434d6613629c7594cb13983ea779e1022e1a))
+* update Lovelace Mushroom via HACS ([a082d2e](https://github.com/aronnebrivio/homeassistant-config/commit/a082d2ee45498a3a13f642e549524540634c31df))
+* update Lovelace Wallpanel via HACS ([f980985](https://github.com/aronnebrivio/homeassistant-config/commit/f980985e52b64bba3527c43a7145a915dcbc149b))
+* update README via service ([e579290](https://github.com/aronnebrivio/homeassistant-config/commit/e57929077c19c54862d5047bb81fe994b9105596))
+* update Spotcast via HACS ([5b45387](https://github.com/aronnebrivio/homeassistant-config/commit/5b453870a5f1aeb68621079e47496b0564db2946))
+* update Waste Collection Schedule via HACS ([cb94e53](https://github.com/aronnebrivio/homeassistant-config/commit/cb94e5357829ee9656faca4db86a72110191b138))
+
+
+### Bug Fixes
+
+* set thermometer icon for home temperature sensor ([2e347e3](https://github.com/aronnebrivio/homeassistant-config/commit/2e347e3b37253f9ecf4378025648e0db3b395aca))
+
 ## [2.32.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.31.0...v2.32.0) (2024-02-17)
 
 

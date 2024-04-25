@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.34.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.33.0...v2.34.0) (2024-04-25)
+
+
+### Features
+
+* update Adaptive Lighting via HACS ([19579c3](https://github.com/aronnebrivio/homeassistant-config/commit/19579c331966f94b7267fc94f3c063c69aa7da23))
+* update HA to 2024.4.4 ([d60c26e](https://github.com/aronnebrivio/homeassistant-config/commit/d60c26eded0705c70bb70951044d9db6b4fbda89))
+* update UI components via HACS ([30fc254](https://github.com/aronnebrivio/homeassistant-config/commit/30fc254e18cc8b5556bdb1beb46039ce66414332))
+* update Waste Collection Schedule via HACS ([8bde631](https://github.com/aronnebrivio/homeassistant-config/commit/8bde63100293ebce024d0ba2ae9828b391305e35))
+
 ## [2.33.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.32.0...v2.33.0) (2024-03-15)
 
 

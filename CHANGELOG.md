@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.35.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.34.0...v2.35.0) (2024-05-28)
+
+
+### Features
+
+* update Adaptive Lighting via HACS ([1753f81](https://github.com/aronnebrivio/homeassistant-config/commit/1753f81161ce1580a9514ca5e5617b0bc68d2d0b))
+* update Alexa Media Player via HACS ([54baabe](https://github.com/aronnebrivio/homeassistant-config/commit/54baabe694ade52365d30b3d7a1c3450a5c2e6e6))
+* update Comfortable Environment Card via HACS ([13ac20c](https://github.com/aronnebrivio/homeassistant-config/commit/13ac20c7890b166777b398506348fdb79bbe81b4))
+* update HA to 2024.5.5 ([f4a025b](https://github.com/aronnebrivio/homeassistant-config/commit/f4a025bd57383f376ef5757a4fae377cf5ce1d1e))
+* update Lovelace Wallpanel via HACS ([6e715e5](https://github.com/aronnebrivio/homeassistant-config/commit/6e715e53c953cb31b54e5e0543a2b45f007b1471))
+* update README and ui-lovelace.yaml via service ([d3122ad](https://github.com/aronnebrivio/homeassistant-config/commit/d3122ad555ecb4e28195c74eda32bd247e91474a))
+* update Waste Collection Schedule via HACS ([b349fcf](https://github.com/aronnebrivio/homeassistant-config/commit/b349fcf80d38260075206d9fb43b4052f09c9257))
+
 ## [2.34.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.33.0...v2.34.0) (2024-04-25)
 
 

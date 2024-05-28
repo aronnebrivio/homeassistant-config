@@ -1075,6 +1075,17 @@ views:
         name: Upload
         type: custom:mini-graph-card
       type: horizontal-stack
+    - cards:
+      - animate: true
+        entities:
+        - sensor.speedtest_ping
+        font_size: 75
+        icon: mdi:speedometer
+        line_color: red
+        line_width: 4
+        name: Ping
+        type: custom:mini-graph-card
+      type: horizontal-stack
     type: vertical-stack
   - cards:
     - title: Proxmox

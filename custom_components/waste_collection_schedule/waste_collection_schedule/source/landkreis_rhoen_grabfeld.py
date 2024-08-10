@@ -22,7 +22,8 @@ EVENT_BLACKLIST = ['Wertstoffhof Mellrichstadt',
                    'Wertstoffsammelstelle Bischofsheim']
 
 ICON_MAP = {
-    "Restmüll/Gelber Sack/Biotonne": "mdi:trash-can",
+    "Restmüll/Biotonne": "mdi:trash-can",
+    "Gelbe Tonne": "mdi:recycle-variant",
     "Papiersammlung": "mdi:package-variant",
     "Problemmüllsammlung": "mdi:biohazard"
 }
@@ -34,8 +35,6 @@ class Source:
         self._district = district
 
     def fetch(self):
-        now = datetime.datetime.now().date()
-
         r = requests.get(API_URL, params={
             "stadt": self._city,
             "ortsteil": self._district

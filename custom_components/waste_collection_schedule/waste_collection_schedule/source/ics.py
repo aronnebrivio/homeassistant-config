@@ -108,18 +108,18 @@ _LOGGER = logging.getLogger(__name__)
 class Source:
     def __init__(
         self,
-        url=None,
-        file=None,
-        offset=None,
-        params=None,
-        year_field=None,
-        method="GET",
-        regex=None,
-        title_template="{{date.summary}}",
-        split_at=None,
-        version=2,
-        verify_ssl=True,
-        headers={},
+        url: str | None = None,
+        file: str | None = None,
+        offset: int | None = None,
+        params: dict | None = None,
+        year_field: str | None = None,
+        method: str = "GET",
+        regex: str | None = None,
+        title_template: str = "{{date.summary}}",
+        split_at: str | None = None,
+        version: int = 2,
+        verify_ssl: bool = True,
+        headers: dict = {},
     ):
         self._url = re.sub("^webcal", "https", url) if url else None
         self._file = file
@@ -181,7 +181,6 @@ class Source:
             return self.fetch_file(self._file)
 
     def fetch_url(self, url, params=None):
-        print(url)
         # get ics file
         if self._method == "GET":
             r = requests.get(
@@ -195,7 +194,7 @@ class Source:
             raise RuntimeError(
                 "Error: unknown method to fetch URL, use GET or POST; got {self._method}"
             )
-        print(r.text)
+
         r.raise_for_status()
 
         if r.apparent_encoding == "UTF-8-SIG":

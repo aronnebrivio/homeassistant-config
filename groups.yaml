@@ -1,12 +1,13 @@
 livingroom:
   name: Soggiorno
   entities:
-    - switch.livingroom_tv
+    - media_player.tv
     - light.spada_suprema
     - light.piantana_sala
     - media_player.echo_sala
     - sensor.termometro_sala_temperature
     - sensor.termometro_sala_humidity
+    - climate.condizionatore_sala
 bedroom:
   name: Camera da letto
   entities:
@@ -17,15 +18,21 @@ bedroom:
     - light.abat_jour_letto_sinistra
     - sensor.termometro_camera_temperature
     - sensor.termometro_camera_humidity
+    - climate.condizionatore_camera
 bathroom:
   name: Bagno
   entities:
     - switch.water_heater
+    - sensor.termometro_bagno_temperature
+    - sensor.termometro_bagno_humidity
 kitchen:
   name: Cucina
   entities:
     - media_player.echo_show_cucina
     - sensor.frient_energy_monitor_energy
+    - sensor.termometro_cucina_temperature
+    - sensor.termometro_cucina_humidity
+    - climate.condizionatore_cucina
 entrance:
   name: Ingresso
   entities:

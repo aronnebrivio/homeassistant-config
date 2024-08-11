@@ -10,11 +10,6 @@
   friendly_name: Termometro Sala
   temperature_precision: 1
   humidity_precision: 1
-'0x00124b0024cce16f':
-  friendly_name: Termometro Camera
-  temperature_precision: 1
-  humidity_precision: 1
-  humidity_calibration: 0
 '0x588e81fffef78a9f':
   friendly_name: Abat Jour Letto Sinistra
   transition: 1
@@ -38,3 +33,7 @@
   friendly_name: Termometro Bagno
   humidity_precision: 1
   temperature_precision: 1
+'0x00124b0024cce16f':
+  friendly_name: Termometro Camera
+  temperature_precision: 1
+  humidity_precision: 1

@@ -164,23 +164,6 @@
       icon: mdi:lightbulb
       supported_features: 63
       state: "off"
-    light.luce_1:
-      effect_list:
-        - blink
-        - breathe
-        - okay
-        - channel_change
-        - finish_effect
-        - stop_effect
-      supported_color_modes:
-        - brightness
-      linkquality: 31
-      update:
-        state: idle
-      update_available: false
-      friendly_name: Luce 1
-      supported_features: 45
-      state: "off"
   icon: mdi:bed
 - id: "1644931731811"
   name: Fun time
@@ -256,54 +239,6 @@
       icon: mdi:lightbulb
       friendly_name: Luce Scrivania
       supported_features: 63
-      state: "on"
-    switch.circadian_lighting_abat_jour_letto_sinistra:
-      hs_color:
-        - 26.786
-        - 43.922
-      brightness: 100
-      colortemp: 3536.1991527867967
-      icon: mdi:theme-light-dark
-      friendly_name: Abat Jour Letto Sinistra
-      state: "off"
-    switch.circadian_lighting_studio:
-      hs_color:
-        - 26.786
-        - 43.922
-      brightness: 100
-      colortemp: 3536.1991527867967
-      icon: mdi:theme-light-dark
-      friendly_name: Studio
-      state: "off"
-    light.nzxt_smart_device_v2_1:
-      effect_list:
-        - Direct
-        - Static
-        - Fading
-        - Spectrum Cycle
-        - Marquee
-        - Cover Marquee
-        - Alternating
-        - Pulsing
-        - Breathing
-      supported_color_modes:
-        - hs
-      icon: mdi:led-outline
-      friendly_name: NZXT Smart Device V2 1
-      supported_features: 21
-      color_mode: hs
-      brightness: 255
-      hs_color:
-        - 0
-        - 100
-      rgb_color:
-        - 255
-        - 0
-        - 0
-      xy_color:
-        - 0.701
-        - 0.299
-      effect: Direct
       state: "on"
   icon: mdi:party-popper
   metadata: {}

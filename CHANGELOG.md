@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.36.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.35.0...v2.36.0) (2024-08-11)
+
+
+### Features
+
+* add Spook Inverse, provided via Spook ([2d8560b](https://github.com/aronnebrivio/homeassistant-config/commit/2d8560bd42a0cd8db837a7a2d20068d1bece85d6))
+* add Spook via HACS ([d62ecd9](https://github.com/aronnebrivio/homeassistant-config/commit/d62ecd97261b92f894aab0239f92745f85613dda))
+* remove DuckDNS integration ([f7d8af3](https://github.com/aronnebrivio/homeassistant-config/commit/f7d8af350c6f21bcb0c22dfd927894be3476b438))
+* review automations ([f2392fd](https://github.com/aronnebrivio/homeassistant-config/commit/f2392fd950d4cdbd1aa0106a4a2967d6ad002308))
+* update Alexa Media Player via HACS ([cb19529](https://github.com/aronnebrivio/homeassistant-config/commit/cb19529ec3a801f357af79dae7f67d51d5e818d0))
+* update Comfortable Environment Card via HACS ([eeb04a4](https://github.com/aronnebrivio/homeassistant-config/commit/eeb04a4862c762c6a3ef16cd9a267768c4750797))
+* update HA to 2024.8.1 ([8ae4f5d](https://github.com/aronnebrivio/homeassistant-config/commit/8ae4f5df84ab55073bdcb4055eb945e15c9f5a43))
+* update Lovelace Wallpanel via HACS ([999506d](https://github.com/aronnebrivio/homeassistant-config/commit/999506d005f865babed86e921e0015c4ff3bc659))
+* update Mushrooms via HACS ([23b0aaf](https://github.com/aronnebrivio/homeassistant-config/commit/23b0aaf3983a2ba19148eabf4a14bc74bc9a4fa9))
+* update Spotcast via HACS ([04668a7](https://github.com/aronnebrivio/homeassistant-config/commit/04668a78acb202a9a6dd5577482fd0d3978efc78))
+* update Waste Collection Schedule via HACS ([5997c6f](https://github.com/aronnebrivio/homeassistant-config/commit/5997c6f523d52f6878c230996ed83056bc1dd4c2))
+
+
+### Bug Fixes
+
+* reset bedroom thermometer device ([6b107d4](https://github.com/aronnebrivio/homeassistant-config/commit/6b107d4d69cb75be6885f5152837a349ec8fb673))
+* set kitchen air conditioner in the correct group ([9cdbc76](https://github.com/aronnebrivio/homeassistant-config/commit/9cdbc76a9b4d72958a9d8dd6fbf5167be7c19e67))
+
 ## [2.35.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.34.0...v2.35.0) (2024-05-28)
 
 

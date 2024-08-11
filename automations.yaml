@@ -143,8 +143,8 @@
       - update.home_assistant_supervisor_update
       - update.home_assistant_core_update
       - update.home_assistant_operating_system_update
-      mobile_app_device: 905677963a9b6082d24810268358ebec
-      mobile_app_device_2: 905677963a9b6082d24810268358ebec
+      mobile_app_device: da511411cc302530f0e489f1d099abbf
+      mobile_app_device_2: 0aa5cbd661ef17ae46ea03b9fabf7ea9
 - id: '1658824207858'
   alias: Re-Load Speed Test
   description: Perform a Manual Speed Test when sensor goes offline
@@ -242,7 +242,7 @@
   condition:
   - condition: time
     after: '22:30:00'
-    before: 07:00:00
+    before: 08:00:00
     weekday:
     - sun
     - mon

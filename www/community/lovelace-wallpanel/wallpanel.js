@@ -107,7 +107,7 @@ class ScreenWakeLock {
 	}
 }
 
-const version = "4.25.1";
+const version = "4.25.5";
 const defaultConfig = {
 	enabled: false,
 	enabled_on_tabs: [],
@@ -496,14 +496,17 @@ function setSidebarHidden(hidden) {
 		if (!panelLovelace) {
 			return;
 		}
-		const menuButton = panelLovelace.shadowRoot
-			.querySelector("hui-root").shadowRoot
-			.querySelector("ha-menu-button");
-		if (hidden) {
-			menuButton.style.display = "none";
-		}
-		else {
-			menuButton.style.removeProperty("display");
+		const huiRoot = panelLovelace.shadowRoot.querySelector("hui-root");
+		if (huiRoot) {
+			const menuButton = huiRoot.shadowRoot.querySelector("ha-menu-button");
+			if (menuButton) {
+				if (hidden) {
+					menuButton.style.display = "none";
+				}
+				else {
+					menuButton.style.removeProperty("display");
+				}
+			}
 		}
 	}
 	catch (e) {
@@ -667,6 +670,7 @@ class WallpanelView extends HuiView {
 		this.lastEnergyCollectionUpdate = 0;
 		this.screensaverStopNavigationPathTimeout = null;
 
+		this.lovelace = getHaPanelLovelace().lovelace;
 		this.__hass = elHass.__hass;
 		this.__cards = [];
 		this.__badges = [];
@@ -1142,7 +1146,8 @@ class WallpanelView extends HuiView {
 					cardConfig.collection_key = "energy_wallpanel";
 					this.energyCollectionUpdateEnabled = true;
 				}
-				const cardElement = this.createCardElement(cardConfig);
+				const createCardElement = this._createCardElement ? this._createCardElement : this.createCardElement;
+				const cardElement = createCardElement.bind(this)(cardConfig);
 				cardElement.hass = this.hass;
 
 				this.__cards.push(cardElement);
@@ -1571,19 +1576,20 @@ class WallpanelView extends HuiView {
 				let tmp = tags.split("!");
 				tags = tmp[0];
 				for (let i=1; i<tmp.length; i++) {
-					let tmp2 = tmp[i].split("=", 2);
-					if (tmp2[0] == "prefix") {
-						prefix = tmp2[1];
+					let argType = tmp[i].substring(0, tmp[i].indexOf("="));
+					let argValue = tmp[i].substring(tmp[i].indexOf("=") + 1);
+					if (argType == "prefix") {
+						prefix = argValue;
 					}
-					else if (tmp2[0] == "suffix") {
-						suffix = tmp2[1];
+					else if (argType == "suffix") {
+						suffix = argValue;
 					}
-					else if (tmp2[0] == "options") {
+					else if (argType == "options") {
 						options = {};
-						tmp2[1].split(",").forEach(optVal => {
-							let tmp3 = optVal.split(":", 2);
-							if (tmp3[0] && tmp3[1]) {
-								options[tmp3[0].replace(/\s/g, '')] = tmp3[1].replace(/\s/g, '');
+						argValue.split(",").forEach(optVal => {
+							let tmp2 = optVal.split(":", 2);
+							if (tmp2[0] && tmp2[1]) {
+								options[tmp2[0].replace(/\s/g, '')] = tmp2[1].replace(/\s/g, '');
 							}
 						});
 					}
@@ -1611,6 +1617,10 @@ class WallpanelView extends HuiView {
 			}
 			if (/DateTime/.test(tag)) {
 				let date = new Date(val.replace(/(\d\d\d\d):(\d\d):(\d\d) (\d\d):(\d\d):(\d\d)/, '$1-$2-$3T$4:$5:$6'));
+				if (isNaN(date)) {
+					// Invalid date
+					return "";
+				}
 				if (!options) {
 					options = {year: "numeric", month: "2-digit", day: "2-digit"};
 				}
@@ -2452,7 +2462,6 @@ function startup() {
 	customElements.define("wallpanel-view", WallpanelView);
 	wallpanel = document.createElement("wallpanel-view");
 	elHaMain.shadowRoot.appendChild(wallpanel);
-	locationChanged();
 	window.addEventListener("location-changed", event => {
 		logger.debug("location-changed", event);
 		locationChanged();
@@ -2481,6 +2490,11 @@ function startup() {
 		},
 		"lovelace_updated"
 	);
+	try {
+		locationChanged();
+	} catch {
+		setTimeout(locationChanged, 1000);
+	}
 }
 
 setTimeout(startup, 25);
@@ -3621,3 +3635,4 @@ EXIF.pretty = function(img) {
 EXIF.readFromBinaryFile = function(file) {
 	return findEXIFinJPEG(file);
 }
+

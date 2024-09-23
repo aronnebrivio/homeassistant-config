@@ -4,11 +4,20 @@ from datetime import datetime
 
 import requests
 from waste_collection_schedule import Collection  # type: ignore[attr-defined]
+from waste_collection_schedule.exceptions import (
+    SourceArgumentException,
+    SourceArgumentExceptionMultiple,
+    SourceArgumentNotFoundWithSuggestions,
+)
 
 TITLE = "EDPEvent - Multi Source"
 DESCRIPTION = "Source for all EDPEvent waste collection sources. This included multiple municipalities in Sweden."
 URL = "https://www.edpevent.se"
 TEST_CASES = {
+    "https://edpmypage.roslagsvatten.se/FutureWebOS/SimpleWastePickup, Andromedavägen 1, Åkersberga": {
+        "street_address": "Andromedavägen 1",
+        "url": "https://edpmypage.roslagsvatten.se/FutureWebOS/SimpleWastePickup",
+    },
     "Boden - Bodens Kommun": {
         "street_address": "KYRKGATAN 24",
         "service_provider": "boden",
@@ -41,6 +50,22 @@ TEST_CASES = {
         "street_address": "Frögatan 76 -150",
         "service_provider": "skelleftea",
     },
+    "Borås - Test1": {
+        "street_address": "Länghemsgatan 10",
+        "service_provider": "boras",
+    },
+    "Borås - Test2": {
+        "street_address": "Yttre Näs 1, Seglora",
+        "service_provider": "boras",
+    },
+    "Borås - Test3": {
+        "street_address": "Stora Hyberg 1, Brämhult",
+        "url": "https://kundportal.borasem.se/EDPFutureWeb/SimpleWastePickup",
+    },
+    "Kretslopp Sydost Hägnevägen 1, Sävsjö": {
+        "street_address": "Hägnevägen 1, Sävsjö",
+        "service_provider": "kretslopp-sydost",
+    },
 }
 
 COUNTRY = "se"
@@ -53,7 +78,7 @@ ICON_MAP = {
     "Deponi": "mdi:recycle",
     "Restavfall": "mdi:trash-can",
     "Matavfall": "mdi:food-apple",
-    "Slam": "",
+    "Slam": "mdi:emoticon-poop",
     "Trädgårdsavfall": "mdi:leaf",
 }
 
@@ -99,6 +124,21 @@ SERVICE_PROVIDERS = {
         "url": "https://uppsalavatten.se",
         "api_url": "https://futureweb.uppsalavatten.se/Uppsala/FutureWeb/SimpleWastePickup",
     },
+    "boras": {
+        "title": "Borås Energi och Miljö",
+        "url": "https://www.borasem.se",
+        "api_url": "https://kundportal.borasem.se/EDPFutureWeb/SimpleWastePickup",
+    },
+    "roslagsvatten": {
+        "title": "Roslagsvatten",
+        "url": "https://roslagsvatten.se",
+        "api_url": "https://edpmypage.roslagsvatten.se/FutureWebOS/SimpleWastePickup",
+    },
+    "kretslopp-sydost": {
+        "title": "Kretslopp Sydost",
+        "url": "https://kretsloppsydost.se",
+        "api_url": "https://kundportal.kretsloppsydost.se/FutureWeb/SimpleWastePickup",
+    },
 }
 
 EXTRA_INFO = [
@@ -124,14 +164,19 @@ class Source:
         if url is None:
             # Raise an exception if the user did not provide a service provider (or url)
             if service_provider is None:
-                raise ValueError("You must provide either a service provider or a url")
+                raise SourceArgumentExceptionMultiple(
+                    ["service_provider", "url"],
+                    "You must provide either a service provider or a url",
+                )
             # Get the api url using the service provider
             self._url = SERVICE_PROVIDERS.get(service_provider.lower(), {}).get(
                 "api_url"
             )
         if self._url is None:
-            raise ValueError(
-                f"Unknown service provider: {service_provider}, use one of {[x for x in SERVICE_PROVIDERS.keys()]}"
+            raise SourceArgumentNotFoundWithSuggestions(
+                "service_provider",
+                service_provider,
+                SERVICE_PROVIDERS.keys(),
             )
         # Remove trailing slash from the url if present
         if self._url.endswith("/"):
@@ -154,18 +199,21 @@ class Source:
                 if len(address_data["Buildings"]) > 0:
                     address = address_data["Buildings"][0]
                 else:
-                    raise Exception(
-                        f"No returned building address for: {self._street_address}"
+                    raise SourceArgumentException(
+                        "street_address",
+                        f"No returned building address for: {self._street_address}",
                     )
             else:
-                raise Exception(
-                    f"The server failed to fetch the building data for: {self._street_address}"
+                raise SourceArgumentException(
+                    "street_address",
+                    f"The server failed to fetch the building data for: {self._street_address}",
                 )
 
         # Raise exception if all the above checks failed
         if not address:
-            raise Exception(
-                f"Failed to find building address for: {self._street_address}"
+            raise SourceArgumentException(
+                "street_address",
+                f"Failed to find building address for: {self._street_address}",
             )
 
         # Use the address we got to get the waste collection schedule

@@ -4,6 +4,10 @@ from datetime import datetime, timedelta, timezone
 
 import requests
 from waste_collection_schedule import Collection  # type: ignore[attr-defined]
+from waste_collection_schedule.exceptions import (
+    SourceArgumentNotFound,
+    SourceArgumentNotFoundWithSuggestions,
+)
 from waste_collection_schedule.service.ICS import ICS
 
 _LOGGER = logging.getLogger(__name__)
@@ -24,6 +28,15 @@ TEST_CASES = {
         "street": "Konrad-Zuse-Str.",
         "house_number": 4,
     },
+}
+
+PARAM_TRANSLATIONS = {
+    "de": {
+        "city": "Ort",
+        "street": "Straße",
+        "postcode": "PLZ",
+        "house_number": "Hausnummer",
+    }
 }
 
 
@@ -48,7 +61,7 @@ class Source:
 
         data = json.loads(r.text)
         if len(data) == 0:
-            raise Exception(f"street not found: {self._street}")
+            raise SourceArgumentNotFound("street", self._street)
 
         street_entry = next(
             (
@@ -62,7 +75,14 @@ class Source:
         )
 
         if street_entry is None:
-            raise Exception(f"street not found: {self._street}")
+            suggestions = [
+                item["name"]
+                for item in data
+                if item["plz"] == self._postcode and item["place"] == self._city
+            ]
+            raise SourceArgumentNotFoundWithSuggestions(
+                "street", self._street, suggestions=suggestions
+            )
 
         params = {"StreetId": street_entry["id"]}
         r = requests.get(
@@ -73,19 +93,22 @@ class Source:
 
         data = json.loads(r.text)
         if len(data) == 0:
-            raise Exception(f"No house_number not found: {self._street}")
+            raise SourceArgumentNotFound("house_number", self._house_number)
 
         house_number_entry = next(
             (
                 item
                 for item in data
-                if f"{item["houseNr"]}{item["houseNrAdd"]}" == self._house_number
+                if f"{item['houseNr']}{item['houseNrAdd']}" == self._house_number
             ),
             None,
         )
 
         if house_number_entry is None:
-            raise Exception(f"house_number not found: {self._house_number}")
+            suggestions = [f"{item['houseNr']}{item['houseNrAdd']}" for item in data]
+            raise SourceArgumentNotFoundWithSuggestions(
+                "house_number", self._house_number, suggestions=suggestions
+            )
 
         # get ics file
         params = {
@@ -115,7 +138,7 @@ class Source:
         headers = {"content-type": "application/json"}
 
         r = requests.post(
-            f"https://ahkwebapi.heidekreis.de/api/object/{house_number_entry["idObject"]}/QDisposalScheduler/asIcal",
+            f"https://ahkwebapi.heidekreis.de/api/object/{house_number_entry['idObject']}/QDisposalScheduler/asIcal",
             data=json.dumps(params),
             headers=headers,
         )

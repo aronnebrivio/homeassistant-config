@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.37.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.36.0...v2.37.0) (2024-09-23)
+
+
+### Features
+
+* update multiple custom components via HACS ([76f4e30](https://github.com/aronnebrivio/homeassistant-config/commit/76f4e306ccb645f98f811e3d79e0ba3a9047e311))
+* update themes via HACS ([eeddcc6](https://github.com/aronnebrivio/homeassistant-config/commit/eeddcc654bfeae42d1facc251cc47da0a5ee166c))
+* upgrade HA to 2024.9.2 ([09a804f](https://github.com/aronnebrivio/homeassistant-config/commit/09a804f735d5fb4b7fd2a53f24269f6d043c8c5e))
+
 ## [2.36.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.35.0...v2.36.0) (2024-08-11)
 
 

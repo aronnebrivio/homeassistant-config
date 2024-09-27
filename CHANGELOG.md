@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.38.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.37.0...v2.38.0) (2024-09-27)
+
+
+### Features
+
+* update README and ui-lovelace.yaml via service ([1410b89](https://github.com/aronnebrivio/homeassistant-config/commit/1410b89612dfa949c7a3713eb1b5d4c009be2918))
+* upgrade HA to 2024.9.3 ([099ea15](https://github.com/aronnebrivio/homeassistant-config/commit/099ea1586c64a5281f126da4b9e953f36913cb52))
+
 ## [2.37.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.36.0...v2.37.0) (2024-09-23)
 
 

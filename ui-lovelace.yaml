@@ -64,10 +64,16 @@ decluttering_templates:
 title: Casa
 views:
 - badges:
-  - entity: person.aronne
+  - display_type: complete
+    entity: person.aronne
     name: ''
-  - entity: person.valentina
+    show_entity_picture: true
+    type: entity
+  - display_type: complete
+    entity: person.valentina
     name: ''
+    show_entity_picture: true
+    type: entity
   - entity: sensor.home_temperature
     name: ''
   - entity: sensor.home_humidity
@@ -75,7 +81,9 @@ views:
   - entity: sensor.frient_energy_monitor_power
     name: ''
   - entity: sensor.daily_energy
+    icon: mdi:transmission-tower
     name: ''
+    type: entity
   cards:
   - entity: weather.casa
     name: Casa
@@ -980,8 +988,10 @@ views:
   - entities:
     - entity: sensor.home_temperature
     - entity: sensor.weather_temperature
+      icon: mdi:thermometer
     - entity: sensor.home_humidity
     - entity: sensor.weather_humidity
+      icon: mdi:water-percent
     - entity: sensor.thermal_comfort_absolute_humidity
       name: Home absolute humidity
     - entity: sensor.external_absolute_humidity

@@ -12,8 +12,8 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 353
-Number of sensors | 163
+Number of entities | 440
+Number of sensors | 216
 
 
 ## My installed extensions:
@@ -35,6 +35,7 @@ Number of sensors | 163
 - [HACS](https://github.com/hacs/integration)
 - [Openrgb](https://github.com/koying/openrgb_ha)
 - [Smartir](https://github.com/smartHomeHub/SmartIR)
+- [Spook 👻 Your Homie](https://github.com/frenck/spook)
 - [Spotcast](https://github.com/fondberg/spotcast)
 - [Thermal Comfort](https://github.com/dolezsa/thermal_comfort)
 - [Waste Collection Schedule](https://github.com/mampfes/hacs_waste_collection_schedule)

@@ -12,8 +12,8 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 426
-Number of sensors | 207
+Number of entities | 465
+Number of sensors | 234
 
 
 ## My installed extensions:
@@ -21,6 +21,7 @@ Number of sensors | 207
 ### Add-ons
 - Advanced SSH & Web Terminal
 - Cloudflared
+- ESPHome
 - File editor
 - Home Assistant Google Drive Backup
 - Mosquitto broker
@@ -41,6 +42,9 @@ Number of sensors | 207
 - [Waste Collection Schedule](https://github.com/mampfes/hacs_waste_collection_schedule)
 
 ### Lovelace plugins
+- [Apexcharts Card](https://github.com/RomRider/apexcharts-card)
+- [Bar Card](https://github.com/custom-cards/bar-card)
+- [Card Mod](https://github.com/thomasloven/lovelace-card-mod)
 - [Comfortable Environment Card](https://github.com/argaar/comfortable-environment-card)
 - [Garbage Collection Card](https://github.com/amaximus/garbage-collection-card)
 - [Layout Card](https://github.com/thomasloven/lovelace-layout-card)
@@ -48,6 +52,7 @@ Number of sensors | 207
 - [Mushroom](https://github.com/piitaya/lovelace-mushroom)
 - [Simple Weather Card](https://github.com/kalkih/simple-weather-card)
 - [Spotify Lovelace Card](https://github.com/custom-cards/spotify-card)
+- [Stack In Card](https://github.com/custom-cards/stack-in-card)
 - [State Switch](https://github.com/thomasloven/lovelace-state-switch)
 - [Wallpanel](https://github.com/j-a-n/lovelace-wallpanel)
 

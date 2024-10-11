@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.39.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.38.0...v2.39.0) (2024-10-11)
+
+
+### Features
+
+* add ESPHome add-on and first test configuration ([4bcee4c](https://github.com/aronnebrivio/homeassistant-config/commit/4bcee4c1b231b8d9a274eea9e90db30436454866))
+* new CPU, RAM and Storage sensor cards ([3dcc848](https://github.com/aronnebrivio/homeassistant-config/commit/3dcc8482c118e80e623a097ac0517ae5f587df74))
+* update custom components via HACS ([52a2e9e](https://github.com/aronnebrivio/homeassistant-config/commit/52a2e9e16686cc3836ddf67be64941e20ef2b653))
+* update HA to 2024.10.2 ([ae217f0](https://github.com/aronnebrivio/homeassistant-config/commit/ae217f09e89dc5ebd4ba5f5e5fe8ee685860e55c))
+* update Wallpanel via HACS ([2d70704](https://github.com/aronnebrivio/homeassistant-config/commit/2d707047303644805e4afea888dbf0e18bd47314))
+* upgrade HA to 2024.10.1 ([d40551c](https://github.com/aronnebrivio/homeassistant-config/commit/d40551c3aea2837f26be2610da52da005f4ba516))
+
 ## [2.38.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.37.0...v2.38.0) (2024-09-27)
 
 

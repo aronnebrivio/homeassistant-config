@@ -1106,46 +1106,54 @@ views:
           action: url
           url_path: https://192.168.1.2:8006/
         type: template
-      - entity: sensor.proxmox_cpu_usage
-        icon: mdi:memory
-        type: entity
-      - entity: sensor.proxmox_memory_usage
-        icon: mdi:chip
-        type: entity
       type: custom:mushroom-chips-card
     - cards:
-      - entity: sensor.proxmox_cpu_usage
-        max: 100
-        min: 0
-        name: CPU Usage
-        severity:
-          green: 0
-          red: 85
-          yellow: 45
-        type: gauge
-        unit: '%'
-      - entity: sensor.proxmox_memory_usage
-        max: 16
-        min: 0
-        name: RAM Usage
-        severity:
-          green: 0
-          red: 13
-          yellow: 10
-        type: gauge
-        unit: GB
-      type: horizontal-stack
-    - entity: sensor.proxmox_storage_usage
-      max: 100
-      min: 0
-      name: Disk Usage
-      needle: false
-      severity:
-        green: 0
-        red: 80
-        yellow: 50
-      type: gauge
-      unit: '%'
+      - badge_icon: ''
+        card_mod:
+          style: "{% set ashlvl = states('sensor.proxmox_memory_usage') | float(0)\
+            \ %}\n{% set ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1\
+            \ + 0.1 %}\nha-card {\n    background: linear-gradient(90deg, rgb(255,111,34,0.5)\
+            \ {{ ashpercent1 }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n\
+            }\n"
+        entity: sensor.proxmox_cpu_usage
+        icon: mdi:chart-areaspline
+        icon_color: deep-orange
+        primary: CPU
+        secondary: '{{ states(''sensor.proxmox_cpu_usage'') }} %'
+        tap_action:
+          action: more-info
+        type: custom:mushroom-template-card
+      - badge_icon: ''
+        card_mod:
+          style: "{% set ashlvl = states('sensor.proxmox_memory_usage') | float(0)\
+            \ %}\n{% set ashpercent1 = ashlvl / 16 * 100 %}\n{% set ashpercent2 =\
+            \ ashpercent1 + 0.1 %}\nha-card {\n    background: linear-gradient(90deg,\
+            \ rgba(33,150,243,0.5) {{ ashpercent1 }}%, #1D1D1D {{ ashpercent2 }}%);\n\
+            \    border-color:rgba(52,52,52,1);\n}\n"
+        entity: sensor.proxmox_memory_usage
+        icon: mdi:memory
+        icon_color: blue
+        primary: RAM
+        secondary: '{{ states(''sensor.proxmox_memory_usage'') }} GB'
+        tap_action:
+          action: more-info
+        type: custom:mushroom-template-card
+      - badge_icon: ''
+        card_mod:
+          style: "{% set ashlvl = states('sensor.proxmox_storage_usage') | float(0)\
+            \ %}\n{% set ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1\
+            \ + 0.1 %}\nha-card {\n    background: linear-gradient(90deg, rgb(76,\
+            \ 175, 80, 0.5) {{ ashpercent1 }}%, #1D1D1D {{ ashpercent2 }}%);\n   \
+            \ border-color:rgba(52,52,52,1);\n}\n"
+        entity: sensor.proxmox_storage_usage
+        icon: mdi:harddisk
+        icon_color: green
+        primary: Storage
+        secondary: '{{ states(''sensor.proxmox_storage_usage'') }} %'
+        tap_action:
+          action: more-info
+        type: custom:mushroom-template-card
+      type: vertical-stack
     type: vertical-stack
   - cards:
     - title: AdGuard Home
@@ -1306,15 +1314,97 @@ views:
         type: custom:mushroom-light-card
         use_light_color: true
       type: horizontal-stack
+    type: vertical-stack
+  - cards:
+    - title: 🖥️ Fisso
+      type: custom:mushroom-title-card
+    - cards:
+      - badge_icon: ''
+        card_mod:
+          style: "{% set ashlvl = states('sensor.fisso_cpuload') | float(0) %}\n{%\
+            \ set ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1\
+            \ %}\nha-card {\n    background: linear-gradient(90deg, rgb(255,111,34,0.5)\
+            \ {{ ashpercent1 }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n\
+            }\n"
+        entity: sensor.fisso_cpuload
+        icon: mdi:chart-areaspline
+        icon_color: deep-orange
+        primary: CPU
+        secondary: '{{ states(''sensor.fisso_cpuload'') }} %'
+        type: custom:mushroom-template-card
+      - badge_icon: ''
+        card_mod:
+          style: "{% set ashlvl = states('sensor.fisso_memoryusage') | float(0) %}\n\
+            {% set ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1\
+            \ %}\nha-card {\n    background: linear-gradient(90deg, rgba(33,150,243,0.5)\
+            \ {{ ashpercent1 }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n\
+            }\n"
+        entity: sensor.fisso_memoryusage
+        icon: mdi:memory
+        icon_color: blue
+        primary: RAM
+        secondary: '{{ states(''sensor.fisso_memoryusage'') }} %'
+        type: custom:mushroom-template-card
+      type: vertical-stack
     - entities:
-      - entity: sensor.cpu_load
-        name: CPU Load
-      - entity: sensor.gpu_load
-        name: GPU Load
-      - entity: sensor.ram_usage
-        name: RAM Usage
-      show_header_toggle: true
-      title: PC
+      - entity: sensor.fisso_activewindow
+        name: Finestra Attiva
+      - entity: sensor.fisso_currentvolume
+        name: Volume
+      - entity: button.fisso_mediamute
+        icon: mdi:volume-mute
+        name: Mute
+      - entity: button.fisso_hibernate
+        icon: mdi:snowflake
+        name: Hibernate
+      type: entities
+    type: vertical-stack
+  - cards:
+    - title: 💻 Abo
+      type: custom:mushroom-title-card
+    - cards:
+      - badge_icon: ''
+        card_mod:
+          style: "{% set ashlvl = states('sensor.abo_cpuload') | float(0) %}\n{% set\
+            \ ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\n\
+            ha-card {\n    background: linear-gradient(90deg, rgb(255,111,34,0.5)\
+            \ {{ ashpercent1 }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n\
+            }\n"
+        entity: sensor.abo_cpuload
+        icon: mdi:chart-areaspline
+        icon_color: deep-orange
+        primary: CPU
+        secondary: '{{ states(''sensor.abo_cpuload'') }} %'
+        type: custom:mushroom-template-card
+      - badge_icon: ''
+        card_mod:
+          style: "{% set ashlvl = states('sensor.abo_memoryusage') | float(0) %}\n\
+            {% set ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1\
+            \ %}\nha-card {\n    background: linear-gradient(90deg, rgba(33,150,243,0.5)\
+            \ {{ ashpercent1 }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n\
+            }\n"
+        entity: sensor.abo_memoryusage
+        icon: mdi:memory
+        icon_color: blue
+        primary: RAM
+        secondary: '{{ states(''sensor.abo_memoryusage'') }} %'
+        type: custom:mushroom-template-card
+      type: vertical-stack
+    - entities:
+      - entity: sensor.abo_activewindow
+        name: Finestra attiva
+      - entity: sensor.abo_battery_charge_remaining_percentage
+        name: Batteria
+      - entity: sensor.abo_battery_charge_status
+        name: In carica
+      - entity: sensor.abo_audio_default_device_volume
+        name: Volume
+      - entity: button.abo_mediamute
+        icon: mdi:volume-mute
+        name: Mute
+      - entity: button.abo_hibernate
+        icon: mdi:snowflake
+        name: Hibernate
       type: entities
     type: vertical-stack
   icon: mdi:desktop-classic

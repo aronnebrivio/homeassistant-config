@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "minor_version": 1,
+  "key": "lovelace_dashboards",
+  "data": {
+    "items": [
+      {
+        "show_in_sidebar": true,
+        "title": "Mobile",
+        "require_admin": false,
+        "mode": "storage",
+        "url_path": "lovelace-mushroom",
+        "id": "lovelace_mushroom",
+        "icon": "mdi:cellphone"
+      },
+      {
+        "id": "map",
+        "icon": "mdi:map",
+        "title": "Map",
+        "url_path": "map",
+        "require_admin": false,
+        "mode": "storage",
+        "show_in_sidebar": true
+      },
+      {
+        "id": "dashboard_test",
+        "show_in_sidebar": true,
+        "title": "Devices",
+        "require_admin": false,
+        "mode": "storage",
+        "url_path": "dashboard-test",
+        "icon": "mdi:desktop-classic"
+      }
+    ]
+  }
+}

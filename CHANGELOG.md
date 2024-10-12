@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.42.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.41.0...v2.42.0) (2024-10-12)
+
+
+### Features
+
+* add Sensor.Community integration for air quality sensors ([96260be](https://github.com/aronnebrivio/homeassistant-config/commit/96260be9ff4705a5a807e17efdddae2f752194b9))
+* remove Cloudflared add-on ([b5aafc1](https://github.com/aronnebrivio/homeassistant-config/commit/b5aafc1299798457090dbd36ab79be90001603ad))
+* remove RPC Shutdown add-on ([27871e1](https://github.com/aronnebrivio/homeassistant-config/commit/27871e1447ab13fd784f3129db83ada15c5b8d70))
+* use button created by HASS.Agent instead of RPCShutdown to turn off PC ([a488ce6](https://github.com/aronnebrivio/homeassistant-config/commit/a488ce673cea34aef8a557f0fba0014e63c66439))
+* use smart plug 1 for bedroom mosquitto repellent ([81a8169](https://github.com/aronnebrivio/homeassistant-config/commit/81a8169dd2a13e72499ac35fb4e2d57b5875ad80))
+
 ## [2.41.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.40.0...v2.41.0) (2024-10-12)
 
 

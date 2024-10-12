@@ -19,6 +19,7 @@ bedroom:
     - sensor.termometro_camera_temperature
     - sensor.termometro_camera_humidity
     - climate.condizionatore_camera
+    - switch.mosquitto_repellent
 bathroom:
   name: Bagno
   entities:

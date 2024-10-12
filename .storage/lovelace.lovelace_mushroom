@@ -195,43 +195,6 @@
                   "icon_color": "{% if is_state('switch.dummy_switch', 'on') %}\n  purple\n{% endif %}"
                 }
               ]
-            },
-            {
-              "type": "custom:mini-graph-card",
-              "name": "Consumo elettrico giornaliero",
-              "icon": "mdi:pulse",
-              "smoothing": true,
-              "hours_to_show": 240,
-              "points_per_hour": 1,
-              "line_width": 2,
-              "line_color": "orange",
-              "animate": true,
-              "height": 100,
-              "entities": [
-                "sensor.daily_energy"
-              ],
-              "show": {
-                "graph": "bar",
-                "average": true,
-                "extrema": true,
-                "labels": false
-              },
-              "group_by": "date",
-              "aggregate_func": "max"
-            },
-            {
-              "type": "custom:mini-graph-card",
-              "name": "Umiditá assoluta",
-              "entities": [
-                {
-                  "entity": "sensor.thermal_comfort_absolute_humidity",
-                  "name": "Interno"
-                },
-                {
-                  "entity": "sensor.external_absolute_humidity",
-                  "name": "Esterno"
-                }
-              ]
             }
           ]
         },
@@ -641,6 +604,31 @@
                   ]
                 }
               ]
+            },
+            {
+              "type": "vertical-stack",
+              "cards": [
+                {
+                  "type": "custom:mushroom-title-card",
+                  "title": "",
+                  "subtitle": "Extra"
+                },
+                {
+                  "type": "horizontal-stack",
+                  "cards": [
+                    {
+                      "type": "custom:mushroom-entity-card",
+                      "entity": "switch.mosquitto_repellent",
+                      "name": "Antizanzare",
+                      "icon": "mdi:bee",
+                      "icon_color": "light-green",
+                      "tap_action": {
+                        "action": "toggle"
+                      }
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
@@ -767,6 +755,48 @@
                   "type": "custom:mushroom-media-player-card",
                   "entity": "media_player.echo_show_cucina",
                   "use_media_info": true
+                }
+              ]
+            },
+            {
+              "type": "custom:mushroom-title-card",
+              "title": "",
+              "subtitle": "Stats"
+            },
+            {
+              "type": "custom:mini-graph-card",
+              "name": "Consumo elettrico giornaliero",
+              "icon": "mdi:pulse",
+              "smoothing": true,
+              "hours_to_show": 240,
+              "points_per_hour": 1,
+              "line_width": 2,
+              "line_color": "orange",
+              "animate": true,
+              "height": 100,
+              "entities": [
+                "sensor.daily_energy"
+              ],
+              "show": {
+                "graph": "bar",
+                "average": true,
+                "extrema": true,
+                "labels": false
+              },
+              "group_by": "date",
+              "aggregate_func": "max"
+            },
+            {
+              "type": "custom:mini-graph-card",
+              "name": "Umiditá assoluta",
+              "entities": [
+                {
+                  "entity": "sensor.thermal_comfort_absolute_humidity",
+                  "name": "Interno"
+                },
+                {
+                  "entity": "sensor.external_absolute_humidity",
+                  "name": "Esterno"
                 }
               ]
             }
@@ -948,40 +978,54 @@
                   "subtitle": "Server"
                 },
                 {
-                  "type": "custom:mushroom-template-card",
-                  "primary": "CPU",
-                  "secondary": "{{ states('sensor.proxmox_cpu_usage') }} %",
-                  "icon": "mdi:chart-areaspline",
-                  "icon_color": "deep-orange",
-                  "entity": "sensor.proxmox_cpu_usage",
-                  "badge_icon": "",
-                  "card_mod": {
-                    "style": "{% set ashlvl = states('sensor.proxmox_memory_usage') | float(0) %}\n{% set ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\nha-card {\n    background: linear-gradient(90deg, rgb(255,111,34,0.5) {{ ashpercent1 }}%, rgba(139,195,74,0) {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n}\n"
-                  }
-                },
-                {
-                  "type": "custom:mushroom-template-card",
-                  "primary": "RAM",
-                  "secondary": "{{ states('sensor.proxmox_memory_usage') }} GB",
-                  "icon": "mdi:memory",
-                  "icon_color": "blue",
-                  "entity": "sensor.proxmox_memory_usage",
-                  "badge_icon": "",
-                  "card_mod": {
-                    "style": "{% set ashlvl = states('sensor.proxmox_memory_usage') | float(0) %}\n{% set ashpercent1 = ashlvl / 16 * 100 %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\nha-card {\n    background: linear-gradient(90deg, rgba(33,150,243,0.5) {{ ashpercent1 }}%, rgba(139,195,74,0) {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n}\n"
-                  }
-                },
-                {
-                  "type": "custom:mushroom-template-card",
-                  "primary": "Storage",
-                  "secondary": "{{ states('sensor.proxmox_storage_usage') }} %",
-                  "icon": "mdi:harddisk",
-                  "icon_color": "green",
-                  "entity": "sensor.proxmox_storage_usage",
-                  "badge_icon": "",
-                  "card_mod": {
-                    "style": "{% set ashlvl = states('sensor.proxmox_storage_usage') | float(0) %}\n{% set ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\nha-card {\n    background: linear-gradient(90deg, rgb(76, 175, 80, 0.5) {{ ashpercent1 }}%, rgba(139,195,74,0) {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n}\n"
-                  }
+                  "type": "vertical-stack",
+                  "cards": [
+                    {
+                      "type": "custom:mushroom-template-card",
+                      "primary": "CPU",
+                      "secondary": "{{ states('sensor.proxmox_cpu_usage') }} %",
+                      "icon": "mdi:chart-areaspline",
+                      "icon_color": "deep-orange",
+                      "entity": "sensor.proxmox_cpu_usage",
+                      "badge_icon": "",
+                      "tap_action": {
+                        "action": "more-info"
+                      },
+                      "card_mod": {
+                        "style": "{% set ashlvl = states('sensor.proxmox_memory_usage') | float(0) %}\n{% set ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\nha-card {\n    background: linear-gradient(90deg, rgb(255,111,34,0.5) {{ ashpercent1 }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n}\n"
+                      }
+                    },
+                    {
+                      "type": "custom:mushroom-template-card",
+                      "primary": "RAM",
+                      "secondary": "{{ states('sensor.proxmox_memory_usage') }} GB",
+                      "icon": "mdi:memory",
+                      "icon_color": "blue",
+                      "entity": "sensor.proxmox_memory_usage",
+                      "badge_icon": "",
+                      "tap_action": {
+                        "action": "more-info"
+                      },
+                      "card_mod": {
+                        "style": "{% set ashlvl = states('sensor.proxmox_memory_usage') | float(0) %}\n{% set ashpercent1 = ashlvl / 16 * 100 %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\nha-card {\n    background: linear-gradient(90deg, rgba(33,150,243,0.5) {{ ashpercent1 }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n}\n"
+                      }
+                    },
+                    {
+                      "type": "custom:mushroom-template-card",
+                      "primary": "Storage",
+                      "secondary": "{{ states('sensor.proxmox_storage_usage') }} %",
+                      "icon": "mdi:harddisk",
+                      "icon_color": "green",
+                      "entity": "sensor.proxmox_storage_usage",
+                      "badge_icon": "",
+                      "card_mod": {
+                        "style": "{% set ashlvl = states('sensor.proxmox_storage_usage') | float(0) %}\n{% set ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\nha-card {\n    background: linear-gradient(90deg, rgb(76, 175, 80, 0.5) {{ ashpercent1 }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n}\n"
+                      },
+                      "tap_action": {
+                        "action": "more-info"
+                      }
+                    }
+                  ]
                 }
               ]
             }

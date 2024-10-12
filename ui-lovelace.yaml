@@ -521,6 +521,13 @@ views:
           action: toggle
         type: custom:mushroom-entity-card
       type: horizontal-stack
+    - entity: switch.mosquitto_repellent
+      icon: mdi:bee
+      icon_color: light-green
+      name: Antizanzare
+      tap_action:
+        action: toggle
+      type: custom:mushroom-entity-card
     type: vertical-stack
   - cards:
     - title: Scrivania

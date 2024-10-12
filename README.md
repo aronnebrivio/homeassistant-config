@@ -12,7 +12,7 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 462
+Number of entities | 461
 Number of sensors | 232
 
 
@@ -20,7 +20,6 @@ Number of sensors | 232
 
 ### Add-ons
 - Advanced SSH & Web Terminal
-- Cloudflared
 - ESPHome
 - File editor
 - Home Assistant Google Drive Backup

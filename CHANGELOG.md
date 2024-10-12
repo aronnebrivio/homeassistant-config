@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.41.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.40.0...v2.41.0) (2024-10-12)
+
+
+### Features
+
+* include additional custom dashboards json files from .storage folder ([83a3076](https://github.com/aronnebrivio/homeassistant-config/commit/83a30766abf847124153f579420e756a65719371))
+* review esp8266-01 configuration and use as Master Sword switch instead of a smat plug ([9bfa1cd](https://github.com/aronnebrivio/homeassistant-config/commit/9bfa1cd8e153729c0d2407594725210c112db3fd))
+
+
+### Bug Fixes
+
+* use Python 3.12 to execute esphome configuration check ([d0a8b3b](https://github.com/aronnebrivio/homeassistant-config/commit/d0a8b3b2e53c5bbec511dccd60dfc64365366ced))
+
 ## [2.40.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.39.0...v2.40.0) (2024-10-11)
 
 

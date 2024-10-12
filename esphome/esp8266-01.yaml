@@ -1,6 +1,8 @@
+substitutions:
+  name: "esp8266-01"
+
 esphome:
-  name: "master-sword"
-  friendly_name: "Master Sword"
+  name: ${name}
 
 esp8266:
   board: esp01_1m
@@ -11,11 +13,11 @@ logger:
 # Enable Home Assistant API
 api:
   encryption:
-    key: "qxnithwbnZKvfr29axNOVg3j51zlZB0R0jW7jOlGGCg="
+    key: !secret esp8266-01.api.encryption_key
 
 ota:
   - platform: esphome
-    password: "fbdc6f4c4599fe98ffc506b39ce48e04"
+    password: !secret esp8266-01.ota.password
 
 wifi:
   ssid: !secret wifi.ssid
@@ -23,12 +25,12 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "master-sword"
-    password: "bmChb8dr3hdO"
+    ssid: ${name}
+    password: !secret esp8266-01.wifi.ap.password
 
 captive_portal:
 
 switch:
   - platform: gpio
-    pin: 14
-    id: master_sword
+    pin: GPIO14
+    name: ${name}-relay

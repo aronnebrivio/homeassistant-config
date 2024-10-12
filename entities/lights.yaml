@@ -1,7 +1,7 @@
 # Master Sword
 - platform: switch
   name: "Spada Suprema"
-  entity_id: switch.smart_plug_1
+  entity_id: switch.esp8266_01_relay
 # Piantana Sala
 - platform: group
   name: "Piantana Sala"

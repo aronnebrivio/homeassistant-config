@@ -123,7 +123,7 @@
   indoor_temp_sensor: sensor.home_temperature
   indoor_humidity_sensor: sensor.home_humidity
   outdoor_temp_sensor: sensor.weather_temperature
-  calibration_factor: 2.0
+  calibration_factor: 1.364
 # Date and Time
 - platform: time_date
   display_options:
@@ -134,3 +134,38 @@
     - 'date_time_iso'
     - 'time_date'
     - 'time_utc'
+# Indoor AQI
+- platform: statistics
+  unique_id: pm25_24hr_avg
+  name: "PM2.5 24-hour Average"
+  entity_id: sensor.esp32_01_particulate_matter_2_5_m_concentration
+  state_characteristic: mean
+  max_age:
+    hours: 24
+- platform: template
+  sensors:
+    indoor_aqi:
+      friendly_name: "Indoor AQI"
+      icon_template: mdi:chemical-weapon
+      device_class: aqi
+      unit_of_measurement: AQI
+      value_template: >
+        {% macro aqi(val, val_l, val_h, aqi_l, aqi_h) -%}
+          {{(((aqi_h-aqi_l)/(val_h - val_l) * (val - val_l)) + aqi_l)|round(0)}}
+        {%- endmacro %}
+        {% set v = states('sensor.esp32_01_particulate_matter_2_5_m_concentration')|round(1) %}
+        {% if v <= 12.0 %}
+          {{aqi(v, 0, 12.0, 0, 50)}}
+        {% elif 12.0 < v <= 35.4 %}
+          {{aqi(v, 12.1, 35.4, 51, 100)}}
+        {% elif 35.4 < v <= 55.4 %}
+          {{aqi(v, 35.5, 55.4, 101, 150)}}
+        {% elif 55.4 < v <= 150.5 %}
+          {{aqi(v, 55.5, 150.4, 151, 200)}}
+        {% elif 150.4 < v <= 250.4 %}
+          {{aqi(v, 150.4, 250.4, 201, 300)}}
+        {% elif 250.5 < v <= 500.4 %}
+          {{aqi(v, 250.5, 500.4, 301, 500)}}
+        {% else %}
+          500
+        {% endif %}

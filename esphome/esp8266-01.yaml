@@ -20,8 +20,8 @@ ota:
     password: !secret esp8266-01.ota.password
 
 wifi:
-  ssid: !secret wifi.ssid
-  password: !secret wifi.password
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:

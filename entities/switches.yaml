@@ -7,6 +7,7 @@
     service: button.press
     target:
       entity_id: button.fisso_shutdown
+    data: {}
 # Dummy switch
 - platform: template
   switches:

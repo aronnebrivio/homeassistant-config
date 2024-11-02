@@ -8,8 +8,6 @@ esphome:
     then:
       - delay: 1s
       - script.execute: boot_flash
-  includes:
-    - utils.h
 
 esp32:
   board: esp32dev

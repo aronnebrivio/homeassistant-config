@@ -1005,21 +1005,216 @@ views:
       icon: mdi:water
     title: Weather
     type: entities
-  - entities:
-    - entity: sensor.thermal_comfort_absolute_humidity
-      name: Interno
-    - entity: sensor.external_absolute_humidity
-      name: Esterno
-    name: Umiditá assoluta
-    type: custom:mini-graph-card
-  - entity: sensor.mold_indicator
-    name: Rischio muffa
-    needle: false
-    severity:
-      green: 0
-      red: 85
-      yellow: 70
-    type: gauge
+  - cards:
+    - subtitle: Umidità
+      type: custom:mushroom-title-card
+    - entity: sensor.mold_indicator
+      name: Rischio muffa
+      needle: true
+      segments:
+      - color: '#FF453A'
+        from: 100
+      - color: '#FE5335'
+        from: 95
+      - color: '#FE6230'
+        from: 90
+      - color: '#FE702B'
+        from: 85
+      - color: '#FE7F26'
+        from: 80
+      - color: '#FE8E21'
+        from: 75
+      - color: '#FE9C1C'
+        from: 70
+      - color: '#FEAB17'
+        from: 65
+      - color: '#FEB912'
+        from: 60
+      - color: '#FEC80D'
+        from: 55
+      - color: '#FED709'
+        from: 50
+      - color: '#EBD10F'
+        from: 45
+      - color: '#D8CC15'
+        from: 40
+      - color: '#C6C61B'
+        from: 35
+      - color: '#B3C121'
+        from: 30
+      - color: '#A1BB28'
+        from: 25
+      - color: '#8EB62E'
+        from: 20
+      - color: '#7BB034'
+        from: 15
+      - color: '#69AB3A'
+        from: 10
+      - color: '#56A540'
+        from: 5
+      - color: '#44A047'
+        from: 0
+      type: gauge
+    - cards:
+      - entity: sensor.thermal_comfort_absolute_humidity
+        icon_color: green
+        name: Interno
+        primary_info: state
+        secondary_info: name
+        style: "ha-card {\n  border: none\n}\n"
+        type: custom:mushroom-entity-card
+      - entity: sensor.external_absolute_humidity
+        icon_color: blue
+        name: Esterno
+        primary_info: state
+        secondary_info: name
+        style: "ha-card {\n  border: none\n}\n"
+        type: custom:mushroom-entity-card
+      columns: 2
+      square: false
+      type: grid
+    - animate: true
+      entities:
+      - color: green
+        entity: sensor.thermal_comfort_absolute_humidity
+        name: Interno
+      - entity: sensor.external_absolute_humidity
+        name: Esterno
+      font_size: 50
+      hours_to_show: 24
+      line_width: 3
+      show:
+        icon: false
+        labels: false
+        labels_secondary: false
+        legend: false
+        name: false
+        points: hover
+        state: false
+      style: "ha-card {\n  border: none\n}\n"
+      type: custom:mini-graph-card
+    keep:
+      background: false
+      box_shadow: false
+      margin: false
+    style: "ha-card-border-width: 0\nha-card {\n  border: none\n}\n"
+    type: custom:stack-in-card
+  - cards:
+    - subtitle: Qualità dell'aria
+      type: custom:mushroom-title-card
+    - entity: sensor.indoor_aqi
+      max: 200
+      min: 0
+      name: ''
+      needle: true
+      segments:
+      - color: '#44A047'
+        from: 0
+      - color: '#69AB3A'
+        from: 10
+      - color: '#8EB62E'
+        from: 20
+      - color: '#B3C121'
+        from: 30
+      - color: '#D8CC15'
+        from: 40
+      - color: '#FED709'
+        from: 50
+      - color: '#FEC507'
+        from: 60
+      - color: '#FEB305'
+        from: 70
+      - color: '#FEA104'
+        from: 80
+      - color: '#FE8F02'
+        from: 90
+      - color: '#FE7E01'
+        from: 100
+      - color: '#E9640F'
+        from: 110
+      - color: '#D54B1E'
+        from: 120
+      - color: '#C1322D'
+        from: 130
+      - color: '#AD193C'
+        from: 140
+      - color: '#99004B'
+        from: 150
+      - color: '#960047'
+        from: 155
+      - color: '#930043'
+        from: 160
+      - color: '#90003F'
+        from: 165
+      - color: '#8E003B'
+        from: 170
+      - color: '#8B0037'
+        from: 175
+      - color: '#880033'
+        from: 180
+      - color: '#86002F'
+        from: 185
+      - color: '#83002B'
+        from: 190
+      - color: '#800027'
+        from: 195
+      - color: '#7E0023'
+        from: 200
+      type: gauge
+    - cards:
+      - entity: sensor.esp32_01_particulate_matter_10_0_m_concentration
+        icon_color: green
+        name: <10µm
+        primary_info: state
+        secondary_info: name
+        style: "ha-card {\n  border: none\n}\n"
+        type: custom:mushroom-entity-card
+      - entity: sensor.esp32_01_particulate_matter_2_5_m_concentration
+        icon_color: blue
+        name: <2.5µm
+        primary_info: state
+        secondary_info: name
+        style: "ha-card {\n  border: none\n}\n"
+        type: custom:mushroom-entity-card
+      - entity: sensor.esp32_01_particulate_matter_1_0_m_concentration
+        icon_color: red
+        name: <1µm
+        primary_info: state
+        secondary_info: name
+        style: "ha-card {\n  border: none\n}\n"
+        type: custom:mushroom-entity-card
+      columns: 3
+      square: false
+      type: grid
+    - animate: true
+      entities:
+      - color: green
+        entity: sensor.esp32_01_particulate_matter_10_0_m_concentration
+        name: <10µm
+      - entity: sensor.esp32_01_particulate_matter_2_5_m_concentration
+        name: <2.5µm
+      - color: red
+        entity: sensor.esp32_01_particulate_matter_1_0_m_concentration
+        name: <1µm
+      font_size: 50
+      hours_to_show: 24
+      line_width: 3
+      show:
+        icon: false
+        labels: false
+        labels_secondary: false
+        legend: false
+        name: false
+        points: hover
+        state: false
+      style: "ha-card {\n  border: none\n}\n"
+      type: custom:mini-graph-card
+    keep:
+      background: false
+      box_shadow: false
+      margin: false
+    style: "ha-card-border-width: 0\nha-card {\n  border: none\n}\n"
+    type: custom:stack-in-card
   - entities:
     - entity: sensor.thermal_comfort_dew_point
       name: Dew point

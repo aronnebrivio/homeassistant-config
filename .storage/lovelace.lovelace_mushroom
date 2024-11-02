@@ -69,11 +69,11 @@
                 },
                 {
                   "type": "custom:mushroom-entity-card",
-                  "entity": "binary_sensor.garbage_collection_tomorrow",
+                  "entity": "sensor.indoor_aqi",
                   "name": " ",
                   "layout": "vertical",
-                  "icon": "mdi:trash-can-outline",
-                  "icon_color": "brown"
+                  "icon": "",
+                  "icon_color": "green"
                 }
               ]
             },
@@ -94,7 +94,7 @@
             },
             {
               "type": "custom:mushroom-title-card",
-              "title": "Rooms"
+              "title": "🏠 Rooms"
             },
             {
               "type": "horizontal-stack",
@@ -195,6 +195,14 @@
                   "icon_color": "{% if is_state('switch.dummy_switch', 'on') %}\n  purple\n{% endif %}"
                 }
               ]
+            },
+            {
+              "type": "custom:mushroom-title-card",
+              "title": "🤓 Stats",
+              "title_tap_action": {
+                "action": "navigate",
+                "navigation_path": "/lovelace-mushroom/stats"
+              }
             }
           ]
         },
@@ -757,48 +765,6 @@
                   "use_media_info": true
                 }
               ]
-            },
-            {
-              "type": "custom:mushroom-title-card",
-              "title": "",
-              "subtitle": "Stats"
-            },
-            {
-              "type": "custom:mini-graph-card",
-              "name": "Consumo elettrico giornaliero",
-              "icon": "mdi:pulse",
-              "smoothing": true,
-              "hours_to_show": 240,
-              "points_per_hour": 1,
-              "line_width": 2,
-              "line_color": "orange",
-              "animate": true,
-              "height": 100,
-              "entities": [
-                "sensor.daily_energy"
-              ],
-              "show": {
-                "graph": "bar",
-                "average": true,
-                "extrema": true,
-                "labels": false
-              },
-              "group_by": "date",
-              "aggregate_func": "max"
-            },
-            {
-              "type": "custom:mini-graph-card",
-              "name": "Umiditá assoluta",
-              "entities": [
-                {
-                  "entity": "sensor.thermal_comfort_absolute_humidity",
-                  "name": "Interno"
-                },
-                {
-                  "entity": "sensor.external_absolute_humidity",
-                  "name": "Esterno"
-                }
-              ]
             }
           ]
         },
@@ -1069,6 +1035,407 @@
               ]
             }
           ]
+        },
+        {
+          "icon": "mdi:chart-areaspline-variant",
+          "path": "stats",
+          "cards": [
+            {
+              "type": "custom:mushroom-chips-card",
+              "chips": [
+                {
+                  "type": "menu"
+                },
+                {
+                  "type": "back"
+                }
+              ]
+            },
+            {
+              "type": "custom:mushroom-title-card",
+              "title": "Stats"
+            },
+            {
+              "type": "custom:mini-graph-card",
+              "name": "Consumo elettrico giornaliero",
+              "icon": "mdi:pulse",
+              "smoothing": true,
+              "hours_to_show": 240,
+              "points_per_hour": 1,
+              "line_width": 2,
+              "line_color": "orange",
+              "animate": true,
+              "height": 100,
+              "entities": [
+                "sensor.daily_energy"
+              ],
+              "show": {
+                "graph": "bar",
+                "average": true,
+                "extrema": true,
+                "labels": false
+              },
+              "group_by": "date",
+              "aggregate_func": "max"
+            },
+            {
+              "type": "custom:stack-in-card",
+              "keep": {
+                "margin": false,
+                "box_shadow": false,
+                "background": false
+              },
+              "style": "ha-card-border-width: 0\nha-card {\n  border: none\n}\n",
+              "cards": [
+                {
+                  "type": "custom:mushroom-title-card",
+                  "subtitle": "Umidità"
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.mold_indicator",
+                  "name": "Rischio muffa",
+                  "needle": true,
+                  "segments": [
+                    {
+                      "from": 100,
+                      "color": "#FF453A"
+                    },
+                    {
+                      "from": 95,
+                      "color": "#FE5335"
+                    },
+                    {
+                      "from": 90,
+                      "color": "#FE6230"
+                    },
+                    {
+                      "from": 85,
+                      "color": "#FE702B"
+                    },
+                    {
+                      "from": 80,
+                      "color": "#FE7F26"
+                    },
+                    {
+                      "from": 75,
+                      "color": "#FE8E21"
+                    },
+                    {
+                      "from": 70,
+                      "color": "#FE9C1C"
+                    },
+                    {
+                      "from": 65,
+                      "color": "#FEAB17"
+                    },
+                    {
+                      "from": 60,
+                      "color": "#FEB912"
+                    },
+                    {
+                      "from": 55,
+                      "color": "#FEC80D"
+                    },
+                    {
+                      "from": 50,
+                      "color": "#FED709"
+                    },
+                    {
+                      "from": 45,
+                      "color": "#EBD10F"
+                    },
+                    {
+                      "from": 40,
+                      "color": "#D8CC15"
+                    },
+                    {
+                      "from": 35,
+                      "color": "#C6C61B"
+                    },
+                    {
+                      "from": 30,
+                      "color": "#B3C121"
+                    },
+                    {
+                      "from": 25,
+                      "color": "#A1BB28"
+                    },
+                    {
+                      "from": 20,
+                      "color": "#8EB62E"
+                    },
+                    {
+                      "from": 15,
+                      "color": "#7BB034"
+                    },
+                    {
+                      "from": 10,
+                      "color": "#69AB3A"
+                    },
+                    {
+                      "from": 5,
+                      "color": "#56A540"
+                    },
+                    {
+                      "from": 0,
+                      "color": "#44A047"
+                    }
+                  ]
+                },
+                {
+                  "type": "grid",
+                  "square": false,
+                  "columns": 2,
+                  "cards": [
+                    {
+                      "type": "custom:mushroom-entity-card",
+                      "entity": "sensor.thermal_comfort_absolute_humidity",
+                      "primary_info": "state",
+                      "secondary_info": "name",
+                      "name": "Interno",
+                      "icon_color": "green",
+                      "style": "ha-card {\n  border: none\n}\n"
+                    },
+                    {
+                      "type": "custom:mushroom-entity-card",
+                      "entity": "sensor.external_absolute_humidity",
+                      "primary_info": "state",
+                      "secondary_info": "name",
+                      "name": "Esterno",
+                      "icon_color": "blue",
+                      "style": "ha-card {\n  border: none\n}\n"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:mini-graph-card",
+                  "entities": [
+                    {
+                      "entity": "sensor.thermal_comfort_absolute_humidity",
+                      "name": "Interno",
+                      "color": "green"
+                    },
+                    {
+                      "entity": "sensor.external_absolute_humidity",
+                      "name": "Esterno"
+                    }
+                  ],
+                  "hours_to_show": 24,
+                  "line_width": 3,
+                  "font_size": 50,
+                  "animate": true,
+                  "show": {
+                    "name": false,
+                    "icon": false,
+                    "state": false,
+                    "legend": false,
+                    "points": "hover",
+                    "labels": false,
+                    "labels_secondary": false
+                  },
+                  "style": "ha-card {\n  border: none\n}\n"
+                }
+              ]
+            },
+            {
+              "type": "custom:stack-in-card",
+              "keep": {
+                "margin": false,
+                "box_shadow": false,
+                "background": false
+              },
+              "style": "ha-card-border-width: 0\nha-card {\n  border: none\n}\n",
+              "cards": [
+                {
+                  "type": "custom:mushroom-title-card",
+                  "subtitle": "Qualità dell'aria"
+                },
+                {
+                  "type": "gauge",
+                  "entity": "sensor.indoor_aqi",
+                  "name": "",
+                  "needle": true,
+                  "min": 0,
+                  "max": 200,
+                  "segments": [
+                    {
+                      "from": 0,
+                      "color": "#44A047"
+                    },
+                    {
+                      "from": 10,
+                      "color": "#69AB3A"
+                    },
+                    {
+                      "from": 20,
+                      "color": "#8EB62E"
+                    },
+                    {
+                      "from": 30,
+                      "color": "#B3C121"
+                    },
+                    {
+                      "from": 40,
+                      "color": "#D8CC15"
+                    },
+                    {
+                      "from": 50,
+                      "color": "#FED709"
+                    },
+                    {
+                      "from": 60,
+                      "color": "#FEC507"
+                    },
+                    {
+                      "from": 70,
+                      "color": "#FEB305"
+                    },
+                    {
+                      "from": 80,
+                      "color": "#FEA104"
+                    },
+                    {
+                      "from": 90,
+                      "color": "#FE8F02"
+                    },
+                    {
+                      "from": 100,
+                      "color": "#FE7E01"
+                    },
+                    {
+                      "from": 110,
+                      "color": "#E9640F"
+                    },
+                    {
+                      "from": 120,
+                      "color": "#D54B1E"
+                    },
+                    {
+                      "from": 130,
+                      "color": "#C1322D"
+                    },
+                    {
+                      "from": 140,
+                      "color": "#AD193C"
+                    },
+                    {
+                      "from": 150,
+                      "color": "#99004B"
+                    },
+                    {
+                      "from": 155,
+                      "color": "#960047"
+                    },
+                    {
+                      "from": 160,
+                      "color": "#930043"
+                    },
+                    {
+                      "from": 165,
+                      "color": "#90003F"
+                    },
+                    {
+                      "from": 170,
+                      "color": "#8E003B"
+                    },
+                    {
+                      "from": 175,
+                      "color": "#8B0037"
+                    },
+                    {
+                      "from": 180,
+                      "color": "#880033"
+                    },
+                    {
+                      "from": 185,
+                      "color": "#86002F"
+                    },
+                    {
+                      "from": 190,
+                      "color": "#83002B"
+                    },
+                    {
+                      "from": 195,
+                      "color": "#800027"
+                    },
+                    {
+                      "from": 200,
+                      "color": "#7E0023"
+                    }
+                  ]
+                },
+                {
+                  "type": "grid",
+                  "square": false,
+                  "columns": 3,
+                  "cards": [
+                    {
+                      "type": "custom:mushroom-entity-card",
+                      "entity": "sensor.esp32_01_particulate_matter_10_0_m_concentration",
+                      "primary_info": "state",
+                      "secondary_info": "name",
+                      "name": "<10µm",
+                      "icon_color": "green",
+                      "style": "ha-card {\n  border: none\n}\n"
+                    },
+                    {
+                      "type": "custom:mushroom-entity-card",
+                      "entity": "sensor.esp32_01_particulate_matter_2_5_m_concentration",
+                      "primary_info": "state",
+                      "secondary_info": "name",
+                      "name": "<2.5µm",
+                      "icon_color": "blue",
+                      "style": "ha-card {\n  border: none\n}\n"
+                    },
+                    {
+                      "type": "custom:mushroom-entity-card",
+                      "entity": "sensor.esp32_01_particulate_matter_1_0_m_concentration",
+                      "primary_info": "state",
+                      "secondary_info": "name",
+                      "name": "<1µm",
+                      "icon_color": "red",
+                      "style": "ha-card {\n  border: none\n}\n"
+                    }
+                  ]
+                },
+                {
+                  "type": "custom:mini-graph-card",
+                  "entities": [
+                    {
+                      "entity": "sensor.esp32_01_particulate_matter_10_0_m_concentration",
+                      "name": "<10µm",
+                      "color": "green"
+                    },
+                    {
+                      "entity": "sensor.esp32_01_particulate_matter_2_5_m_concentration",
+                      "name": "<2.5µm"
+                    },
+                    {
+                      "entity": "sensor.esp32_01_particulate_matter_1_0_m_concentration",
+                      "name": "<1µm",
+                      "color": "red"
+                    }
+                  ],
+                  "hours_to_show": 24,
+                  "line_width": 3,
+                  "font_size": 50,
+                  "animate": true,
+                  "show": {
+                    "name": false,
+                    "icon": false,
+                    "state": false,
+                    "legend": false,
+                    "points": "hover",
+                    "labels": false,
+                    "labels_secondary": false
+                  },
+                  "style": "ha-card {\n  border: none\n}\n"
+                }
+              ]
+            }
+          ],
+          "badges": []
         }
       ]
     }

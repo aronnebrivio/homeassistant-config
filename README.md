@@ -12,8 +12,8 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 461
-Number of sensors | 232
+Number of entities | 477
+Number of sensors | 244
 
 
 ## My installed extensions:
@@ -23,6 +23,7 @@ Number of sensors | 232
 - ESPHome
 - File editor
 - Home Assistant Google Drive Backup
+- Matter Server
 - Mosquitto broker
 - Samba share
 - Zigbee2MQTT

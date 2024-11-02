@@ -220,17 +220,18 @@
       entity_id: light.piantana_sala
   mode: single
 - id: '1677479754729'
-  alias: '[NFC][Bed] Lights off'
-  description: Turn off bed lights
-  trigger:
-  - platform: tag
-    tag_id: 515ace01-e5e2-41fc-bc5f-1b138fb30c35
-  condition: []
-  action:
-  - service: light.turn_off
-    data: {}
+  alias: '[NFC][Bed] Lights toggle'
+  description: Toggle bed lights
+  triggers:
+  - tag_id: 515ace01-e5e2-41fc-bc5f-1b138fb30c35
+    trigger: tag
+  conditions: []
+  actions:
+  - action: light.toggle
     target:
-      entity_id: light.bed
+      entity_id:
+      - light.bed
+    data: {}
   mode: single
 - id: '1686580227765'
   alias: '[Climate] Turn Bedroom AC on during night if temp above 26.2'
@@ -295,4 +296,18 @@
     data: {}
     target:
       entity_id: climate.condizionatore_camera
+  mode: single
+- id: '1728838134324'
+  alias: '[NFC][Vetrina Ingresso] Toggle'
+  description: 'Toggle vetrina ingresso light'
+  triggers:
+  - trigger: tag
+    tag_id: 0d891f34-721d-43b2-b33d-87c570913883
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.vetrina_ingresso
   mode: single

@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.43.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.42.0...v2.43.0) (2024-11-02)
+
+
+### Features
+
+* **air-quality:** add entities to measure air quality via ESPHome and calculate AQI from PM2.5 ([f786179](https://github.com/aronnebrivio/homeassistant-config/commit/f7861795ad3061081762562dec2c5092dc11a397))
+* **air-quality:** review web and mobile dashboards to view air quality data ([25145a4](https://github.com/aronnebrivio/homeassistant-config/commit/25145a4a07182e8285b3099acdd7c8ed25e54332))
+* **automations:** add vetrina ingresso NFC toggle and review bed lights tag ([1bf3f09](https://github.com/aronnebrivio/homeassistant-config/commit/1bf3f09eaebfe344a202232fe03bb074fe7248f9))
+* update HA to 2024.10.4 ([5f7782b](https://github.com/aronnebrivio/homeassistant-config/commit/5f7782b0e7af98f3cb0766b4d8d74c4c9c232cbe))
+
+
+### Bug Fixes
+
+* remove unused include ([69b62f3](https://github.com/aronnebrivio/homeassistant-config/commit/69b62f3997ba2574c38bf3348561fe8b40baf673))
+
 ## [2.42.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.41.0...v2.42.0) (2024-10-12)
 
 

@@ -86,6 +86,11 @@ SERVICE_DOMAINS = [
         "service_id": "kronberg",
     },
     {
+        "title": "MHEG Mülheim an der Ruhr",
+        "url": "https://www.mheg.de/",
+        "service_id": "muelheim",
+    },
+    {
         "title": "Stadt Norderstedt",
         "url": "https://www.betriebsamt-norderstedt.de/",
         "service_id": "nds",
@@ -135,6 +140,16 @@ SERVICE_DOMAINS = [
     #        "url": "https://www.straelen.de/",
     #        "service_id": "straelen",
     #    },
+    {
+        "title": "Stadt Cuxhaven",
+        "url": "https://www.cuxhaven.de/",
+        "service_id": "cux",
+    },
+    {
+        "title": "Stadt Frankenthal",
+        "url": "https://www.frankenthal.de/",
+        "service_id": "frankenthal",
+    },
 ]
 
 

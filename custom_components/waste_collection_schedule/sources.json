@@ -51,10 +51,10 @@
       "id": "impactapps_com_au"
     },
     {
-      "title": "Bayside City Council",
+      "title": "Bayside Council",
       "module": "impactapps_com_au",
       "default_params": {
-        "service": "Bayside City Council"
+        "service": "Bayside Council"
       },
       "id": "impactapps_com_au"
     },
@@ -94,6 +94,14 @@
     },
     {
       "title": "Brisbane City Council",
+      "module": "impactapps_com_au",
+      "default_params": {
+        "service": "Brisbane City Council"
+      },
+      "id": "impactapps_com_au"
+    },
+    {
+      "title": "Brisbane City Council",
       "module": "brisbane_qld_gov_au",
       "default_params": {},
       "id": "brisbane_qld_gov_au"
@@ -119,6 +127,14 @@
       "id": "campbelltown_nsw_gov_au"
     },
     {
+      "title": "Campbeltown City Council",
+      "module": "impactapps_com_au",
+      "default_params": {
+        "service": "Campbeltown City Council"
+      },
+      "id": "impactapps_com_au"
+    },
+    {
       "title": "Cardinia Shire Council",
       "module": "cardinia_vic_gov_au",
       "default_params": {},
@@ -137,6 +153,14 @@
       "id": "ballarat_vic_gov_au"
     },
     {
+      "title": "City of Ballarat",
+      "module": "impactapps_com_au",
+      "default_params": {
+        "service": "City of Ballarat"
+      },
+      "id": "impactapps_com_au"
+    },
+    {
       "title": "City of Burnside",
       "module": "app_my_local_services_au",
       "default_params": {},
@@ -147,6 +171,14 @@
       "module": "canadabay_nsw_gov_au",
       "default_params": {},
       "id": "canadabay_nsw_gov_au"
+    },
+    {
+      "title": "City of Canada Bay Council",
+      "module": "impactapps_com_au",
+      "default_params": {
+        "service": "City of Canada Bay Council"
+      },
+      "id": "impactapps_com_au"
     },
     {
       "title": "City of Charles Sturt",
@@ -273,6 +305,14 @@
       "module": "impactapps_com_au",
       "default_params": {
         "service": "Cowra Council"
+      },
+      "id": "impactapps_com_au"
+    },
+    {
+      "title": "Cumberland City Council",
+      "module": "impactapps_com_au",
+      "default_params": {
+        "service": "Cumberland City Council"
       },
       "id": "impactapps_com_au"
     },
@@ -441,14 +481,6 @@
       "id": "impactapps_com_au"
     },
     {
-      "title": "Loddon Shire Council",
-      "module": "impactapps_com_au",
-      "default_params": {
-        "service": "Loddon Shire Council"
-      },
-      "id": "impactapps_com_au"
-    },
-    {
       "title": "Logan City Council",
       "module": "logan_qld_gov_au",
       "default_params": {},
@@ -589,6 +621,14 @@
       "id": "portstephens_nsw_gov_au"
     },
     {
+      "title": "Port Stephens Council",
+      "module": "impactapps_com_au",
+      "default_params": {
+        "service": "Port Stephens Council"
+      },
+      "id": "impactapps_com_au"
+    },
+    {
       "title": "Queanbeyan-Palerang Regional Council",
       "module": "impactapps_com_au",
       "default_params": {
@@ -601,6 +641,14 @@
       "module": "recyclesmart_com",
       "default_params": {},
       "id": "recyclesmart_com"
+    },
+    {
+      "title": "Redland City Council",
+      "module": "impactapps_com_au",
+      "default_params": {
+        "service": "Redland City Council"
+      },
+      "id": "impactapps_com_au"
     },
     {
       "title": "Redland City Council (QLD)",
@@ -633,12 +681,10 @@
       "id": "shellharbourwaste_com_au"
     },
     {
-      "title": "Singleton Council",
-      "module": "impactapps_com_au",
-      "default_params": {
-        "service": "Singleton Council"
-      },
-      "id": "impactapps_com_au"
+      "title": "Shire of Mundaring",
+      "module": "mundaring_wa_gov_au",
+      "default_params": {},
+      "id": "mundaring_wa_gov_au"
     },
     {
       "title": "Snowy Valleys Council",
@@ -747,6 +793,14 @@
       "module": "wollondilly_nsw_gov_au",
       "default_params": {},
       "id": "wollondilly_nsw_gov_au"
+    },
+    {
+      "title": "Wollongong City Council",
+      "module": "impactapps_com_au",
+      "default_params": {
+        "service": "Wollongong City Council"
+      },
+      "id": "impactapps_com_au"
     },
     {
       "title": "Wollongong City Council",
@@ -1209,6 +1263,12 @@
       "id": "citiesapps_com"
     },
     {
+      "title": "Eisenkappel-Vellach",
+      "module": "bad_eisenkappel_info",
+      "default_params": {},
+      "id": "bad_eisenkappel_info"
+    },
+    {
       "title": "Eisenstadt",
       "module": "citiesapps_com",
       "default_params": {},
@@ -1425,6 +1485,12 @@
       "module": "ics",
       "default_params": {},
       "id": "ics_muellapp_com"
+    },
+    {
+      "title": "GOJER",
+      "module": "gojer_at",
+      "default_params": {},
+      "id": "gojer_at"
     },
     {
       "title": "Gols",
@@ -3463,6 +3529,12 @@
       "id": "hygea_be"
     },
     {
+      "title": "Ittre",
+      "module": "ittre_be",
+      "default_params": {},
+      "id": "ittre_be"
+    },
+    {
       "title": "Limburg.net",
       "module": "ics",
       "default_params": {},
@@ -3479,7 +3551,10 @@
     {
       "title": "Aurora (ON)",
       "module": "recyclecoach_com",
-      "default_params": {},
+      "default_params": {
+        "city": "Aurora",
+        "state": "Ontario"
+      },
       "id": "recyclecoach_com"
     },
     {
@@ -3553,7 +3628,23 @@
       "id": "ics_recollect"
     },
     {
+      "title": "District of Saanich, BC",
+      "module": "ics",
+      "default_params": {
+        "split_at": "\\, (?:and )?|(?: and )"
+      },
+      "id": "ics_recollect"
+    },
+    {
       "title": "Halifax, NS",
+      "module": "ics",
+      "default_params": {
+        "split_at": "\\, (?:and )?|(?: and )"
+      },
+      "id": "ics_recollect"
+    },
+    {
+      "title": "Halton Region, ON",
       "module": "ics",
       "default_params": {
         "split_at": "\\, (?:and )?|(?: and )"
@@ -3563,13 +3654,19 @@
     {
       "title": "Kawartha Lakes (ON)",
       "module": "recyclecoach_com",
-      "default_params": {},
+      "default_params": {
+        "city": "Kawartha Lakes",
+        "state": "Ontario"
+      },
       "id": "recyclecoach_com"
     },
     {
       "title": "London (ON)",
       "module": "recyclecoach_com",
-      "default_params": {},
+      "default_params": {
+        "city": "London",
+        "state": "Ontario"
+      },
       "id": "recyclecoach_com"
     },
     {
@@ -3585,6 +3682,12 @@
         "split_at": "\\, (?:and )?|(?: and )"
       },
       "id": "ics_recollect"
+    },
+    {
+      "title": "Norfolk County (ON)",
+      "module": "recyclecoach_com",
+      "default_params": {},
+      "id": "recyclecoach_com"
     },
     {
       "title": "Orillia, Ontario",
@@ -3617,6 +3720,12 @@
       "id": "ics_recollect"
     },
     {
+      "title": "Richmond Hill (ON)",
+      "module": "recyclecoach_com",
+      "default_params": {},
+      "id": "recyclecoach_com"
+    },
+    {
       "title": "RM of Morris, MB",
       "module": "ics",
       "default_params": {
@@ -3641,7 +3750,10 @@
     {
       "title": "Vaughan (ON)",
       "module": "recyclecoach_com",
-      "default_params": {},
+      "default_params": {
+        "city": "Vaughan",
+        "state": "Ontario"
+      },
       "id": "recyclecoach_com"
     },
     {
@@ -3823,16 +3935,84 @@
   ],
   "France": [
     {
+      "title": "Ch\u00e2teauroux M\u00e9tropole",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 897
+      },
+      "id": "publidata_fr"
+    },
+    {
+      "title": "Communaut\u00e9 de Communes de Montesquieu",
+      "module": "cc-montesquieu_fr",
+      "default_params": {},
+      "id": "cc-montesquieu_fr"
+    },
+    {
+      "title": "Grand Paris Seine et Oise",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 1294
+      },
+      "id": "publidata_fr"
+    },
+    {
       "title": "Mairie de Mamirolle",
       "module": "mamirolle_info",
       "default_params": {},
       "id": "mamirolle_info"
     },
     {
+      "title": "Orl\u00e9ans M\u00e9tropole",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 100
+      },
+      "id": "publidata_fr"
+    },
+    {
+      "title": "Publidata generic source",
+      "module": "publidata_fr",
+      "default_params": {},
+      "id": "publidata_fr"
+    },
+    {
+      "title": "Saint Quentin en Yvelines",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 701
+      },
+      "id": "publidata_fr"
+    },
+    {
+      "title": "Saumur Val de Loire",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 159
+      },
+      "id": "publidata_fr"
+    },
+    {
       "title": "Sivom Rive Droite - Bassens",
       "module": "sivom_rivedroite_fr",
       "default_params": {},
       "id": "sivom_rivedroite_fr"
+    },
+    {
+      "title": "Tours M\u00e9tropole",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 65
+      },
+      "id": "publidata_fr"
+    },
+    {
+      "title": "Versailles Grand Parc",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 251
+      },
+      "id": "publidata_fr"
     }
   ],
   "Generic": [
@@ -4539,6 +4719,14 @@
       "id": "ics_avl_ludwigsburg_de"
     },
     {
+      "title": "AVR Kommunal, Rhein-Neckar-Kreis",
+      "module": "abfall_io",
+      "default_params": {
+        "key": "914fb9d000a9a05af4fd54cfba478860"
+      },
+      "id": "abfall_io"
+    },
+    {
       "title": "AWA Entsorgungs GmbH",
       "module": "abfallnavi_de",
       "default_params": {
@@ -4615,6 +4803,12 @@
         "service": "krwaf"
       },
       "id": "abfallnavi_de"
+    },
+    {
+      "title": "AWG Wuppertal",
+      "module": "awg_wuppertal_de",
+      "default_params": {},
+      "id": "awg_wuppertal_de"
     },
     {
       "title": "AWIDO Online",
@@ -4737,6 +4931,17 @@
       "id": "reso_gmbh_de"
     },
     {
+      "title": "Baden Baden",
+      "module": "ics",
+      "default_params": {
+        "params": {
+          "jahr": ""
+        },
+        "year_field": "jahr"
+      },
+      "id": "ics_baden_baden_de"
+    },
+    {
       "title": "Balve",
       "module": "lobbe_app",
       "default_params": {
@@ -4746,7 +4951,13 @@
       "id": "lobbe_app"
     },
     {
-      "title": "Bamberg (Stadt und Landkreis)",
+      "title": "Bamberg (City/Stadt)",
+      "module": "stadt_bamberg_de",
+      "default_params": {},
+      "id": "stadt_bamberg_de"
+    },
+    {
+      "title": "Bamberg (Landkreis)",
       "module": "ics",
       "default_params": {},
       "id": "ics_abfalltermine_bamberg_de"
@@ -4960,6 +5171,14 @@
       "id": "app_abfallplus_de"
     },
     {
+      "title": "Burgenlandkreis",
+      "module": "muellabfuhr_de",
+      "default_params": {
+        "client": "Burgenlandkreis"
+      },
+      "id": "muellabfuhr_de"
+    },
+    {
       "title": "Burgwald",
       "module": "lobbe_app",
       "default_params": {
@@ -5075,6 +5294,14 @@
         "state": "Nordrhein-Westfalen"
       },
       "id": "lobbe_app"
+    },
+    {
+      "title": "Dessau-Rosslau",
+      "module": "muellabfuhr_de",
+      "default_params": {
+        "client": "Dessau-Rosslau"
+      },
+      "id": "muellabfuhr_de"
     },
     {
       "title": "Diemelsee",
@@ -5451,6 +5678,12 @@
         "customer": "unterhaching"
       },
       "id": "awido_de"
+    },
+    {
+      "title": "GFA L\u00fcneburg",
+      "module": "gfa_lueneburg_de",
+      "default_params": {},
+      "id": "gfa_lueneburg_de"
     },
     {
       "title": "Gipsprojekt",
@@ -6417,6 +6650,14 @@
     },
     {
       "title": "Landkreis Gie\u00dfen",
+      "module": "awido_de",
+      "default_params": {
+        "customer": "lkgi"
+      },
+      "id": "awido_de"
+    },
+    {
+      "title": "Landkreis Gie\u00dfen",
       "module": "muellmax_de",
       "default_params": {
         "service": "Lkg"
@@ -6506,6 +6747,14 @@
       "id": "abfall_io"
     },
     {
+      "title": "Landkreis Hildburghausen",
+      "module": "muellabfuhr_de",
+      "default_params": {
+        "client": "Landkreis Hildburghausen"
+      },
+      "id": "muellabfuhr_de"
+    },
+    {
       "title": "Landkreis Kelheim",
       "module": "awido_de",
       "default_params": {
@@ -6590,6 +6839,12 @@
       "id": "awido_de"
     },
     {
+      "title": "Landkreis Neumarkt",
+      "module": "abfuhrplan_landkreis_neumarkt_de",
+      "default_params": {},
+      "id": "abfuhrplan_landkreis_neumarkt_de"
+    },
+    {
       "title": "Landkreis Nordwestmecklenburg",
       "module": "geoport_nwm_de",
       "default_params": {},
@@ -6650,6 +6905,12 @@
         "customer": "rosenheim"
       },
       "id": "awido_de"
+    },
+    {
+      "title": "Landkreis Rostock",
+      "module": "abfall_lro_de",
+      "default_params": {},
+      "id": "abfall_lro_de"
     },
     {
       "title": "Landkreis Rotenburg (W\u00fcmme)",
@@ -6724,6 +6985,14 @@
       "id": "ics_abfall_app_net"
     },
     {
+      "title": "Landkreis S\u00f6mmerda",
+      "module": "muellabfuhr_de",
+      "default_params": {
+        "client": "Landkreis S\u00f6mmerda"
+      },
+      "id": "muellabfuhr_de"
+    },
+    {
       "title": "Landkreis S\u00fcdliche Weinstra\u00dfe",
       "module": "awido_de",
       "default_params": {
@@ -6760,6 +7029,14 @@
         "key": "31fb9c7d783a030bf9e4e1994c7d2a91"
       },
       "id": "abfall_io"
+    },
+    {
+      "title": "Landkreis Wittenberg",
+      "module": "muellabfuhr_de",
+      "default_params": {
+        "client": "Landkreis Wittenberg"
+      },
+      "id": "muellabfuhr_de"
     },
     {
       "title": "Landkreis Wittmund",
@@ -7072,6 +7349,14 @@
       "id": "app_abfallplus_de"
     },
     {
+      "title": "MHEG M\u00fclheim an der Ruhr",
+      "module": "abfallnavi_de",
+      "default_params": {
+        "service": "muelheim"
+      },
+      "id": "abfallnavi_de"
+    },
+    {
       "title": "Michelstadt",
       "module": "reso_gmbh_de",
       "default_params": {
@@ -7102,6 +7387,12 @@
         "operator": "biedenkopf"
       },
       "id": "buergerportal_de"
+    },
+    {
+      "title": "M\u00f6rfelden-Walldorf",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_moerfelden_walldorf_de"
     },
     {
       "title": "M\u00fchlheim am Main (MyMuell App)",
@@ -7378,6 +7669,12 @@
       "id": "rh_entsorgung_de"
     },
     {
+      "title": "Rhein-Lahn Kreis",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_rhein_lahn_kreis_abfallwirtschaft_de"
+    },
+    {
       "title": "Rhein-Neckar-Kreis",
       "module": "app_abfallplus_de",
       "default_params": {
@@ -7458,6 +7755,14 @@
       "id": "lobbe_app"
     },
     {
+      "title": "Saalekreis",
+      "module": "muellabfuhr_de",
+      "default_params": {
+        "client": "Saalekreis"
+      },
+      "id": "muellabfuhr_de"
+    },
+    {
       "title": "Salzgitter (MyMuell App)",
       "module": "jumomind_de",
       "default_params": {
@@ -7506,6 +7811,12 @@
       "id": "jumomind_de"
     },
     {
+      "title": "Schwabach",
+      "module": "abfuhrplan_schwabach_de",
+      "default_params": {},
+      "id": "abfuhrplan_schwabach_de"
+    },
+    {
       "title": "Schwarze Elster",
       "module": "app_abfallplus_de",
       "default_params": {
@@ -7536,6 +7847,12 @@
         "app_id": "de.k4systems.muellalarm"
       },
       "id": "app_abfallplus_de"
+    },
+    {
+      "title": "sds Schwerin",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_sds_schwerin_de"
     },
     {
       "title": "Sector 27 - Datteln, Marl, Oer-Erkenschwick",
@@ -7590,6 +7907,14 @@
       "id": "abfallnavi_de"
     },
     {
+      "title": "Stadt Cuxhaven",
+      "module": "abfallnavi_de",
+      "default_params": {
+        "service": "cux"
+      },
+      "id": "abfallnavi_de"
+    },
+    {
       "title": "Stadt Darmstadt",
       "module": "muellmax_de",
       "default_params": {
@@ -7626,6 +7951,14 @@
       "module": "frankenberg_de",
       "default_params": {},
       "id": "frankenberg_de"
+    },
+    {
+      "title": "Stadt Frankenthal",
+      "module": "abfallnavi_de",
+      "default_params": {
+        "service": "frankenthal"
+      },
+      "id": "abfallnavi_de"
     },
     {
       "title": "Stadt Fulda",
@@ -7750,6 +8083,14 @@
         "service": "solingen"
       },
       "id": "abfallnavi_de"
+    },
+    {
+      "title": "Stadt Spenge",
+      "module": "ics",
+      "default_params": {
+        "regex": "SP (.*): Spenge"
+      },
+      "id": "ics_spenge_de"
     },
     {
       "title": "Stadt Unterschlei\u00dfheim",
@@ -8076,6 +8417,14 @@
       "id": "jumomind_de"
     },
     {
+      "title": "Weimarer Land",
+      "module": "muellabfuhr_de",
+      "default_params": {
+        "client": "Weimarer Land"
+      },
+      "id": "muellabfuhr_de"
+    },
+    {
       "title": "Wenden",
       "module": "ics",
       "default_params": {},
@@ -8208,6 +8557,12 @@
       "id": "app_abfallplus_de"
     },
     {
+      "title": "ZBG Gladbeck",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_zb_gladbeck_de"
+    },
+    {
       "title": "ZEW Zweckverband Entsorgungsregion West",
       "module": "abfallnavi_de",
       "default_params": {
@@ -8304,6 +8659,30 @@
   ],
   "Italy": [
     {
+      "title": "A&T 2000 Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Aci Sant'Antonio",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Acinque Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "AET Ambiente Energia Territorio S.p.A.",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Agliana",
       "module": "aliaserviziambientali_it",
       "default_params": {
@@ -8312,10 +8691,172 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Agno Chiampo Ambiente",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Alia Servizi Ambientali S.p.A.",
       "module": "aliaserviziambientali_it",
       "default_params": {},
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Alife - CZETA Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Altavilla Irpina",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Amag Ambiente",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Amaie Energia e Servizi Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Amalfi",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "AnconAmbiente",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Andora",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Anguillara Sabazia - Cosp Tecno Service",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Aprilia - Progetto Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Ardea - DM Technology Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "ARO Figulinas - DLR Ambiente - Ciclat",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Arosio - Service 24 Ambiente Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Artena",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Aset S.p.A",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "ASIA Azienda Speciale per l'Igiene Ambientale",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Asm Terni",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Assago - San Germano - Gruppo Iren",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Assisi - ECE Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Asti - ASP S.p.A.",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "ATO2 - Ancona",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Auer - Ora",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Avellino - Grande Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Azienda Ambiente Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Bacino Ventimigliese - TeknoService",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Bagheria - A.M.B. S.p.a",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Bagno a Ripoli",
@@ -8342,12 +8883,102 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Bari - Amiu Puglia",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Bassano Romano",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Belforte del Chienti",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Bellunum Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Bientina",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Bitti, Luna e Onan\u00ec - Formula Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Blera",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Borghetto di Borbera",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Borgo San Lorenzo",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Borgo San Lorenzo"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Borgomaro",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Borgosesia - Seso Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Brandizzo",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Brembate",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Brixen/Bressanone - Stadtwerke Brixen AG/ASM Bressanone SpA",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Bubbiano",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Budoni - Formula Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Buggiano",
@@ -8358,6 +8989,30 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Buonvicino",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "C.C.S. - Consorzio Campale Stabile",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Cabras",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Calatafimi Segesta",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Calenzano",
       "module": "aliaserviziambientali_it",
       "default_params": {
@@ -8366,12 +9021,54 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Calvi Risorta - Isola Verde Ecologia",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Camerino",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Campagnano di Roma  - DM Technology Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Campi Bisenzio",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Campi Bisenzio"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Campobasso - S.E.A. Servizi e Ambiente SPA",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Campolieto - Smaltimenti Sud",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Cancello ed Arnone - WM Magenta Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Canicattini Bagni - Traina Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Cantagallo",
@@ -8390,12 +9087,72 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Capua - CZETA Spa - Ciclat",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Carini - Senesi SpA",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Carmignano",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Carmignano"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Caronno Pertusella - Econord",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Carpignano Salentino",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Carrara - Nausicaa S.p.a",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Casale Marittimo",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Casavatore - Ecology Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Castel Gandolfo - Coop 134",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Castel Volturno - WM Magenta Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Castelbuono - Castelbuono Ambiente srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Castelfiorentino",
@@ -8406,12 +9163,54 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Castelforte",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Castellammare del Golfo - Agesp Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Castelnuovo di Porto",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Castelsardo",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Castelvetrano",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Castiglione in Teverina - Cosp Tecno Service",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Cerreto Guidi",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Cerreto Guidi"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Cerro Maggiore - Agesp Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Certaldo",
@@ -8422,6 +9221,30 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Cesa - DM Technology Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Cesano Boscone - San Germano - Gruppo Iren",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Challand-Saint-Victor",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Chiaramonte Gulfi - Mecogest",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Chiesina Uzzanese",
       "module": "aliaserviziambientali_it",
       "default_params": {
@@ -8430,10 +9253,124 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Chieti - Formula Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Chiusavecchia",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Cidiu",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "CIDIU S.p.A.",
       "module": "cidiu_it",
       "default_params": {},
       "id": "cidiu_it"
+    },
+    {
+      "title": "Cinisello Balsamo - Nord Milano Ambiente S.P.A.",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "CISA",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Cisterna di Latina - Cisterna Ambiente",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Cisternino",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "CLARA Ambiente",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Co.S.R.A.B",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Collinas",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Cologno Monzese - CEM Ambiente",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Comuni della Convenzione di Sesto Calende - Econord",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Comunit\u00e0 della Vallagarina - Dolomiti Ambiente Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Comunit\u00e0 delle Giudicarie",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Comunit\u00e0 Montana Sarcidano e Barbagia di Seulo - Formula Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Comunit\u00e0 Valsugana e Tesino",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Conca Casale e Venafro - Smaltimenti Sud",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Consac",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Consorzio Area Vasta Basso Novarese",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Contarina S.p.A",
@@ -8446,12 +9383,114 @@
       "id": "ics_contarina_it"
     },
     {
+      "title": "Cooperativa Trasforma",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Cosir Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Cosp Tecno Service",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Cosvega",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Covar14",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Cupello - Pulchra Ambiente Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Curti - WM Magenta Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Decimoputzu - Formula Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "DLR Ambiente - Ciclat",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Dolomiti Ambiente Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Ecoambiente Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "EcoInnova Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Econova Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Empoli",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Empoli"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Enna - Eco Enna Servizi",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Entratico",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Faleria",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Fiemme Servizi",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Fiesole",
@@ -8478,12 +9517,60 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Fiuggi",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Floridia - IGM rifiuti industriali",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Follonica",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Fondi - De Vizia Transfer Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Fonni, Oliena e Orgosolo - San Germano - Gruppo Iren",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Formula Ambiente Spa - Abruzzo",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Frosinone - De Vizia Transfer Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Fucecchio",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Fucecchio"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Gallo Matese",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Gambassi Terme",
@@ -8494,6 +9581,72 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "GardaUno Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Garfagnana Ecologia Ambiente - GEA",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Gavorrano",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "GEA Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "GESENU  Gestione Servizi Nettezza Urbana S.P.A",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Gestione Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Giarre - IGM rifiuti industriali",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Ginosa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Gioiosa Ionica",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Gioiosa Marea - Pizzo Pippo",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Gonnesa - De Vizia Transfer Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Greve in Chianti",
       "module": "aliaserviziambientali_it",
       "default_params": {
@@ -8502,10 +9655,34 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Guardistallo",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Iglesias",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Il Rifiutologo",
       "module": "ilrifiutologo_it",
       "default_params": {},
       "id": "ilrifiutologo_it"
+    },
+    {
+      "title": "Illasi",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Imperia - De Vizia Transfer Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Impruneta",
@@ -8516,10 +9693,70 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Inverno e Monteleone",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Iren Ambiente",
+      "module": "irenambiente_it",
+      "default_params": {},
+      "id": "irenambiente_it"
+    },
+    {
+      "title": "Isola del Liri - Cosp Tecno Service",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Isole Tremiti - Smaltimenti Sud",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Isontina Ambiente",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "isontina ambiente: Ronchi dei legionari",
       "module": "isontinambiente_it",
       "default_params": {},
       "id": "isontinambiente_it"
+    },
+    {
+      "title": "Ispica - Impregico Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Itri - De Vizia Transfer Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Jnker APP",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Junker",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Lacco Ameno - SuperEco SRL",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Lamporecchio",
@@ -8546,6 +9783,114 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Latina - ABC Azienda Beni Comuni di Latina",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Laurenzana",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Lavorgna Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Lein\u00ec",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Lentate sul Seveso",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Leporano - Impregico Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Letino",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Levate",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Limosano",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Lodi",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Lod\u00e8 - Eco Flap - Ciclat",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Loreto Aprutino - Diodoro Ecologia",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Lucca - Sistema Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Macerata Campania - DHI",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Mandas - C.A.P.R.I.",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Maracalagonis - Formula Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Marcallo con Casone",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Marche Multiservizi Falconara",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Marliana",
       "module": "aliaserviziambientali_it",
       "default_params": {
@@ -8554,12 +9899,84 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Marsala, Trapani e Misiliscemi- Formula Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Massa e Cozzile",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Massa e Cozzile"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Massalengo",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Meda",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Mentana - Paoletti Ecologia",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Merano - ASM",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Messina - Messinaservizi Bene Comune",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Minerva Ambiente",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Minturno",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Miramare Service Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Mondolfo",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Mondragone - DHI",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Monserrato - Gesenu Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Monsummano Terme",
@@ -8586,12 +10003,60 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Montalto di Castro",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Monte di Procida - DM Technology Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Monte Isola - Sea Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Monte Urano - Eco Elpidiense Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Montecassiano",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Montecatini Terme",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Montecatini Terme"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Montefiascone - Viterbo Ambiente",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Monteflavio, Montorio Romano, Moricone - Diodoro Ecologia",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Montelongo - Rotello - San Giuliano di Puglia - Impregico Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Montelupo Fiorentino",
@@ -8610,12 +10075,156 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Montepulciano",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Monterotondo - APM",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Monterotondo Marittimo",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Montescudaio",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Montespertoli",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Montespertoli"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Monteverdi Marittimo",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Monticiano",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Monza - Impresa Sangalli",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Mosciano Sant'Angelo - Diodoro Ecologia",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Mottola e Laterza - Meridionale Servizi Ambientali Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Muraca Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Nicosia - Leukosia",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Noventa di Piave",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Nuoro - \u00c8-Comune srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Orciano Pisano",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Oristano - Formula Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Orosei - Sceas - Ciclat",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Osimo - Astea",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Ossago Lodigiano",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Palata",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Palombara Sabina",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Passerano Marmorito",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Patti - Pizzo Pippo",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Paullo",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Perdasdefogu - Eco-Sistemi",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Pescia",
@@ -8626,12 +10235,36 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Pescina - Pulchra Ambiente Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Piazza Brembana",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Pietrabruna",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Pieve a Nievole",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Pieve a Nievole"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Pimonte - Ecogin Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Pistoia",
@@ -8650,12 +10283,30 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Pomarance",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Ponte Buggianese",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Ponte Buggianese"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Posada - Formula Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Potenza - Acta Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Prato",
@@ -8666,12 +10317,84 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Pratola Peligna - Diodoro Ecologia",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Priolo Gargallo -  IGM rifiuti industriali",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Prossedi",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Pulsano - Al.ma. Ecologia Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Quarrata",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Quarrata"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Quarto - DM Technology Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Ravello",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Rescaldina",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Rho - A.Se.R SpA",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Rieco - Abruzzo",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Rieco - Lazio",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Rieco - Marche",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Rieti - ASM Rieti Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Rignano sull'Arno",
@@ -8682,12 +10405,90 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Riola Sardo - EffeAmbiente",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Ripalimosani",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Riparbella",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Robecchetto con Induno",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Rocca di Papa - DM Technology Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Roccella Ionica - Jonica Multiservizi Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Rosora",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Rovellasca",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Sabaudia - Del Prete Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Sala Consilina - SuperEco SRL",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Salerno - Salerno Pulita Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Saluggia",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Sambuca Pistoiese",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Sambuca Pistoiese"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Sammichele di Bari e Casamassima - Meridionale Servizi Ambientali srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "San Casciano in Val di Pesa",
@@ -8706,6 +10507,60 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Sanremo - Amaie Energia e Servizi Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Santa Lucia del Mela",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Santa Maria a Vico",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Santa Maria Capua Vetere - DHI",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Santi Cosma e Damiano",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Saponara",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Saprodir",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Sardegna Ecology - Ciclat",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Sasom",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Scandicci",
       "module": "aliaserviziambientali_it",
       "default_params": {
@@ -8714,12 +10569,36 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Scanzorosciate",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Scarperia e San Piero",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Scarperia e San Piero"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Seab SPA Bolzano",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Sennori e Sorso - Gesenu Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Sermoneta - Del Prete Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Serravalle Pistoiese",
@@ -8738,12 +10617,216 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Sesto San Giovanni - Impresa Sangalli",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Sezze - SPL",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Sieco Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Signa",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Signa"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Silvi - Diodoro Ecologia",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Siniscola - DLR Ambiente - Ciclat",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Soleto",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Solza",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Spoltore - Rieco",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Squillace - Sieco Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Stefanaconi",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Suno",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Termoli - Rieco Sud Scarl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Terno d'Isola",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Terracina",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Terre Roveresche",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Tivoli - ASA Tivoli Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Toro",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Torp\u00e8 - Eco Flap - Ciclat",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Traona",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Trappeto",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Tricase",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Triora",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Trivento - Smaltimenti Sud",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Turate - Turcato Snc",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Unione Basso Biferno - Impregico Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Unione Castello di Gerione - Giuliani Environment",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Unione Comuni Alta Marmilla - Formula Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Unione Comuni del Meilogu - Formula Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Unione Comuni del Villanova - Formula Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Unione Comuni Terre del Campidano - Formula Ambiente Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Unione dei Comuni del Guilcier - Cosir Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Unione dei Comuni di Valmalenco",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Unione Terra dei Castelli",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Ussita",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Uzzano",
@@ -8770,12 +10853,54 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Valfornace",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Valle Camonica Servizi Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Valle Umbra Servizi S.p.A.",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Vasto - Pulchra Ambiente Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Veritas Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Vernio",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Vernio"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Vezzano sul Crostolo",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Viagrande",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     },
     {
       "title": "Vicchio",
@@ -8786,12 +10911,84 @@
       "id": "aliaserviziambientali_it"
     },
     {
+      "title": "Vicoforte",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Vieste - Impregico Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Villanterio",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Villaputzu",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Villaricca - Sieco Spa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Villaspeciosa",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
       "title": "Vinci",
       "module": "aliaserviziambientali_it",
       "default_params": {
         "municipality": "Vinci"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Vitorchiano",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Vitulazio - DM Technology Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Volsca Ambiente",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Volterra",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Wipptal",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
+    },
+    {
+      "title": "Zambrone - Tecnew Srl",
+      "module": "junker_app",
+      "default_params": {},
+      "id": "junker_app"
     }
   ],
   "Lithuania": [
@@ -8820,12 +11017,14 @@
       "module": "sica_lu",
       "default_params": {},
       "id": "sica_lu"
-    },
+    }
+  ],
+  "Malta": [
     {
-      "title": "SICA",
-      "module": "sicaapp_lu",
+      "title": "Malta",
+      "module": "wastecollection_mt",
       "default_params": {},
-      "id": "sicaapp_lu"
+      "id": "wastecollection_mt"
     }
   ],
   "Netherlands": [
@@ -8844,6 +11043,12 @@
         "company": "acv"
       },
       "id": "ximmio_nl"
+    },
+    {
+      "title": "Afval Wijzer",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mijnafvalwijzer_nl"
     },
     {
       "title": "Afvalstoffendienst.nl",
@@ -8936,6 +11141,12 @@
         "service": "denhaag"
       },
       "id": "hvcgroep_nl"
+    },
+    {
+      "title": "Edam-Volendam",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_edam_volendam_nl"
     },
     {
       "title": "GAD",
@@ -9350,6 +11561,12 @@
       "id": "pronatura_bydgoszcz_pl"
     },
     {
+      "title": "Czerwonak, Murowana Go\u015blina, Oborniki",
+      "module": "eko_tom_pl",
+      "default_params": {},
+      "id": "eko_tom_pl"
+    },
+    {
       "title": "Ecoharmonogram",
       "module": "ecoharmonogram_pl",
       "default_params": {},
@@ -9392,12 +11609,26 @@
       "id": "ekosystem_wroc_pl"
     }
   ],
+  "Slovakia": [
+    {
+      "title": "fcc Environment",
+      "module": "fcc_group_eu",
+      "default_params": {},
+      "id": "fcc_group_eu"
+    }
+  ],
   "Slovenia": [
     {
       "title": "Moji odpadki, Ljubljana",
       "module": "mojiodpadki_si",
       "default_params": {},
       "id": "mojiodpadki_si"
+    },
+    {
+      "title": "Snaga Maribor",
+      "module": "snaga_mb_si",
+      "default_params": {},
+      "id": "snaga_mb_si"
     }
   ],
   "Sweden": [
@@ -9406,6 +11637,12 @@
       "module": "affarsverken_se",
       "default_params": {},
       "id": "affarsverken_se"
+    },
+    {
+      "title": "Avfallsapp.se - Multi Source",
+      "module": "avfallsapp_se",
+      "default_params": {},
+      "id": "avfallsapp_se"
     },
     {
       "title": "Boden",
@@ -9448,6 +11685,12 @@
         "service_provider": "kretslopp-sydost"
       },
       "id": "edpevent_se"
+    },
+    {
+      "title": "Kristianstad Renh\u00e5llning",
+      "module": "renhallningen_kristianstad_se",
+      "default_params": {},
+      "id": "renhallningen_kristianstad_se"
     },
     {
       "title": "Landskrona - Sval\u00f6vs Renh\u00e5llning",
@@ -9556,6 +11799,14 @@
       "module": "sysav_se",
       "default_params": {},
       "id": "sysav_se"
+    },
+    {
+      "title": "S\u00f6derk\u00f6ping",
+      "module": "avfallsapp_se",
+      "default_params": {
+        "service_provider": "soderkoping"
+      },
+      "id": "avfallsapp_se"
     },
     {
       "title": "Uppsala Vatten",
@@ -9915,6 +12166,12 @@
       "id": "a_region_ch"
     },
     {
+      "title": "Seon",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_seon_ch"
+    },
+    {
       "title": "Speicher",
       "module": "a_region_ch",
       "default_params": {
@@ -10221,6 +12478,14 @@
       "id": "blackpool_gov_uk"
     },
     {
+      "title": "Blaenau Gwent County Borough Council",
+      "module": "iapp_itouchvision_com",
+      "default_params": {
+        "municipality": "BLAENAU GWENT"
+      },
+      "id": "iapp_itouchvision_com"
+    },
+    {
       "title": "Borough Council of King's Lynn & West Norfolk",
       "module": "west_norfolk_gov_uk",
       "default_params": {},
@@ -10307,10 +12572,24 @@
       "id": "bury_gov_uk"
     },
     {
+      "title": "Caerphilly, Wales",
+      "module": "ics",
+      "default_params": {
+        "split_at": "\\, (?:and )?|(?: and )"
+      },
+      "id": "ics_recollect"
+    },
+    {
       "title": "Cambridge City Council",
       "module": "cambridge_gov_uk",
       "default_params": {},
       "id": "cambridge_gov_uk"
+    },
+    {
+      "title": "Cannock Chase Council",
+      "module": "cannock_chase_dc_gov_uk",
+      "default_params": {},
+      "id": "cannock_chase_dc_gov_uk"
     },
     {
       "title": "Canterbury City Council",
@@ -10325,6 +12604,12 @@
       "id": "cardiff_gov_uk"
     },
     {
+      "title": "Carmarthenshire County Council",
+      "module": "carmarthenshire_gov_wales",
+      "default_params": {},
+      "id": "carmarthenshire_gov_wales"
+    },
+    {
       "title": "Central Bedfordshire Council",
       "module": "centralbedfordshire_gov_uk",
       "default_params": {},
@@ -10335,6 +12620,12 @@
       "module": "charnwood_gov_uk",
       "default_params": {},
       "id": "charnwood_gov_uk"
+    },
+    {
+      "title": "Chelmsford City Council",
+      "module": "chelmsford_gov_uk",
+      "default_params": {},
+      "id": "chelmsford_gov_uk"
     },
     {
       "title": "Cherwell District Council",
@@ -10415,6 +12706,12 @@
       "id": "croydon_gov_uk"
     },
     {
+      "title": "Dacorum Borough Council",
+      "module": "dacorum_gov_uk",
+      "default_params": {},
+      "id": "dacorum_gov_uk"
+    },
+    {
       "title": "Darlington Borough Council",
       "module": "darlington_gov_uk",
       "default_params": {},
@@ -10439,6 +12736,12 @@
       "id": "derby_gov_uk"
     },
     {
+      "title": "Dorset Council",
+      "module": "dorset_gov_uk",
+      "default_params": {},
+      "id": "dorset_gov_uk"
+    },
+    {
       "title": "Dover District Council",
       "module": "dover_gov_uk",
       "default_params": {},
@@ -10451,10 +12754,28 @@
       "id": "dudley_gov_uk"
     },
     {
+      "title": "Dundee City Council",
+      "module": "dundeecity_gov_uk",
+      "default_params": {},
+      "id": "dundeecity_gov_uk"
+    },
+    {
+      "title": "Dundee MyBins",
+      "module": "dundeecity_gov_uk",
+      "default_params": {},
+      "id": "dundeecity_gov_uk"
+    },
+    {
       "title": "Durham County Council",
       "module": "durham_gov_uk",
       "default_params": {},
       "id": "durham_gov_uk"
+    },
+    {
+      "title": "Ealing Council",
+      "module": "ealing_gov_uk",
+      "default_params": {},
+      "id": "ealing_gov_uk"
     },
     {
       "title": "East Ayrshire Council",
@@ -10577,6 +12898,12 @@
       "id": "flintshire_gov_uk"
     },
     {
+      "title": "Folkestone and Hythe District Councol",
+      "module": "folkestone_hythe_gov_uk",
+      "default_params": {},
+      "id": "folkestone_hythe_gov_uk"
+    },
+    {
       "title": "Fylde Council",
       "module": "fylde_gov_uk",
       "default_params": {},
@@ -10637,6 +12964,12 @@
       "module": "hart_gov_uk",
       "default_params": {},
       "id": "hart_gov_uk"
+    },
+    {
+      "title": "Hastings Borough Council",
+      "module": "hastings_gov_uk",
+      "default_params": {},
+      "id": "hastings_gov_uk"
     },
     {
       "title": "Herefordshire City Council",
@@ -10857,6 +13190,12 @@
       "id": "iweb_itouchvision_com"
     },
     {
+      "title": "Mid and East Antrim",
+      "module": "midandeastantrim_gov_uk",
+      "default_params": {},
+      "id": "midandeastantrim_gov_uk"
+    },
+    {
       "title": "Mid-Sussex District Council",
       "module": "midsussex_gov_uk",
       "default_params": {},
@@ -10935,6 +13274,12 @@
       "id": "north_kesteven_org_uk"
     },
     {
+      "title": "North Lanarkshire Council",
+      "module": "northlanarkshire_gov_uk",
+      "default_params": {},
+      "id": "northlanarkshire_gov_uk"
+    },
+    {
       "title": "North Lincolnshire Council",
       "module": "northlincs_gov_uk",
       "default_params": {},
@@ -11001,6 +13346,12 @@
       "id": "oxford_gov_uk"
     },
     {
+      "title": "Pembrokeshire County Council",
+      "module": "pembrokeshire_gov_uk",
+      "default_params": {},
+      "id": "pembrokeshire_gov_uk"
+    },
+    {
       "title": "Peterborough City Council",
       "module": "peterborough_gov_uk",
       "default_params": {},
@@ -11049,6 +13400,12 @@
       "id": "richmondshire_gov_uk"
     },
     {
+      "title": "Rochdale Borough Council",
+      "module": "rochdale_gov_uk",
+      "default_params": {},
+      "id": "rochdale_gov_uk"
+    },
+    {
       "title": "Rotherham",
       "module": "apps_imactivate_com",
       "default_params": {
@@ -11093,6 +13450,12 @@
         "council": "SOMERSET"
       },
       "id": "iweb_itouchvision_com"
+    },
+    {
+      "title": "Sefton Council",
+      "module": "sefton_gov_uk",
+      "default_params": {},
+      "id": "sefton_gov_uk"
     },
     {
       "title": "Sheffield City Council",
@@ -11261,6 +13624,12 @@
       "id": "stroud_gov_uk"
     },
     {
+      "title": "Sunderland City Council",
+      "module": "sunderland_gov_uk",
+      "default_params": {},
+      "id": "sunderland_gov_uk"
+    },
+    {
       "title": "Surrey Heath Borough Council",
       "module": "jointwastesolutions_org",
       "default_params": {
@@ -11411,6 +13780,12 @@
       "id": "west_dunbartonshire_gov_uk"
     },
     {
+      "title": "West Lothian Council",
+      "module": "westlothian_gov_uk",
+      "default_params": {},
+      "id": "westlothian_gov_uk"
+    },
+    {
       "title": "West Northamptonshire council",
       "module": "westnorthants_gov_uk",
       "default_params": {},
@@ -11501,6 +13876,12 @@
       "id": "wychavon_gov_uk"
     },
     {
+      "title": "Wyre Borough Council",
+      "module": "wyre_gov_uk",
+      "default_params": {},
+      "id": "wyre_gov_uk"
+    },
+    {
       "title": "Wyre Forest District Council",
       "module": "wyreforestdc_gov_uk",
       "default_params": {},
@@ -11511,7 +13892,10 @@
     {
       "title": "Albuquerque, New Mexico, USA",
       "module": "recyclecoach_com",
-      "default_params": {},
+      "default_params": {
+        "city": "Albuquerque",
+        "state": "New Mexico"
+      },
       "id": "recyclecoach_com"
     },
     {
@@ -11577,7 +13961,10 @@
     {
       "title": "Louisville, Kentucky, USA",
       "module": "recyclecoach_com",
-      "default_params": {},
+      "default_params": {
+        "city": "Louisville",
+        "state": "Kentucky"
+      },
       "id": "recyclecoach_com"
     },
     {
@@ -11589,13 +13976,19 @@
     {
       "title": "Newark, Delaware, USA",
       "module": "recyclecoach_com",
-      "default_params": {},
+      "default_params": {
+        "city": "Newark",
+        "state": "Delaware"
+      },
       "id": "recyclecoach_com"
     },
     {
       "title": "Olympia, Washington, USA",
       "module": "recyclecoach_com",
-      "default_params": {},
+      "default_params": {
+        "city": "Olympia",
+        "state": "Washington"
+      },
       "id": "recyclecoach_com"
     },
     {
@@ -11619,6 +14012,12 @@
       "id": "republicservices_com"
     },
     {
+      "title": "Round Rock Texas",
+      "module": "roundrocktexas_gov",
+      "default_params": {},
+      "id": "roundrocktexas_gov"
+    },
+    {
       "title": "Seattle Public Utilities",
       "module": "seattle_gov",
       "default_params": {},
@@ -11627,7 +14026,10 @@
     {
       "title": "Tucson, Arizona, USA",
       "module": "recyclecoach_com",
-      "default_params": {},
+      "default_params": {
+        "city": "Tucson",
+        "state": "Arizona"
+      },
       "id": "recyclecoach_com"
     },
     {

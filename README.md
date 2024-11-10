@@ -13,7 +13,7 @@ I regularly update my configuration files. You can check my current Home Assista
 Description | value
 -- | --
 Number of entities | 477
-Number of sensors | 244
+Number of sensors | 251
 
 
 ## My installed extensions:
@@ -41,22 +41,13 @@ Number of sensors | 244
 - [Waste Collection Schedule](https://github.com/mampfes/hacs_waste_collection_schedule)
 
 ### Lovelace plugins
-- [Apexcharts Card](https://github.com/RomRider/apexcharts-card)
-- [Bar Card](https://github.com/custom-cards/bar-card)
 - [Card Mod](https://github.com/thomasloven/lovelace-card-mod)
-- [Comfortable Environment Card](https://github.com/argaar/comfortable-environment-card)
-- [Garbage Collection Card](https://github.com/amaximus/garbage-collection-card)
-- [Layout Card](https://github.com/thomasloven/lovelace-layout-card)
 - [Mini Graph Card](https://github.com/kalkih/mini-graph-card)
 - [Mushroom](https://github.com/piitaya/lovelace-mushroom)
 - [Simple Weather Card](https://github.com/kalkih/simple-weather-card)
-- [Spotify Lovelace Card](https://github.com/custom-cards/spotify-card)
 - [Stack In Card](https://github.com/custom-cards/stack-in-card)
-- [State Switch](https://github.com/thomasloven/lovelace-state-switch)
-- [Wallpanel](https://github.com/j-a-n/lovelace-wallpanel)
 
 ### Themes
-- [Mushroom Themes](https://github.com/piitaya/lovelace-mushroom-themes)
 
 
 ## Lovelace
@@ -68,9 +59,10 @@ Number of sensors | 244
     <img src="docs/images/desktop/livingroom.png" alt="Livingroom"/>
     <img src="docs/images/desktop/bedroom.png" alt="Bedroom"/>
     <img src="docs/images/desktop/kitchen.png" alt="Kitchen"/>
-    <img src="docs/images/desktop/home_lab.png" alt="Home Lab"/>
-    <img src="docs/images/desktop/entrance.png" alt="Entrance"/>
     <img src="docs/images/desktop/bathroom.png" alt="Bathroom"/>
+    <img src="docs/images/desktop/entrance.png" alt="Entrance"/>
+    <img src="docs/images/desktop/lab.png" alt="Lab"/>
+    <img src="docs/images/desktop/stats.png" alt="Stats"/>
 </details>
 
 <details>
@@ -79,14 +71,18 @@ Number of sensors | 244
     <img src="docs/images/mobile/livingroom.jpg" alt="Livingroom"/>
     <img src="docs/images/mobile/bedroom.jpg" alt="Bedroom"/>
     <img src="docs/images/mobile/kitchen.jpg" alt="Kitchen"/>
-    <img src="docs/images/mobile/home_lab.jpg" alt="Home Lab"/>
-    <img src="docs/images/mobile/entrance.jpg" alt="Entrance"/>
     <img src="docs/images/mobile/bathroom.jpg" alt="Bathroom"/>
+    <img src="docs/images/mobile/entrance.jpg" alt="Entrance"/>
+    <img src="docs/images/mobile/lab_1.jpg" alt="Lab 1"/>
+    <img src="docs/images/mobile/lab_2.jpg" alt="Lab 2"/>
+    <img src="docs/images/mobile/stats_1.jpg" alt="Stats 1"/>
+    <img src="docs/images/mobile/stats_2.jpg" alt="Stats 2"/>
 </details>
 
 
 ## Other things that I run on my Home Server
 - [AdGuard Home](https://adguard.com/en/adguard-home/overview.html) LXC
+- [WireGuard](https://www.wireguard.com/) LXC
 - [Transmission](https://transmissionbt.com/) LXC
 - [Docker](https://www.docker.com/) LXC
   - [InfluxDB](https://www.influxdata.com/) Docker container
@@ -97,8 +93,9 @@ Number of sensors | 244
   - [NginxProxyManager](https://nginxproxymanager.com/) Docker container
   - [Portainer](https://portainer.io/) Docker container
   - [UptimeKuma](https://github.com/louislam/uptime-kuma) Docker container
-  - [WireGuard](https://www.wireguard.com/) Docker container
   - [Broadlink Manager](https://github.com/t0mer/broadlinkmanager-docker) Docker container
+  - [Watchtower](https://containrrr.dev/watchtower/) Docker container
+  - [Vaultwarden](https://www.vaultwarden.net/) Docker container
 
 ## Additional Hardware
 - 1x [KYYKA CC2531](https://www.amazon.it/gp/product/B08Q7NPSRX) with Zigbee2MQTT Firmware
@@ -111,6 +108,8 @@ Number of sensors | 244
 - 1x Echo Dot (3rd gen)
 - 1x Broadlink RM4 Pro
 - 1x Broadlink RM3 Mini
+- 1x ESP32 + PMS5003 sensor
+- 1x ESP8266 + relay
 
 > smart bulbs, led strips, temperature and humidity sensors, smart plugs list and missing links incoming...
 

@@ -298,8 +298,8 @@
       entity_id: climate.condizionatore_camera
   mode: single
 - id: '1728838134324'
-  alias: '[NFC][Vetrina Ingresso] Toggle'
-  description: 'Toggle vetrina ingresso light'
+  alias: '[NFC][Vetrina Ingresso] Light toggle'
+  description: Toggle vetrina ingresso light
   triggers:
   - trigger: tag
     tag_id: 0d891f34-721d-43b2-b33d-87c570913883
@@ -310,4 +310,48 @@
     data: {}
     target:
       entity_id: light.vetrina_ingresso
+  mode: single
+- id: '1730656163756'
+  alias: '[Notify][Air Quality] Poor indoor AQI'
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.indoor_aqi
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+    above: 100
+    trigger: numeric_state
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.u_s_air_quality_index
+    attribute: state
+    below: 100
+  actions:
+  - data:
+      title: "\U0001F4A8 *Apri le finestre!*"
+      message: La qualità dell'aria di casa è scarsa, fai cambiare aria che non si
+        respira!
+    action: notify.aronne
+  mode: single
+- id: '1730656544836'
+  alias: '[Notify][Air Quality] High Outdoor AQI'
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.u_s_air_quality_index
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+    attribute: state
+    above: 150
+  conditions: []
+  actions:
+  - data:
+      title: "\U0001FA9F *Chiudi tutto!*"
+      message: La qualità dell'aria fuori fa schifo, tappati in casa!
+    action: notify.aronne
   mode: single

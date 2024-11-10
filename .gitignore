@@ -28,8 +28,3 @@ known_devices.yaml
 
 .shopping_list.json
 google_calendars.yaml
-
-# Include additional custom lovelace dashboards
-!.storage/lovelace_dashboards
-!.storage/lovelace.dashboard_test
-!.storage/lovelace.lovelace_mushroom

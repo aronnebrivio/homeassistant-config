@@ -1,5 +1,25 @@
 # Changelog
 
+## [3.0.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.43.0...v3.0.0) (2024-11-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* review Lovelace dashboard using sections
+* cleanup lot of unused components due to switch to single sections dashboard
+
+### Features
+
+* add notifications for indoor vs outdoor AQI ([f870c39](https://github.com/aronnebrivio/homeassistant-config/commit/f870c39b8741d33bebd6859928c9a2535436bcf3))
+* add secret for WAQI integration ([164cab7](https://github.com/aronnebrivio/homeassistant-config/commit/164cab79d025bc3b85249b4293d0ab8323fe6a62))
+* update HA to 2024.11.1 ([385860a](https://github.com/aronnebrivio/homeassistant-config/commit/385860a0900dd70ba26ce0ad011e884b2f721b83))
+
+
+### Code Refactoring
+
+* cleanup lot of unused components due to switch to single sections dashboard ([bdd0e6a](https://github.com/aronnebrivio/homeassistant-config/commit/bdd0e6a8bdf8ea3462fc8c0f0754d510c530940e))
+* review Lovelace dashboard using sections ([33dfba6](https://github.com/aronnebrivio/homeassistant-config/commit/33dfba6e2c0ab2305ce984a10392e3b737ae4e2c))
+
 ## [2.43.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.42.0...v2.43.0) (2024-11-02)
 
 

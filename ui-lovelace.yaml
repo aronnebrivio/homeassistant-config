@@ -45,6 +45,9 @@ views:
   - cards:
     - entity: weather.casa
       forecast_type: daily
+      grid_options:
+        columns: 12
+        rows: 4
       type: weather-forecast
       visibility:
       - condition: screen
@@ -239,16 +242,35 @@ views:
       type: custom:mushroom-template-card
     - double_tap_action:
         action: none
+      grid_options:
+        columns: 3
+        rows: 1
       hold_action:
         action: toggle
       icon: mdi:test-tube
       icon_color: "{% if is_state('switch.dummy_switch', 'on') %}\n  purple\n{% endif\
         \ %}"
-      primary: Lab
+      primary: ''
       secondary: ''
       tap_action:
         action: navigate
         navigation_path: /lovelace/lab
+      type: custom:mushroom-template-card
+    - double_tap_action:
+        action: none
+      grid_options:
+        columns: 3
+        rows: 1
+      hold_action:
+        action: toggle
+      icon: mdi:devices
+      icon_color: "{% if is_state('switch.dummy_switch', 'on') %}\n  yellow\n{% endif\
+        \ %}"
+      primary: ''
+      secondary: ''
+      tap_action:
+        action: navigate
+        navigation_path: /lovelace/devices
       type: custom:mushroom-template-card
     column_span: 4
     type: grid
@@ -381,12 +403,16 @@ views:
       visibility:
       - condition: screen
         media_query: '(min-width: 0px) and (max-width: 767px)'
-    - entity: climate.condizionatore_sala
-      features:
-      - type: climate-hvac-modes
+    - disable_battery_warning: true
+      disable_buttons: true
+      disable_eco: true
+      disable_heat: false
+      disable_menu: false
+      disable_summer: true
+      disable_window: true
+      entity: climate.condizionatore_sala
       name: Condizionatore
-      show_current_as_primary: false
-      type: thermostat
+      type: custom:better-thermostat-ui-card
       visibility:
       - condition: screen
         media_query: '(min-width: 768px)'
@@ -579,22 +605,20 @@ views:
         action: toggle
       type: custom:mushroom-light-card
       use_light_color: true
-    - entity: switch.work_station
+    - color: blue
+      entity: switch.work_station
       icon: mdi:account-hard-hat
       name: Work Station
-      primary_info: name
-      secondary_info: state
       tap_action:
         action: toggle
-      type: custom:mushroom-entity-card
-    - entity: switch.gaming_station
+      type: tile
+    - color: red
+      entity: switch.gaming_station
       icon: mdi:controller
       name: Gaming Station
-      primary_info: name
-      secondary_info: state
       tap_action:
         action: toggle
-      type: custom:mushroom-entity-card
+      type: tile
     - collapsible_controls: true
       entity: climate.condizionatore_camera
       hvac_modes:
@@ -608,10 +632,16 @@ views:
       visibility:
       - condition: screen
         media_query: '(min-width: 0px) and (max-width: 767px)'
-    - entity: climate.condizionatore_camera
-      features:
-      - type: climate-hvac-modes
-      type: thermostat
+    - disable_battery_warning: true
+      disable_buttons: true
+      disable_eco: true
+      disable_heat: false
+      disable_menu: false
+      disable_summer: true
+      disable_window: true
+      entity: climate.condizionatore_camera
+      name: Condizionatore
+      type: custom:better-thermostat-ui-card
       visibility:
       - condition: screen
         media_query: '(min-width: 768px)'
@@ -646,20 +676,20 @@ views:
         action: toggle
       type: custom:mushroom-light-card
       use_light_color: true
-    - entity: switch.fisso
+    - color: green
+      entity: switch.fisso
       icon: mdi:desktop-classic
-      icon_color: green
       name: PC
       tap_action:
         action: toggle
-      type: custom:mushroom-entity-card
-    - entity: switch.casse_pc
+      type: tile
+    - color: purple
+      entity: switch.casse_pc
       icon: mdi:speaker
-      icon_color: purple
       name: Casse
       tap_action:
         action: toggle
-      type: custom:mushroom-entity-card
+      type: tile
     - collapsible_controls: true
       entity: light.asus_tuf_gaming_b460_plus_0
       icon: ''
@@ -855,10 +885,16 @@ views:
       visibility:
       - condition: screen
         media_query: '(min-width: 0px) and (max-width: 767px)'
-    - entity: climate.condizionatore_cucina
-      features:
-      - type: climate-hvac-modes
-      type: thermostat
+    - disable_battery_warning: true
+      disable_buttons: true
+      disable_eco: true
+      disable_heat: false
+      disable_menu: false
+      disable_summer: true
+      disable_window: true
+      entity: climate.condizionatore_cucina
+      name: Condizionatore
+      type: custom:better-thermostat-ui-card
       visibility:
       - condition: screen
         media_query: '(min-width: 768px)'
@@ -977,17 +1013,39 @@ views:
   - cards:
     - title: Smart home
       type: custom:mushroom-title-card
-    - entity: switch.water_heater
+    - color: light-blue
+      entity: switch.water_heater
       grid_options:
         columns: full
       icon: mdi:water-boiler
       tap_action:
         action: toggle
-      type: custom:mushroom-entity-card
+      type: tile
     type: grid
   subview: true
   theme: Backend-selected
   title: Bagno
+  type: sections
+- badges: []
+  cards: []
+  icon: mdi:door
+  max_columns: 3
+  path: entrance
+  sections:
+  - cards:
+    - title: Smart home
+      type: custom:mushroom-title-card
+    - color: amber
+      entity: light.vetrina_ingresso
+      grid_options:
+        columns: full
+      tap_action:
+        action: toggle
+      type: tile
+    type: grid
+  subview: true
+  theme: Backend-selected
+  title: Ingresso
   type: sections
 - badges: []
   cards: []
@@ -998,54 +1056,49 @@ views:
   - cards:
     - title: Overview
       type: custom:mushroom-title-card
-    - entity: sensor.speedtest_download
+    - color: red
+      entity: sensor.speedtest_download
       icon: mdi:router-wireless
-      icon_color: red
-      primary: Internet
-      secondary: '{{ states(''sensor.speedtest_download'') }} Mbps'
+      name: Internet
       tap_action:
         action: url
         url_path: http://192.168.1.1/
-      type: custom:mushroom-template-card
-    - entity: binary_sensor.proxmox_is_running
+      type: tile
+    - color: indigo
+      entity: binary_sensor.proxmox_is_running
       icon: mdi:server-network
-      icon_color: indigo
       name: Proxmox
       tap_action:
         action: url
         url_path: https://192.168.1.2:8006/
-      type: custom:mushroom-entity-card
-    - entity: switch.adguard_protection
-      hold_action:
-        action: toggle
+      type: tile
+    - color: green
+      entity: binary_sensor.adguard_protection
       icon: mdi:shield-check
-      icon_color: green
       name: AdGuard Home
       tap_action:
         action: url
         url_path: http://192.168.1.5:3000/
-      type: custom:mushroom-entity-card
-    - entity: switch.transmission_switch
+      type: tile
+    - color: accent
+      entity: binary_sensor.transmission_switch
       icon: mdi:light-switch
-      icon_color: "{% if is_state('switch.transmission_switch', 'on') %}\n  amber\n\
-        {% endif %}"
-      primary: Transmission
-      secondary: '{{ states(''switch.transmission_switch'') }}'
+      name: Transmission
       tap_action:
         action: url
         url_path: http://192.168.1.6:9091/
-      type: custom:mushroom-template-card
-    - entity: switch.dummy_switch
+      type: tile
+    - color: teal
+      entity: switch.dummy_switch
       grid_options:
         columns: full
+      hide_state: true
       icon: mdi:monitor-dashboard
-      icon_color: teal
-      primary: Dashy
-      secondary: ''
+      name: Dashy
       tap_action:
         action: url
         url_path: http://192.168.1.13:8080/
-      type: custom:mushroom-template-card
+      type: tile
     type: grid
   - cards:
     - title: 🗄️ Server
@@ -1103,130 +1156,73 @@ views:
       type: custom:mushroom-template-card
     type: grid
   - cards:
-    - title: 🖥️ Fisso
+    - grid_options:
+        columns: full
+      title: 🛜 Internet
       type: custom:mushroom-title-card
-    - badge_icon: ''
-      card_mod:
-        style: "{% set ashlvl = states('sensor.fisso_cpuload') | float(0) %}\n{% set\
-          \ ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\nha-card\
-          \ {\n    background: linear-gradient(90deg, rgb(255,111,34,0.5) {{ ashpercent1\
-          \ }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n\
-          }\n"
-      entity: sensor.fisso_cpuload
+    - detail: 1
+      entity: sensor.speedtest_download
+      graph: line
+      icon: mdi:arrow-down-bold
+      name: Download
+      type: sensor
+    - detail: 1
+      entity: sensor.speedtest_upload
+      graph: line
+      icon: mdi:arrow-up-bold
+      name: Upload
+      type: sensor
+    - color: deep-orange
+      entity: sensor.speedtest_ping
       grid_options:
         columns: full
-      icon: mdi:chart-areaspline
-      icon_color: deep-orange
-      primary: CPU
-      secondary: '{{ states(''sensor.fisso_cpuload'') }} %'
-      tap_action:
-        action: more-info
-      type: custom:mushroom-template-card
-    - badge_icon: ''
-      card_mod:
-        style: "{% set ashlvl = states('sensor.fisso_memoryusage') | float(0) %}\n\
-          {% set ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\n\
-          ha-card {\n    background: linear-gradient(90deg, rgba(33,150,243,0.5) {{\
-          \ ashpercent1 }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n\
-          }\n"
-      entity: sensor.fisso_memoryusage
-      grid_options:
-        columns: full
-      icon: mdi:memory
-      icon_color: blue
-      primary: RAM
-      secondary: '{{ states(''sensor.fisso_memoryusage'') }} %'
-      tap_action:
-        action: more-info
-      type: custom:mushroom-template-card
-    - entities:
-      - entity: sensor.fisso_activewindow
-        name: Finestra Attiva
-      - entity: sensor.fisso_currentvolume
-        name: Volume
-      - entity: button.fisso_mediamute
-        icon: mdi:volume-mute
-        name: Mute
-      - entity: button.fisso_hibernate
-        icon: mdi:snowflake
-        name: Hibernate
-      type: entities
+      name: Ping
+      show_entity_picture: false
+      state_content: state
+      type: tile
     type: grid
   - cards:
-    - title: 💻 Abo
+    - grid_options:
+        columns: full
+      title: 🛡️ AdGuard Home
       type: custom:mushroom-title-card
-    - badge_icon: ''
-      card_mod:
-        style: "{% set ashlvl = states('sensor.abo_cpuload') | float(0) %}\n{% set\
-          \ ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\nha-card\
-          \ {\n    background: linear-gradient(90deg, rgb(255,111,34,0.5) {{ ashpercent1\
-          \ }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n\
-          }\n"
-      entity: sensor.abo_cpuload
+    - detail: 1
+      entity: sensor.adguard_dns_queries
+      graph: line
+      icon: ''
+      name: Richieste
+      type: sensor
+    - detail: 1
+      entity: sensor.adguard_dns_queries_blocked_ratio
+      graph: line
+      icon: ''
+      name: Bloccate
+      type: sensor
+    - color: purple
+      entity: sensor.adguard_average_processing_speed
       grid_options:
         columns: full
-      icon: mdi:chart-areaspline
-      icon_color: deep-orange
-      primary: CPU
-      secondary: '{{ states(''sensor.abo_cpuload'') }} %'
-      tap_action:
-        action: more-info
-      type: custom:mushroom-template-card
-    - badge_icon: ''
-      card_mod:
-        style: "{% set ashlvl = states('sensor.abo_memoryusage') | float(0) %}\n{%\
-          \ set ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\n\
-          ha-card {\n    background: linear-gradient(90deg, rgba(33,150,243,0.5) {{\
-          \ ashpercent1 }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n\
-          }\n"
-      entity: sensor.abo_memoryusage
+      name: Average processing speed
+      type: tile
+    - color: green
+      entity: switch.adguard_protection
       grid_options:
         columns: full
-      icon: mdi:memory
-      icon_color: blue
-      primary: RAM
-      secondary: '{{ states(''sensor.abo_memoryusage'') }} %'
-      tap_action:
-        action: more-info
-      type: custom:mushroom-template-card
-    - entities:
-      - entity: sensor.abo_activewindow
-        name: Finestra attiva
-      - entity: sensor.abo_battery_charge_remaining_percentage
-        name: Batteria
-      - entity: sensor.abo_battery_charge_status
-        name: In carica
-      - entity: sensor.abo_audio_default_device_volume
-        name: Volume
-      - entity: button.abo_mediamute
-        icon: mdi:volume-mute
-        name: Mute
-      - entity: button.abo_hibernate
-        icon: mdi:snowflake
-        name: Hibernate
-      type: entities
+      name: Protection
+      type: tile
+    - entity: switch.adguard_filtering
+      icon: mdi:filter
+      name: Filtering
+      type: tile
+    - color: light-blue
+      entity: switch.adguard_safe_search
+      icon: mdi:shield-search
+      name: Safe search
+      type: tile
     type: grid
   subview: true
   theme: Backend-selected
   title: Lab
-  type: sections
-- badges: []
-  cards: []
-  icon: mdi:door
-  max_columns: 3
-  path: entrance
-  sections:
-  - cards:
-    - title: Smart home
-      type: custom:mushroom-title-card
-    - entity: light.vetrina_ingresso
-      grid_options:
-        columns: full
-      type: custom:mushroom-light-card
-    type: grid
-  subview: true
-  theme: Backend-selected
-  title: Ingresso
   type: sections
 - badges: []
   cards: []
@@ -1540,4 +1536,116 @@ views:
     type: grid
   subview: true
   title: Stats
+  type: sections
+- cards: []
+  icon: mdi:devices
+  max_columns: 3
+  path: devices
+  sections:
+  - cards:
+    - title: 🖥️ Fisso
+      type: custom:mushroom-title-card
+    - badge_icon: ''
+      card_mod:
+        style: "{% set ashlvl = states('sensor.fisso_cpuload') | float(0) %}\n{% set\
+          \ ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\nha-card\
+          \ {\n    background: linear-gradient(90deg, rgb(255,111,34,0.5) {{ ashpercent1\
+          \ }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n\
+          }\n"
+      entity: sensor.fisso_cpuload
+      grid_options:
+        columns: full
+      icon: mdi:chart-areaspline
+      icon_color: deep-orange
+      primary: CPU
+      secondary: '{{ states(''sensor.fisso_cpuload'') }} %'
+      tap_action:
+        action: more-info
+      type: custom:mushroom-template-card
+    - badge_icon: ''
+      card_mod:
+        style: "{% set ashlvl = states('sensor.fisso_memoryusage') | float(0) %}\n\
+          {% set ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\n\
+          ha-card {\n    background: linear-gradient(90deg, rgba(33,150,243,0.5) {{\
+          \ ashpercent1 }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n\
+          }\n"
+      entity: sensor.fisso_memoryusage
+      grid_options:
+        columns: full
+      icon: mdi:memory
+      icon_color: blue
+      primary: RAM
+      secondary: '{{ states(''sensor.fisso_memoryusage'') }} %'
+      tap_action:
+        action: more-info
+      type: custom:mushroom-template-card
+    - entities:
+      - entity: sensor.fisso_activewindow
+        name: Finestra Attiva
+      - entity: sensor.fisso_currentvolume
+        name: Volume
+      - entity: button.fisso_mediamute
+        icon: mdi:volume-mute
+        name: Mute
+      - entity: button.fisso_hibernate
+        icon: mdi:snowflake
+        name: Hibernate
+      type: entities
+    type: grid
+  - cards:
+    - title: 💻 Abo
+      type: custom:mushroom-title-card
+    - badge_icon: ''
+      card_mod:
+        style: "{% set ashlvl = states('sensor.abo_cpuload') | float(0) %}\n{% set\
+          \ ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\nha-card\
+          \ {\n    background: linear-gradient(90deg, rgb(255,111,34,0.5) {{ ashpercent1\
+          \ }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n\
+          }\n"
+      entity: sensor.abo_cpuload
+      grid_options:
+        columns: full
+      icon: mdi:chart-areaspline
+      icon_color: deep-orange
+      primary: CPU
+      secondary: '{{ states(''sensor.abo_cpuload'') }} %'
+      tap_action:
+        action: more-info
+      type: custom:mushroom-template-card
+    - badge_icon: ''
+      card_mod:
+        style: "{% set ashlvl = states('sensor.abo_memoryusage') | float(0) %}\n{%\
+          \ set ashpercent1 = ashlvl %}\n{% set ashpercent2 = ashpercent1 + 0.1 %}\n\
+          ha-card {\n    background: linear-gradient(90deg, rgba(33,150,243,0.5) {{\
+          \ ashpercent1 }}%, #1D1D1D {{ ashpercent2 }}%);\n    border-color:rgba(52,52,52,1);\n\
+          }\n"
+      entity: sensor.abo_memoryusage
+      grid_options:
+        columns: full
+      icon: mdi:memory
+      icon_color: blue
+      primary: RAM
+      secondary: '{{ states(''sensor.abo_memoryusage'') }} %'
+      tap_action:
+        action: more-info
+      type: custom:mushroom-template-card
+    - entities:
+      - entity: sensor.abo_activewindow
+        name: Finestra attiva
+      - entity: sensor.abo_battery_charge_remaining_percentage
+        name: Batteria
+      - entity: sensor.abo_battery_charge_status
+        name: In carica
+      - entity: sensor.abo_audio_default_device_volume
+        name: Volume
+      - entity: button.abo_mediamute
+        icon: mdi:volume-mute
+        name: Mute
+      - entity: button.abo_hibernate
+        icon: mdi:snowflake
+        name: Hibernate
+      type: entities
+    type: grid
+  subview: true
+  title: Devices
   type: sections

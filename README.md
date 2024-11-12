@@ -12,7 +12,7 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 477
+Number of entities | 478
 Number of sensors | 251
 
 
@@ -41,6 +41,7 @@ Number of sensors | 251
 - [Waste Collection Schedule](https://github.com/mampfes/hacs_waste_collection_schedule)
 
 ### Lovelace plugins
+- [Better Thermostat Ui](https://github.com/KartoffelToby/better-thermostat-ui-card)
 - [Card Mod](https://github.com/thomasloven/lovelace-card-mod)
 - [Mini Graph Card](https://github.com/kalkih/mini-graph-card)
 - [Mushroom](https://github.com/piitaya/lovelace-mushroom)
@@ -63,6 +64,7 @@ Number of sensors | 251
     <img src="docs/images/desktop/entrance.png" alt="Entrance"/>
     <img src="docs/images/desktop/lab.png" alt="Lab"/>
     <img src="docs/images/desktop/stats.png" alt="Stats"/>
+    <img src="docs/images/desktop/devices.png" alt="Devices"/>
 </details>
 
 <details>
@@ -73,8 +75,8 @@ Number of sensors | 251
     <img src="docs/images/mobile/kitchen.jpg" alt="Kitchen"/>
     <img src="docs/images/mobile/bathroom.jpg" alt="Bathroom"/>
     <img src="docs/images/mobile/entrance.jpg" alt="Entrance"/>
-    <img src="docs/images/mobile/lab_1.jpg" alt="Lab 1"/>
-    <img src="docs/images/mobile/lab_2.jpg" alt="Lab 2"/>
+    <img src="docs/images/mobile/lab.jpg" alt="Lab"/>
+    <img src="docs/images/mobile/devices.jpg" alt="Devices"/>
     <img src="docs/images/mobile/stats_1.jpg" alt="Stats 1"/>
     <img src="docs/images/mobile/stats_2.jpg" alt="Stats 2"/>
 </details>

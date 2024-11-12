@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/aronnebrivio/homeassistant-config/compare/v3.0.0...v3.1.0) (2024-11-12)
+
+
+### Features
+
+* **lovelace:** use better-thermostat and tile cards, add devices view ([9078551](https://github.com/aronnebrivio/homeassistant-config/commit/907855139d5832afc6d004f0e0194008310b7b9f))
+
 ## [3.0.0](https://github.com/aronnebrivio/homeassistant-config/compare/v2.43.0...v3.0.0) (2024-11-10)
 
 

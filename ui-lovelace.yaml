@@ -414,14 +414,14 @@ views:
       visibility:
       - condition: screen
         media_query: '(min-width: 768px)'
-    - entity: light.albero_di_natale
+    - color: green
+      entity: light.albero_di_natale
       grid_options:
         columns: full
       icon: mdi:pine-tree
-      icon_color: green
       tap_action:
         action: toggle
-      type: custom:mushroom-entity-card
+      type: tile
       visibility:
       - condition: state
         entity: binary_sensor.christmas_time

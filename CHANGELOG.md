@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.3.0](https://github.com/aronnebrivio/homeassistant-config/compare/v3.2.0...v3.3.0) (2024-11-24)
+
+
+### Features
+
+* upgrade HA to 2024.11.3 ([2d9f447](https://github.com/aronnebrivio/homeassistant-config/commit/2d9f44719c4aabcf746ff74b09b2a012c6bd7191))
+
+
+### Bug Fixes
+
+* **esp-home:** expose Restart button on esp32-01 ([6050a90](https://github.com/aronnebrivio/homeassistant-config/commit/6050a900cc7d7dc078ec5546b0aeb8cd727d0cd7))
+
 ## [3.2.0](https://github.com/aronnebrivio/homeassistant-config/compare/v3.1.0...v3.2.0) (2024-11-13)
 
 

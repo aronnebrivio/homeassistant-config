@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.0](https://github.com/aronnebrivio/homeassistant-config/compare/v3.1.0...v3.2.0) (2024-11-13)
+
+
+### Features
+
+* **lovelace:** more tiles instead of custom components. Reviewed stats view. ([5aeb3a9](https://github.com/aronnebrivio/homeassistant-config/commit/5aeb3a981bb0fd258ae6c95ee7d84ff42d06519b))
+
 ## [3.1.0](https://github.com/aronnebrivio/homeassistant-config/compare/v3.0.0...v3.1.0) (2024-11-12)
 
 

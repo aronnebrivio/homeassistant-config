@@ -12,15 +12,15 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 479
-Number of sensors | 251
+Number of entities | 480
+Number of sensors | 252
 
 
 ## My installed extensions:
 
 ### Add-ons
 - Advanced SSH & Web Terminal
-- ESPHome Device Compiler
+- ESPHome Device Builder
 - File editor
 - Home Assistant Google Drive Backup
 - Matter Server

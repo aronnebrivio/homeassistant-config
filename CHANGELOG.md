@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.4.0](https://github.com/aronnebrivio/homeassistant-config/compare/v3.3.0...v3.4.0) (2024-12-22)
+
+
+### Features
+
+* update HA to 2024.12.5 ([cfa4778](https://github.com/aronnebrivio/homeassistant-config/commit/cfa4778f365417c27aa3db26a2a6e2eaea055b74))
+
+
+### Bug Fixes
+
+* **lovelace:** remove whitespaces between value and unit of measure ([085d019](https://github.com/aronnebrivio/homeassistant-config/commit/085d0190471e81407a449c1a455726fd0efffc83))
+
 ## [3.3.0](https://github.com/aronnebrivio/homeassistant-config/compare/v3.2.0...v3.3.0) (2024-11-24)
 
 

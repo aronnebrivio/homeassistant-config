@@ -1,6 +1,12 @@
 {
   "Australia": [
     {
+      "title": "1Coast - Central Coast",
+      "module": "1coast_com_au",
+      "default_params": {},
+      "id": "1coast_com_au"
+    },
+    {
       "title": "Adelaide Hills Council",
       "module": "app_my_local_services_au",
       "default_params": {},
@@ -557,6 +563,12 @@
       "id": "mosman_nsw_gov_au"
     },
     {
+      "title": "Moyne Shire Council",
+      "module": "moyne_vic_gov_au",
+      "default_params": {},
+      "id": "moyne_vic_gov_au"
+    },
+    {
       "title": "Naracoorte Lucindale Council",
       "module": "app_my_local_services_au",
       "default_params": {},
@@ -685,6 +697,12 @@
       "module": "mundaring_wa_gov_au",
       "default_params": {},
       "id": "mundaring_wa_gov_au"
+    },
+    {
+      "title": "Shire of Serpentine Jarrahdale",
+      "module": "sjshire_wa_gov_au",
+      "default_params": {},
+      "id": "sjshire_wa_gov_au"
     },
     {
       "title": "Snowy Valleys Council",
@@ -2023,6 +2041,12 @@
       "module": "citiesapps_com",
       "default_params": {},
       "id": "citiesapps_com"
+    },
+    {
+      "title": "Kumberg",
+      "module": "kumberg_gv_at",
+      "default_params": {},
+      "id": "kumberg_gv_at"
     },
     {
       "title": "Kundl",
@@ -3588,6 +3612,14 @@
       "id": "ics_recollect"
     },
     {
+      "title": "City of Lethbridge",
+      "module": "ics",
+      "default_params": {
+        "split_at": "\\, (?:and )?|(?: and )"
+      },
+      "id": "ics_recollect"
+    },
+    {
       "title": "City of Nanaimo",
       "module": "ics",
       "default_params": {
@@ -3597,6 +3629,14 @@
     },
     {
       "title": "City of Peterborough, ON",
+      "module": "ics",
+      "default_params": {
+        "split_at": "\\, (?:and )?|(?: and )"
+      },
+      "id": "ics_recollect"
+    },
+    {
+      "title": "City of Regina",
       "module": "ics",
       "default_params": {
         "split_at": "\\, (?:and )?|(?: and )"
@@ -3748,6 +3788,12 @@
       "id": "toronto_ca"
     },
     {
+      "title": "Valleyfield, Qu\u00e9bec",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_valleyfiled_qc_ca"
+    },
+    {
       "title": "Vaughan (ON)",
       "module": "recyclecoach_com",
       "default_params": {
@@ -3801,26 +3847,10 @@
       "id": "affaldonline_dk"
     },
     {
-      "title": "Fan\u00f8 Kommune",
-      "module": "affaldonline_dk",
-      "default_params": {
-        "municipality": "fanoe"
-      },
-      "id": "affaldonline_dk"
-    },
-    {
       "title": "Favrskov Forsyning",
       "module": "affaldonline_dk",
       "default_params": {
         "municipality": "favrskov"
-      },
-      "id": "affaldonline_dk"
-    },
-    {
-      "title": "Fredericia Kommune Affald & Genbrug",
-      "module": "affaldonline_dk",
-      "default_params": {
-        "municipality": "fredericia"
       },
       "id": "affaldonline_dk"
     },
@@ -3843,14 +3873,6 @@
       "module": "affaldonline_dk",
       "default_params": {
         "municipality": "middelfart"
-      },
-      "id": "affaldonline_dk"
-    },
-    {
-      "title": "Nyborg Forsyning & Service A/S",
-      "module": "affaldonline_dk",
-      "default_params": {
-        "municipality": "nyborg"
       },
       "id": "affaldonline_dk"
     },
@@ -3895,14 +3917,6 @@
       "id": "affaldonline_dk"
     },
     {
-      "title": "Sor\u00f8 Kommune",
-      "module": "affaldonline_dk",
-      "default_params": {
-        "municipality": "soroe"
-      },
-      "id": "affaldonline_dk"
-    },
-    {
       "title": "Vejle Kommune",
       "module": "affaldonline_dk",
       "default_params": {
@@ -3935,6 +3949,14 @@
   ],
   "France": [
     {
+      "title": "Ardenne M\u00e9tropole",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 670
+      },
+      "id": "publidata_fr"
+    },
+    {
       "title": "Ch\u00e2teauroux M\u00e9tropole",
       "module": "publidata_fr",
       "default_params": {
@@ -3949,10 +3971,42 @@
       "id": "cc-montesquieu_fr"
     },
     {
+      "title": "Dreux Agglom\u00e9ration",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 725
+      },
+      "id": "publidata_fr"
+    },
+    {
+      "title": "Dunkerque Grand Littoral",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 673
+      },
+      "id": "publidata_fr"
+    },
+    {
+      "title": "Grand Calais Terres et Mers",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 679
+      },
+      "id": "publidata_fr"
+    },
+    {
       "title": "Grand Paris Seine et Oise",
       "module": "publidata_fr",
       "default_params": {
         "instance_id": 1294
+      },
+      "id": "publidata_fr"
+    },
+    {
+      "title": "Grand Paris Seine Ouest",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 101
       },
       "id": "publidata_fr"
     },
@@ -4003,6 +4057,22 @@
       "module": "publidata_fr",
       "default_params": {
         "instance_id": 65
+      },
+      "id": "publidata_fr"
+    },
+    {
+      "title": "ValDem",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 751
+      },
+      "id": "publidata_fr"
+    },
+    {
+      "title": "ValEco",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 750
       },
       "id": "publidata_fr"
     },
@@ -4131,10 +4201,16 @@
       "id": "offenbach_de"
     },
     {
-      "title": "Abfallkalender W\u00fcrzburg",
+      "title": "Abfallkalender W\u00fcrzburg (deprecated)",
       "module": "wuerzburg_de",
       "default_params": {},
       "id": "wuerzburg_de"
+    },
+    {
+      "title": "Abfallkalender W\u00fcrzburg (ICS)",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_wuerzburg_de"
     },
     {
       "title": "AbfallNavi (RegioIT.de)",
@@ -5024,6 +5100,12 @@
       "id": "bsr_de"
     },
     {
+      "title": "BEST - Bottrop",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_best_bottrop_de"
+    },
+    {
       "title": "Bestwig",
       "module": "lobbe_app",
       "default_params": {
@@ -5534,6 +5616,12 @@
       "id": "app_abfallplus_de"
     },
     {
+      "title": "EUV Stadtbetrieb Castrop-Rauxel",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_euv_stadtbetrieb_de"
+    },
+    {
       "title": "EVA Abfallentsorgung",
       "module": "ics",
       "default_params": {
@@ -5722,7 +5810,7 @@
       "id": "abfall_io"
     },
     {
-      "title": "G\u00fctersloh",
+      "title": "G\u00fctersloh (Stadt)",
       "module": "abfallnavi_de",
       "default_params": {
         "service": "gt2"
@@ -6121,6 +6209,14 @@
         "app_id": "de.k4systems.awbgp"
       },
       "id": "app_abfallplus_de"
+    },
+    {
+      "title": "Kreis G\u00fctersloh GEG",
+      "module": "abfallnavi_de",
+      "default_params": {
+        "service": "krwaf"
+      },
+      "id": "abfallnavi_de"
     },
     {
       "title": "Kreis Heilbronn",
@@ -7389,6 +7485,12 @@
       "id": "buergerportal_de"
     },
     {
+      "title": "MZV Rotenburg",
+      "module": "mzv_rotenburg_bebra_de",
+      "default_params": {},
+      "id": "mzv_rotenburg_bebra_de"
+    },
+    {
       "title": "M\u00f6rfelden-Walldorf",
       "module": "ics",
       "default_params": {},
@@ -7456,13 +7558,10 @@
       "id": "jumomind_de"
     },
     {
-      "title": "Neu Ulm",
-      "module": "ics",
-      "default_params": {
-        "regex": "Abfuhr (.*)",
-        "split_at": "- und "
-      },
-      "id": "ics_neu_ulm_de"
+      "title": "Neu-Ulm",
+      "module": "neu_ulm_de",
+      "default_params": {},
+      "id": "neu_ulm_de"
     },
     {
       "title": "Neum\u00fcnster (MyMuell App)",
@@ -8101,6 +8200,12 @@
       "id": "awido_de"
     },
     {
+      "title": "Stadt Wetzlar",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_wetzlar_de"
+    },
+    {
       "title": "Stadtbetrieb Frechen",
       "module": "ics",
       "default_params": {},
@@ -8208,9 +8313,9 @@
     },
     {
       "title": "S\u00fcdbrandenburgischer Abfallzweckverband",
-      "module": "sbazv_de",
+      "module": "ics",
       "default_params": {},
-      "id": "sbazv_de"
+      "id": "ics_sbazv_de"
     },
     {
       "title": "TBR Remscheid",
@@ -10641,6 +10746,12 @@
         "municipality": "Signa"
       },
       "id": "aliaserviziambientali_it"
+    },
+    {
+      "title": "Silea",
+      "module": "silea_it",
+      "default_params": {},
+      "id": "silea_it"
     },
     {
       "title": "Silvi - Diodoro Ecologia",
@@ -13644,6 +13755,12 @@
       "id": "sutton_gov_uk"
     },
     {
+      "title": "Swale Borough Council",
+      "module": "swale_gov_uk",
+      "default_params": {},
+      "id": "swale_gov_uk"
+    },
+    {
       "title": "Swansea Council",
       "module": "swansea_gov_uk",
       "default_params": {},
@@ -13680,6 +13797,12 @@
       "module": "tewkesbury_gov_uk",
       "default_params": {},
       "id": "tewkesbury_gov_uk"
+    },
+    {
+      "title": "Thanet District Council",
+      "module": "thanet_gov_uk",
+      "default_params": {},
+      "id": "thanet_gov_uk"
     },
     {
       "title": "The Royal Borough of Kingston Council",
@@ -13722,6 +13845,12 @@
       "module": "binzone_uk",
       "default_params": {},
       "id": "binzone_uk"
+    },
+    {
+      "title": "Wakefield Council",
+      "module": "wakefield_gov_uk",
+      "default_params": {},
+      "id": "wakefield_gov_uk"
     },
     {
       "title": "Walsall Council",
@@ -13826,6 +13955,14 @@
       "module": "wiltshire_gov_uk",
       "default_params": {},
       "id": "wiltshire_gov_uk"
+    },
+    {
+      "title": "Winchester City Council",
+      "module": "iapp_itouchvision_com",
+      "default_params": {
+        "municipality": "WINCHESTER"
+      },
+      "id": "iapp_itouchvision_com"
     },
     {
       "title": "Windsor and Maidenhead",

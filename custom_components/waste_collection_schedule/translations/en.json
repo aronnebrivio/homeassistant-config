@@ -109,6 +109,26 @@
           "calendar_title": "Calendar Title"
         }
       },
+      "args_1coast_com_au": {
+        "title": "Configure Source",
+        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/1coast_com_au.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "address": "Address"
+        },
+        "data_description": {
+          "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used."
+        }
+      },
+      "reconfigure_1coast_com_au": {
+        "title": "Reconfigure Source",
+        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/1coast_com_au.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "address": "Address"
+        },
+        "data_description": {}
+      },
       "args_app_my_local_services_au": {
         "title": "Configure Source",
         "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/app_my_local_services_au.md.",
@@ -983,6 +1003,26 @@
         },
         "data_description": {}
       },
+      "args_moyne_vic_gov_au": {
+        "title": "Configure Source",
+        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/moyne_vic_gov_au.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "street_address": "Street Address"
+        },
+        "data_description": {
+          "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used."
+        }
+      },
+      "reconfigure_moyne_vic_gov_au": {
+        "title": "Reconfigure Source",
+        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/moyne_vic_gov_au.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "street_address": "Street Address"
+        },
+        "data_description": {}
+      },
       "args_nillumbik_vic_gov_au": {
         "title": "Configure Source",
         "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/nillumbik_vic_gov_au.md.",
@@ -1169,6 +1209,28 @@
         "data_description": {
           "parcel_number": "An easy way to discover your parcel_number is by going to https://geohub-mundaring.hub.arcgis.com/, and use the Property Map to search for your address ensuring both Lot Numbers and House Number checkboxes are ticked. The pop-up that appears contains an entry that shows your parcel number."
         }
+      },
+      "args_sjshire_wa_gov_au": {
+        "title": "Configure Source",
+        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/sjshire_wa_gov_au.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "address": "Address",
+          "predict": "Predict"
+        },
+        "data_description": {
+          "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used."
+        }
+      },
+      "reconfigure_sjshire_wa_gov_au": {
+        "title": "Reconfigure Source",
+        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/sjshire_wa_gov_au.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "address": "Address",
+          "predict": "Predict"
+        },
+        "data_description": {}
       },
       "args_stirling_wa_gov_au": {
         "title": "Configure Source",
@@ -1766,6 +1828,24 @@
         },
         "data_description": {}
       },
+      "args_kumberg_gv_at": {
+        "title": "Configure Source",
+        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/kumberg_gv_at.md.",
+        "data": {
+          "calendar_title": "Calendar Title"
+        },
+        "data_description": {
+          "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used."
+        }
+      },
+      "reconfigure_kumberg_gv_at": {
+        "title": "Reconfigure Source",
+        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/kumberg_gv_at.md.",
+        "data": {
+          "calendar_title": "Calendar Title"
+        },
+        "data_description": {}
+      },
       "args_ics_linzag_at": {
         "title": "Configure Source",
         "description": "Configure your service provider. \n\n- Go to https://www.linzag.at/portal/de/privatkunden/zuhause/abfall/service_dienstleistungen/abfallkalender and select your location.  \n- Click on the download `Abfallkalender (ICS)` button and copy the download link or copy the link of the button after you already pressed it (href changes after first click).\n- Replace the `url` in the example configuration with this link.\n- Replace the date in the url (after `downloadStartDate=`) with '01-01-&#123;%Y&#125;' this way the link keep valid for following years.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/linzag_at.md.",
@@ -2228,7 +2308,7 @@
       },
       "args_ics_recollect": {
         "title": "Configure Source",
-        "description": "Configure your service provider. \n\n- To get the URL, search your address in the recollect form of your home town.\n- Click \"Get a calendar\", then \"Add to Google Calendar\".\n- The URL shown is your ICS calendar link, for example.\n  ```plain\n  https://recollect.a.ssl.fastly.net/api/places/BCCDF30E-578B-11E4-AD38-5839C200407A/services/208/events.en.ics?client_id=6FBD18FE-167B-11EC-992A-C843A7F05606\n  ```\n- You can strip the client ID URL parameter to get the final URL: `https://recollect.a.ssl.fastly.net/api/places/BCCDF30E-578B-11E4-AD38-5839C200407A/services/208/events.en.ics`\n\nknown to work with:\n|Region|Country|URL|\n|-|-|-|\n|Ottawa, ON|Canada|[ottawa.ca](https://ottawa.ca/en/garbage-and-recycling/recycling/garbage-and-recycling-collection-calendar)|\n|Simcoe County, ON|Canada|[simcoe.ca](https://www.simcoe.ca/dpt/swm/when)|\n|City of Bloomington, IN|USA|[api.recollect.net/r/area/bloomingtonin](https://api.recollect.net/r/area/bloomingtonin)|\n|City of Cambridge, MA|USA|[cambridgema.gov](https://www.cambridgema.gov/services/curbsidecollections)|\n|City of Georgetown, TX|USA|[texasdisposal.com](https://www.texasdisposal.com/waste-wizard/)|\n|City of Vancouver|Canada|[vancouver.ca](https://vancouver.ca/home-property-development/garbage-and-recycling-collection-schedules.aspx)|\n|City of Nanaimo|Canada|[nanaimo.ca](https://www.nanaimo.ca/city-services/garbage-recycling/collectionschedule)|\n|City of Austin|USA|[austintexas.gov](https://www.austintexas.gov/myschedule)|\n|Middlesbrough|UK|[middlesbrough.gov.uk](https://my.middlesbrough.gov.uk/login/)|\n|City of McKinney|USA|[mckinneytexas.org](https://www.mckinneytexas.org/503/Residential-Trash-Services/#App)|\n|Waste Connections|USA|[wasteconnections.com](https://www.wasteconnections.com/pickup-schedule/)|\n|Halton County, ON|Canada|[halton.ca](https://www.halton.ca/For-Residents/Recycling-Waste/Recycling-and-Waste-Tools/Online-Waste-Collection-Schedule)|\n|District of Saanish, BC|Canada|[saanich.ca](https://www.saanich.ca/EN/main/community/utilities-garbage/garbage-organics-recycling.html)|\n|Caerphilly, Wales|UK|[caerphilly.gov.uk](https://www.caerphilly.gov.uk/services/household-waste-and-recycling/bin-collection-days)|\n|Recology CleanScapes, WA|USA|[recology.com](https://www.recology.com/recology-king-county/des-moines/collection-calendar/)|\nand probably a lot more.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/recollect.md.",
+        "description": "Configure your service provider. \n\n- To get the URL, search your address in the recollect form of your home town.\n- Click \"Get a calendar\", then \"Add to Google Calendar\".\n- The URL shown is your ICS calendar link, for example.\n  ```plain\n  https://recollect.a.ssl.fastly.net/api/places/BCCDF30E-578B-11E4-AD38-5839C200407A/services/208/events.en.ics?client_id=6FBD18FE-167B-11EC-992A-C843A7F05606\n  ```\n- You can strip the client ID URL parameter to get the final URL: `https://recollect.a.ssl.fastly.net/api/places/BCCDF30E-578B-11E4-AD38-5839C200407A/services/208/events.en.ics`\n\nknown to work with:\n|Region|Country|URL|\n|-|-|-|\n|Ottawa, ON|Canada|[ottawa.ca](https://ottawa.ca/en/garbage-and-recycling/recycling/garbage-and-recycling-collection-calendar)|\n|Simcoe County, ON|Canada|[simcoe.ca](https://www.simcoe.ca/dpt/swm/when)|\n|City of Bloomington, IN|USA|[api.recollect.net/r/area/bloomingtonin](https://api.recollect.net/r/area/bloomingtonin)|\n|City of Cambridge, MA|USA|[cambridgema.gov](https://www.cambridgema.gov/services/curbsidecollections)|\n|City of Georgetown, TX|USA|[texasdisposal.com](https://www.texasdisposal.com/waste-wizard/)|\n|City of Vancouver|Canada|[vancouver.ca](https://vancouver.ca/home-property-development/garbage-and-recycling-collection-schedules.aspx)|\n|City of Nanaimo|Canada|[nanaimo.ca](https://www.nanaimo.ca/city-services/garbage-recycling/collectionschedule)|\n|City of Austin|USA|[austintexas.gov](https://www.austintexas.gov/myschedule)|\n|Middlesbrough|UK|[middlesbrough.gov.uk](https://my.middlesbrough.gov.uk/login/)|\n|City of McKinney|USA|[mckinneytexas.org](https://www.mckinneytexas.org/503/Residential-Trash-Services/#App)|\n|Waste Connections|USA|[wasteconnections.com](https://www.wasteconnections.com/pickup-schedule/)|\n|Halton County, ON|Canada|[halton.ca](https://www.halton.ca/For-Residents/Recycling-Waste/Recycling-and-Waste-Tools/Online-Waste-Collection-Schedule)|\n|District of Saanish, BC|Canada|[saanich.ca](https://www.saanich.ca/EN/main/community/utilities-garbage/garbage-organics-recycling.html)|\n|Caerphilly, Wales|UK|[caerphilly.gov.uk](https://www.caerphilly.gov.uk/services/household-waste-and-recycling/bin-collection-days)|\n|Recology CleanScapes, WA|USA|[recology.com](https://www.recology.com/recology-king-county/des-moines/collection-calendar/)|\n|City of Lethbridge|Canada|[lethbridge.ca](https://www.lethbridge.ca/waste-recycling/#wastewizard)|\n|City of Regina|Canada|[regina.ca](https://www.regina.ca/home-property/recycling-garbage/)|\nand probably a lot more.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/recollect.md.",
         "data": {
           "calendar_title": "Calendar Title",
           "file": "File",
@@ -2250,7 +2330,7 @@
       },
       "reconfigure_ics_recollect": {
         "title": "Reconfigure Source",
-        "description": "Configure your service provider. \n\n- To get the URL, search your address in the recollect form of your home town.\n- Click \"Get a calendar\", then \"Add to Google Calendar\".\n- The URL shown is your ICS calendar link, for example.\n  ```plain\n  https://recollect.a.ssl.fastly.net/api/places/BCCDF30E-578B-11E4-AD38-5839C200407A/services/208/events.en.ics?client_id=6FBD18FE-167B-11EC-992A-C843A7F05606\n  ```\n- You can strip the client ID URL parameter to get the final URL: `https://recollect.a.ssl.fastly.net/api/places/BCCDF30E-578B-11E4-AD38-5839C200407A/services/208/events.en.ics`\n\nknown to work with:\n|Region|Country|URL|\n|-|-|-|\n|Ottawa, ON|Canada|[ottawa.ca](https://ottawa.ca/en/garbage-and-recycling/recycling/garbage-and-recycling-collection-calendar)|\n|Simcoe County, ON|Canada|[simcoe.ca](https://www.simcoe.ca/dpt/swm/when)|\n|City of Bloomington, IN|USA|[api.recollect.net/r/area/bloomingtonin](https://api.recollect.net/r/area/bloomingtonin)|\n|City of Cambridge, MA|USA|[cambridgema.gov](https://www.cambridgema.gov/services/curbsidecollections)|\n|City of Georgetown, TX|USA|[texasdisposal.com](https://www.texasdisposal.com/waste-wizard/)|\n|City of Vancouver|Canada|[vancouver.ca](https://vancouver.ca/home-property-development/garbage-and-recycling-collection-schedules.aspx)|\n|City of Nanaimo|Canada|[nanaimo.ca](https://www.nanaimo.ca/city-services/garbage-recycling/collectionschedule)|\n|City of Austin|USA|[austintexas.gov](https://www.austintexas.gov/myschedule)|\n|Middlesbrough|UK|[middlesbrough.gov.uk](https://my.middlesbrough.gov.uk/login/)|\n|City of McKinney|USA|[mckinneytexas.org](https://www.mckinneytexas.org/503/Residential-Trash-Services/#App)|\n|Waste Connections|USA|[wasteconnections.com](https://www.wasteconnections.com/pickup-schedule/)|\n|Halton County, ON|Canada|[halton.ca](https://www.halton.ca/For-Residents/Recycling-Waste/Recycling-and-Waste-Tools/Online-Waste-Collection-Schedule)|\n|District of Saanish, BC|Canada|[saanich.ca](https://www.saanich.ca/EN/main/community/utilities-garbage/garbage-organics-recycling.html)|\n|Caerphilly, Wales|UK|[caerphilly.gov.uk](https://www.caerphilly.gov.uk/services/household-waste-and-recycling/bin-collection-days)|\n|Recology CleanScapes, WA|USA|[recology.com](https://www.recology.com/recology-king-county/des-moines/collection-calendar/)|\nand probably a lot more.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/recollect.md.",
+        "description": "Configure your service provider. \n\n- To get the URL, search your address in the recollect form of your home town.\n- Click \"Get a calendar\", then \"Add to Google Calendar\".\n- The URL shown is your ICS calendar link, for example.\n  ```plain\n  https://recollect.a.ssl.fastly.net/api/places/BCCDF30E-578B-11E4-AD38-5839C200407A/services/208/events.en.ics?client_id=6FBD18FE-167B-11EC-992A-C843A7F05606\n  ```\n- You can strip the client ID URL parameter to get the final URL: `https://recollect.a.ssl.fastly.net/api/places/BCCDF30E-578B-11E4-AD38-5839C200407A/services/208/events.en.ics`\n\nknown to work with:\n|Region|Country|URL|\n|-|-|-|\n|Ottawa, ON|Canada|[ottawa.ca](https://ottawa.ca/en/garbage-and-recycling/recycling/garbage-and-recycling-collection-calendar)|\n|Simcoe County, ON|Canada|[simcoe.ca](https://www.simcoe.ca/dpt/swm/when)|\n|City of Bloomington, IN|USA|[api.recollect.net/r/area/bloomingtonin](https://api.recollect.net/r/area/bloomingtonin)|\n|City of Cambridge, MA|USA|[cambridgema.gov](https://www.cambridgema.gov/services/curbsidecollections)|\n|City of Georgetown, TX|USA|[texasdisposal.com](https://www.texasdisposal.com/waste-wizard/)|\n|City of Vancouver|Canada|[vancouver.ca](https://vancouver.ca/home-property-development/garbage-and-recycling-collection-schedules.aspx)|\n|City of Nanaimo|Canada|[nanaimo.ca](https://www.nanaimo.ca/city-services/garbage-recycling/collectionschedule)|\n|City of Austin|USA|[austintexas.gov](https://www.austintexas.gov/myschedule)|\n|Middlesbrough|UK|[middlesbrough.gov.uk](https://my.middlesbrough.gov.uk/login/)|\n|City of McKinney|USA|[mckinneytexas.org](https://www.mckinneytexas.org/503/Residential-Trash-Services/#App)|\n|Waste Connections|USA|[wasteconnections.com](https://www.wasteconnections.com/pickup-schedule/)|\n|Halton County, ON|Canada|[halton.ca](https://www.halton.ca/For-Residents/Recycling-Waste/Recycling-and-Waste-Tools/Online-Waste-Collection-Schedule)|\n|District of Saanish, BC|Canada|[saanich.ca](https://www.saanich.ca/EN/main/community/utilities-garbage/garbage-organics-recycling.html)|\n|Caerphilly, Wales|UK|[caerphilly.gov.uk](https://www.caerphilly.gov.uk/services/household-waste-and-recycling/bin-collection-days)|\n|Recology CleanScapes, WA|USA|[recology.com](https://www.recology.com/recology-king-county/des-moines/collection-calendar/)|\n|City of Lethbridge|Canada|[lethbridge.ca](https://www.lethbridge.ca/waste-recycling/#wastewizard)|\n|City of Regina|Canada|[regina.ca](https://www.regina.ca/home-property/recycling-garbage/)|\nand probably a lot more.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/recollect.md.",
         "data": {
           "calendar_title": "Calendar Title",
           "file": "File",
@@ -2327,6 +2407,48 @@
         "data": {
           "calendar_title": "Calendar Title",
           "street_address": "Street Address"
+        },
+        "data_description": {}
+      },
+      "args_ics_valleyfiled_qc_ca": {
+        "title": "Configure Source",
+        "description": "Configure your service provider. \n\n- Visit https://www.ville.valleyfield.qc.ca/calendrier-electronique-collecte and open the IOS tab.  \n- Copy the google calendar ICS link of your sector.\n- Use this link as the `url` parameter.\n- You can use the regex `Collecte (?:du|des) (.*)` to shorten the event titles (will remove the `Collecte du `/`Collecte des ` prefix).\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/valleyfiled_qc_ca.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "file": "File",
+          "headers": "Headers",
+          "method": "Method",
+          "offset": "Offset",
+          "params": "Parameters",
+          "regex": "Regex",
+          "split_at": "Split At",
+          "title_template": "Title Template",
+          "url": "Url",
+          "verify_ssl": "Verify Ssl",
+          "version": "Version",
+          "year_field": "Year Field"
+        },
+        "data_description": {
+          "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used."
+        }
+      },
+      "reconfigure_ics_valleyfiled_qc_ca": {
+        "title": "Reconfigure Source",
+        "description": "Configure your service provider. \n\n- Visit https://www.ville.valleyfield.qc.ca/calendrier-electronique-collecte and open the IOS tab.  \n- Copy the google calendar ICS link of your sector.\n- Use this link as the `url` parameter.\n- You can use the regex `Collecte (?:du|des) (.*)` to shorten the event titles (will remove the `Collecte du `/`Collecte des ` prefix).\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/valleyfiled_qc_ca.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "file": "File",
+          "headers": "Headers",
+          "method": "Method",
+          "offset": "Offset",
+          "params": "Parameters",
+          "regex": "Regex",
+          "split_at": "Split At",
+          "title_template": "Title Template",
+          "url": "Url",
+          "verify_ssl": "Verify Ssl",
+          "version": "Version",
+          "year_field": "Year Field"
         },
         "data_description": {}
       },
@@ -3108,6 +3230,48 @@
         },
         "data_description": {}
       },
+      "args_ics_wuerzburg_de": {
+        "title": "Configure Source",
+        "description": "Configure your service provider. \n\n- Visit https://www.wuerzburg.de/themen/umwelt-klima/abfall-und-stadtreinigung/abfallkalender and select your street.\n- Click on \"Calendar as ICS\"\n- Right-lick on \"Download\" and select \"Copy link address\"\n- Use this link as URL parameter\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/wuerzburg_de.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "file": "File",
+          "headers": "Headers",
+          "method": "Method",
+          "offset": "Offset",
+          "params": "Parameters",
+          "regex": "Regex",
+          "split_at": "Split At",
+          "title_template": "Title Template",
+          "url": "Url",
+          "verify_ssl": "Verify Ssl",
+          "version": "Version",
+          "year_field": "Year Field"
+        },
+        "data_description": {
+          "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used."
+        }
+      },
+      "reconfigure_ics_wuerzburg_de": {
+        "title": "Reconfigure Source",
+        "description": "Configure your service provider. \n\n- Visit https://www.wuerzburg.de/themen/umwelt-klima/abfall-und-stadtreinigung/abfallkalender and select your street.\n- Click on \"Calendar as ICS\"\n- Right-lick on \"Download\" and select \"Copy link address\"\n- Use this link as URL parameter\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/wuerzburg_de.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "file": "File",
+          "headers": "Headers",
+          "method": "Method",
+          "offset": "Offset",
+          "params": "Parameters",
+          "regex": "Regex",
+          "split_at": "Split At",
+          "title_template": "Title Template",
+          "url": "Url",
+          "verify_ssl": "Verify Ssl",
+          "version": "Version",
+          "year_field": "Year Field"
+        },
+        "data_description": {}
+      },
       "args_abfallnavi_de": {
         "title": "Configure Source",
         "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/abfallnavi_de.md.",
@@ -3262,7 +3426,7 @@
       },
       "args_ics_entsorgung_regional_de": {
         "title": "Configure Source",
-        "description": "Configure your service provider. \n\n- Go to https://www.entsorgung-regional.de/entsorgung/leerungstermine/terminservice-ics-datei.html and select your location.  \n- Select all waste types (or at least the ones you want to be reminded of).\n- Replace the `url` in the example configuration with this link. \n- Do not forget the method and params parameter.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/entsorgung_regional_de.md.",
+        "description": "Configure your service provider. \n\n- Go to https://www.abfallwirtschaft-enzkreis.de/entsorgung/leerungstermine/terminservice-ics-datei.html and select your location.  \n- Select all waste types (or at least the ones you want to be reminded of).\n- Replace the `url` in the example configuration with this link. \n- Do not forget the method and params parameter.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/entsorgung_regional_de.md.",
         "data": {
           "calendar_title": "Calendar Title",
           "file": "File",
@@ -3284,7 +3448,7 @@
       },
       "reconfigure_ics_entsorgung_regional_de": {
         "title": "Reconfigure Source",
-        "description": "Configure your service provider. \n\n- Go to https://www.entsorgung-regional.de/entsorgung/leerungstermine/terminservice-ics-datei.html and select your location.  \n- Select all waste types (or at least the ones you want to be reminded of).\n- Replace the `url` in the example configuration with this link. \n- Do not forget the method and params parameter.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/entsorgung_regional_de.md.",
+        "description": "Configure your service provider. \n\n- Go to https://www.abfallwirtschaft-enzkreis.de/entsorgung/leerungstermine/terminservice-ics-datei.html and select your location.  \n- Select all waste types (or at least the ones you want to be reminded of).\n- Replace the `url` in the example configuration with this link. \n- Do not forget the method and params parameter.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/entsorgung_regional_de.md.",
         "data": {
           "calendar_title": "Calendar Title",
           "file": "File",
@@ -4290,7 +4454,7 @@
       },
       "args_ics_alba_bs_de": {
         "title": "Configure Source",
-        "description": "Configure your service provider. \n\n- Go to https://alba-bs.de/service/abfuhrtermine.html and select your location.  \n- Copy the link of `ICS-Kalender-Datei` (you may need to click it first and then copy the link from the opened popup)\n- Replace the `url` in the example configuration with this link.\n- Replace the year in the `url` with '&#123;%Y&#125;'.  \n  This will be replaced by the current year.\n- You can remove the cHash parameter from the url.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/alba_bs_de.md.",
+        "description": "Configure your service provider. \n\n- Go to https://alba-bs.de/service/abfuhrtermine.html and select your location.  \n- Copy the link of `ICS-Kalender-Datei`. You need to click it first and then copy the link of the `ok` button if the link does not directly leads to the ICS file.\n- Use this url as the `URL` parameter.\n- Replace the year in the `url` with '&#123;%Y&#125;'.  \n  This will be replaced by the current year.\n- You can remove the cHash parameter from the url.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/alba_bs_de.md.",
         "data": {
           "calendar_title": "Calendar Title",
           "file": "File",
@@ -4312,7 +4476,7 @@
       },
       "reconfigure_ics_alba_bs_de": {
         "title": "Reconfigure Source",
-        "description": "Configure your service provider. \n\n- Go to https://alba-bs.de/service/abfuhrtermine.html and select your location.  \n- Copy the link of `ICS-Kalender-Datei` (you may need to click it first and then copy the link from the opened popup)\n- Replace the `url` in the example configuration with this link.\n- Replace the year in the `url` with '&#123;%Y&#125;'.  \n  This will be replaced by the current year.\n- You can remove the cHash parameter from the url.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/alba_bs_de.md.",
+        "description": "Configure your service provider. \n\n- Go to https://alba-bs.de/service/abfuhrtermine.html and select your location.  \n- Copy the link of `ICS-Kalender-Datei`. You need to click it first and then copy the link of the `ok` button if the link does not directly leads to the ICS file.\n- Use this url as the `URL` parameter.\n- Replace the year in the `url` with '&#123;%Y&#125;'.  \n  This will be replaced by the current year.\n- You can remove the cHash parameter from the url.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/alba_bs_de.md.",
         "data": {
           "calendar_title": "Calendar Title",
           "file": "File",
@@ -5150,6 +5314,48 @@
         },
         "data_description": {}
       },
+      "args_ics_best_bottrop_de": {
+        "title": "Configure Source",
+        "description": "Configure your service provider. \n\n- Visit https://www.best-bottrop.de/abfuhrtermine-0910213539.html and select your location.  \n- Click on `Termine für Kalender exportieren` then `Kalender abonnieren` to get an ical subscription link.\n- Use this link as the `url` parameter.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/best_bottrop_de.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "file": "File",
+          "headers": "Headers",
+          "method": "Method",
+          "offset": "Offset",
+          "params": "Parameters",
+          "regex": "Regex",
+          "split_at": "Split At",
+          "title_template": "Title Template",
+          "url": "Url",
+          "verify_ssl": "Verify Ssl",
+          "version": "Version",
+          "year_field": "Year Field"
+        },
+        "data_description": {
+          "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used."
+        }
+      },
+      "reconfigure_ics_best_bottrop_de": {
+        "title": "Reconfigure Source",
+        "description": "Configure your service provider. \n\n- Visit https://www.best-bottrop.de/abfuhrtermine-0910213539.html and select your location.  \n- Click on `Termine für Kalender exportieren` then `Kalender abonnieren` to get an ical subscription link.\n- Use this link as the `url` parameter.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/best_bottrop_de.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "file": "File",
+          "headers": "Headers",
+          "method": "Method",
+          "offset": "Offset",
+          "params": "Parameters",
+          "regex": "Regex",
+          "split_at": "Split At",
+          "title_template": "Title Template",
+          "url": "Url",
+          "verify_ssl": "Verify Ssl",
+          "version": "Version",
+          "year_field": "Year Field"
+        },
+        "data_description": {}
+      },
       "args_bielefeld_de": {
         "title": "Configure Source",
         "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/bielefeld_de.md.",
@@ -5816,9 +6022,51 @@
         },
         "data_description": {}
       },
+      "args_ics_euv_stadtbetrieb_de": {
+        "title": "Configure Source",
+        "description": "Configure your service provider. \n\n- Go to https://www.euv-stadtbetrieb.de/private-haushalte/leerungsabfrage/ and enter your street.    \n- Next select your house number\n- Click under the section \"Google Kalender\" on \"Link kopieren\"\n- Replace the `url` in the example configuration with this link.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/euv_stadtbetrieb_de.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "file": "File",
+          "headers": "Headers",
+          "method": "Method",
+          "offset": "Offset",
+          "params": "Parameters",
+          "regex": "Regex",
+          "split_at": "Split At",
+          "title_template": "Title Template",
+          "url": "Url",
+          "verify_ssl": "Verify Ssl",
+          "version": "Version",
+          "year_field": "Year Field"
+        },
+        "data_description": {
+          "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used."
+        }
+      },
+      "reconfigure_ics_euv_stadtbetrieb_de": {
+        "title": "Reconfigure Source",
+        "description": "Configure your service provider. \n\n- Go to https://www.euv-stadtbetrieb.de/private-haushalte/leerungsabfrage/ and enter your street.    \n- Next select your house number\n- Click under the section \"Google Kalender\" on \"Link kopieren\"\n- Replace the `url` in the example configuration with this link.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/euv_stadtbetrieb_de.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "file": "File",
+          "headers": "Headers",
+          "method": "Method",
+          "offset": "Offset",
+          "params": "Parameters",
+          "regex": "Regex",
+          "split_at": "Split At",
+          "title_template": "Title Template",
+          "url": "Url",
+          "verify_ssl": "Verify Ssl",
+          "version": "Version",
+          "year_field": "Year Field"
+        },
+        "data_description": {}
+      },
       "args_ics_eva_abfallentsorgung_de": {
         "title": "Configure Source",
-        "description": "Configure your service provider. \n\n- Go to https://www.eva-abfallentsorgung.de/Service-Center/Abfallentsorgung/Abfuhrkalender%20individuell#\n- Choose Place and Location\n- Click on ICS-Datei Kalender herunterladen\n- Turn off Erinnerung and select Alarm Meldung anzeigen\n- Copy the link of the download ICS\n- Replace the url in the example configuration with this link\n- You might want to add a regex to the split_at parameter to remove the location from the title (Restmüll&lt;s&gt; In Böbing, Böbing&lt;/s&gt;)\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/eva_abfallentsorgung_de.md.",
+        "description": "Configure your service provider. \n\n- Go to https://www.eva-abfallentsorgung.de/Service-Center/Downloads%20-%20Infos/Abfuhrkalender%20individuell\n- Choose Place and Location\n- Click on `ICS-Datei`\n- Turn off Erinnerung\n- Right click on `herunterladen` and copy the link address\n- Use this link as `url` parameter\n- Remove the year argument from the url (may not be necessary)\n- You may want to use regex `^(.*) in ` to remove the location from the title (Restmüll&lt;s&gt; In Böbing, Böbing&lt;/s&gt;)\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/eva_abfallentsorgung_de.md.",
         "data": {
           "calendar_title": "Calendar Title",
           "file": "File",
@@ -5840,7 +6088,7 @@
       },
       "reconfigure_ics_eva_abfallentsorgung_de": {
         "title": "Reconfigure Source",
-        "description": "Configure your service provider. \n\n- Go to https://www.eva-abfallentsorgung.de/Service-Center/Abfallentsorgung/Abfuhrkalender%20individuell#\n- Choose Place and Location\n- Click on ICS-Datei Kalender herunterladen\n- Turn off Erinnerung and select Alarm Meldung anzeigen\n- Copy the link of the download ICS\n- Replace the url in the example configuration with this link\n- You might want to add a regex to the split_at parameter to remove the location from the title (Restmüll&lt;s&gt; In Böbing, Böbing&lt;/s&gt;)\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/eva_abfallentsorgung_de.md.",
+        "description": "Configure your service provider. \n\n- Go to https://www.eva-abfallentsorgung.de/Service-Center/Downloads%20-%20Infos/Abfuhrkalender%20individuell\n- Choose Place and Location\n- Click on `ICS-Datei`\n- Turn off Erinnerung\n- Right click on `herunterladen` and copy the link address\n- Use this link as `url` parameter\n- Remove the year argument from the url (may not be necessary)\n- You may want to use regex `^(.*) in ` to remove the location from the title (Restmüll&lt;s&gt; In Böbing, Böbing&lt;/s&gt;)\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/eva_abfallentsorgung_de.md.",
         "data": {
           "calendar_title": "Calendar Title",
           "file": "File",
@@ -7327,6 +7575,37 @@
         },
         "data_description": {}
       },
+      "args_mzv_rotenburg_bebra_de": {
+        "title": "Configure Source",
+        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/mzv_rotenburg_bebra_de.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "city": "City",
+          "paper_route": "Paper Route",
+          "yellow_route": "Yellow Route"
+        },
+        "data_description": {
+          "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used.",
+          "city": "Should be spelled exactly like in the `ort` URL parameter of the link url shown on the website: https://www.mzv-rotenburg-bebra.de//webapp.html Like: `lisp`, `rot`, `bebra`, ...",
+          "paper_route": "Used if there are multiple routes for the paper collection. E.g 'Rotenburg - Kernstadt' has paper collection routes `West` and `Ost`.",
+          "yellow_route": "Used if there are multiple routes for the yellow bin collection. E.g 'Rotenburg - Kernstadt' has yellow bin collection routes `1`,`2`,`3` and `4`."
+        }
+      },
+      "reconfigure_mzv_rotenburg_bebra_de": {
+        "title": "Reconfigure Source",
+        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/mzv_rotenburg_bebra_de.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "city": "City",
+          "paper_route": "Paper Route",
+          "yellow_route": "Yellow Route"
+        },
+        "data_description": {
+          "city": "Should be spelled exactly like in the `ort` URL parameter of the link url shown on the website: https://www.mzv-rotenburg-bebra.de//webapp.html Like: `lisp`, `rot`, `bebra`, ...",
+          "paper_route": "Used if there are multiple routes for the paper collection. E.g 'Rotenburg - Kernstadt' has paper collection routes `West` and `Ost`.",
+          "yellow_route": "Used if there are multiple routes for the yellow bin collection. E.g 'Rotenburg - Kernstadt' has yellow bin collection routes `1`,`2`,`3` and `4`."
+        }
+      },
       "args_ics_moerfelden_walldorf_de": {
         "title": "Configure Source",
         "description": "Configure your service provider. \n\n- Visit https://abfallkalender.regioit.de/kalender-moerfelden-walldorf/index.jsp and select your street.  \n- Click on `Herunterladen (ICS)` and select `Keine Erinnerung`.\n- Easy way (firefox):\n  - Click on `Herunterladen (ICS)` to start the download.\n  - Click on the download icon of Firefox and right click -&gt; `Copy Download Link` on the ics file.\n- Harder Way (All Browsers):\n  - Open your browsers developer tools (F12) and go to the network tab.\n  - Click on `Herunterladen (ICS)` and look for the request that is made to download the ics file.\n  - Copy the URL of the request.\n- Use this URL as `url` parameter.\n- Replace the year in the URL with '&#123;%Y&#125;', so it will be automatically replaced by the current year.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/moerfelden_walldorf_de.md.",
@@ -7369,45 +7648,23 @@
         },
         "data_description": {}
       },
-      "args_ics_neu_ulm_de": {
+      "args_neu_ulm_de": {
         "title": "Configure Source",
-        "description": "Configure your service provider. \n\n- Go to https://neu-ulm.de/buerger-service/leben-in-neu-ulm/abfall-sauberkeit/abfallkalender and select your location.  \n- Copy the correct link below `Abfuhrtermine als ICS-Dateien`.\n- Replace the `url` in the example configuration with this link.\n- Replace the year in the url with '&#123;%Y&#125;' so the url should stay valid the next years.\n- Keep the regex if you do not want to see the Abfuhr prefix in the event title.\n- If you want to split events like `Rest- und Biomüll` into two events, you can use the `split_at` option. ( results in events `Rest` and `Biomüll` You might want to change the name of the first one using the customize option. [_See configuration documentationt_](https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/installation.md#configuring-sources).)\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/neu_ulm_de.md.",
+        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/neu_ulm_de.md.",
         "data": {
           "calendar_title": "Calendar Title",
-          "file": "File",
-          "headers": "Headers",
-          "method": "Method",
-          "offset": "Offset",
-          "params": "Parameters",
-          "regex": "Regex",
-          "split_at": "Split At",
-          "title_template": "Title Template",
-          "url": "Url",
-          "verify_ssl": "Verify Ssl",
-          "version": "Version",
-          "year_field": "Year Field"
+          "region": "Region"
         },
         "data_description": {
           "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used."
         }
       },
-      "reconfigure_ics_neu_ulm_de": {
+      "reconfigure_neu_ulm_de": {
         "title": "Reconfigure Source",
-        "description": "Configure your service provider. \n\n- Go to https://neu-ulm.de/buerger-service/leben-in-neu-ulm/abfall-sauberkeit/abfallkalender and select your location.  \n- Copy the correct link below `Abfuhrtermine als ICS-Dateien`.\n- Replace the `url` in the example configuration with this link.\n- Replace the year in the url with '&#123;%Y&#125;' so the url should stay valid the next years.\n- Keep the regex if you do not want to see the Abfuhr prefix in the event title.\n- If you want to split events like `Rest- und Biomüll` into two events, you can use the `split_at` option. ( results in events `Rest` and `Biomüll` You might want to change the name of the first one using the customize option. [_See configuration documentationt_](https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/installation.md#configuring-sources).)\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/neu_ulm_de.md.",
+        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/neu_ulm_de.md.",
         "data": {
           "calendar_title": "Calendar Title",
-          "file": "File",
-          "headers": "Headers",
-          "method": "Method",
-          "offset": "Offset",
-          "params": "Parameters",
-          "regex": "Regex",
-          "split_at": "Split At",
-          "title_template": "Title Template",
-          "url": "Url",
-          "verify_ssl": "Verify Ssl",
-          "version": "Version",
-          "year_field": "Year Field"
+          "region": "Region"
         },
         "data_description": {}
       },
@@ -7995,6 +8252,48 @@
         },
         "data_description": {}
       },
+      "args_ics_wetzlar_de": {
+        "title": "Configure Source",
+        "description": "Configure your service provider. \n\n- Visit https://wetzlar.de/leben-in-wetzlar/abfall-und-entsorgung/ and select 'Jahreskalender &lt;Jahr&gt;'.\n- Search for your `Ortsteil und Straße`.\n- Select `Ansicht` and the `Abfallart` you want to see.\n- Click `anzeigen`\n- Right-click copy link address on the `Jahreskalender als iCal` link to get a ICAL link.\n- Use this link as `url` parameter.\n- Replace the Year in(`abfuhrtermine-2024`) with '&#123;%Y&#125;' in the URL e.g. 'abfuhrtermine-&#123;%Y&#125;'.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/wetzlar_de.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "file": "File",
+          "headers": "Headers",
+          "method": "Method",
+          "offset": "Offset",
+          "params": "Parameters",
+          "regex": "Regex",
+          "split_at": "Split At",
+          "title_template": "Title Template",
+          "url": "Url",
+          "verify_ssl": "Verify Ssl",
+          "version": "Version",
+          "year_field": "Year Field"
+        },
+        "data_description": {
+          "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used."
+        }
+      },
+      "reconfigure_ics_wetzlar_de": {
+        "title": "Reconfigure Source",
+        "description": "Configure your service provider. \n\n- Visit https://wetzlar.de/leben-in-wetzlar/abfall-und-entsorgung/ and select 'Jahreskalender &lt;Jahr&gt;'.\n- Search for your `Ortsteil und Straße`.\n- Select `Ansicht` and the `Abfallart` you want to see.\n- Click `anzeigen`\n- Right-click copy link address on the `Jahreskalender als iCal` link to get a ICAL link.\n- Use this link as `url` parameter.\n- Replace the Year in(`abfuhrtermine-2024`) with '&#123;%Y&#125;' in the URL e.g. 'abfuhrtermine-&#123;%Y&#125;'.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/wetzlar_de.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "file": "File",
+          "headers": "Headers",
+          "method": "Method",
+          "offset": "Offset",
+          "params": "Parameters",
+          "regex": "Regex",
+          "split_at": "Split At",
+          "title_template": "Title Template",
+          "url": "Url",
+          "verify_ssl": "Verify Ssl",
+          "version": "Version",
+          "year_field": "Year Field"
+        },
+        "data_description": {}
+      },
       "args_ics_stadtbetrieb_frechen_de": {
         "title": "Configure Source",
         "description": "Configure your service provider. \n\n- Go to https://www.stadtbetrieb-frechen.de/service/abfallkalender and select your street name.  \n- Right-click on `Jahreskalender importieren (iCal)` and copy link address.\n- Replace the `url` in the example configuration with this link.\n- Replace the year in the url with '&#123;%Y&#125;' this way the link keep valid for following years.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/stadtbetrieb_frechen_de.md.",
@@ -8317,27 +8616,45 @@
         },
         "data_description": {}
       },
-      "args_sbazv_de": {
+      "args_ics_sbazv_de": {
         "title": "Configure Source",
-        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/sbazv_de.md.",
+        "description": "Configure your service provider. \n\n- Go to https://www.sbazv.de/entsorgungstermine/restmuell-papier-gelbesaecke-laubsaecke-weihnachtsbaeume/\n- Mark all types of waste and enter your address\n- Click on \"Kalenderexport\"\n- Click on \"URL in die Zwischenablage kopieren\"\n- Replace the `url` in the example configuration with this link.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/sbazv_de.md.",
         "data": {
           "calendar_title": "Calendar Title",
-          "city": "City",
-          "district": "District",
-          "street": "Street"
+          "file": "File",
+          "headers": "Headers",
+          "method": "Method",
+          "offset": "Offset",
+          "params": "Parameters",
+          "regex": "Regex",
+          "split_at": "Split At",
+          "title_template": "Title Template",
+          "url": "Url",
+          "verify_ssl": "Verify Ssl",
+          "version": "Version",
+          "year_field": "Year Field"
         },
         "data_description": {
           "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used."
         }
       },
-      "reconfigure_sbazv_de": {
+      "reconfigure_ics_sbazv_de": {
         "title": "Reconfigure Source",
-        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/sbazv_de.md.",
+        "description": "Configure your service provider. \n\n- Go to https://www.sbazv.de/entsorgungstermine/restmuell-papier-gelbesaecke-laubsaecke-weihnachtsbaeume/\n- Mark all types of waste and enter your address\n- Click on \"Kalenderexport\"\n- Click on \"URL in die Zwischenablage kopieren\"\n- Replace the `url` in the example configuration with this link.\n\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/ics/sbazv_de.md.",
         "data": {
           "calendar_title": "Calendar Title",
-          "city": "City",
-          "district": "District",
-          "street": "Street"
+          "file": "File",
+          "headers": "Headers",
+          "method": "Method",
+          "offset": "Offset",
+          "params": "Parameters",
+          "regex": "Regex",
+          "split_at": "Split At",
+          "title_template": "Title Template",
+          "url": "Url",
+          "verify_ssl": "Verify Ssl",
+          "version": "Version",
+          "year_field": "Year Field"
         },
         "data_description": {}
       },
@@ -9066,6 +9383,28 @@
         "data": {
           "calendar_title": "Calendar Title",
           "address_id": "Address Id"
+        },
+        "data_description": {}
+      },
+      "args_silea_it": {
+        "title": "Configure Source",
+        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/silea_it.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "address": "Address",
+          "municipality": "Municipality"
+        },
+        "data_description": {
+          "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used."
+        }
+      },
+      "reconfigure_silea_it": {
+        "title": "Reconfigure Source",
+        "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/silea_it.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "address": "Address",
+          "municipality": "Municipality"
         },
         "data_description": {}
       },
@@ -13523,12 +13862,14 @@
         "description": "Configure your service provider. \n\nAn easy way to discover your Unique Property Reference Number (UPRN) is by going to https://www.findmyaddress.co.uk/ and entering in your address details\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/hastings_gov_uk.md.",
         "data": {
           "calendar_title": "Calendar Title",
-          "house_number": "House Number",
-          "postcode": "Postcode",
+          "house_number": "House Number (Deprecated, leave empty)",
+          "postcode": "Postcode (Deprecated, leave empty)",
           "uprn": "Unique Property Reference Number (UPRN)"
         },
         "data_description": {
           "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used.",
+          "house_number": "Deprecated, leave mpty, will be ignored",
+          "postcode": "Deprecated, leave mpty, will be ignored",
           "uprn": "An easy way to discover your Unique Property Reference Number (UPRN) is by going to https://www.findmyaddress.co.uk/ and entering in your address details"
         }
       },
@@ -13537,11 +13878,13 @@
         "description": "Configure your service provider. \n\nAn easy way to discover your Unique Property Reference Number (UPRN) is by going to https://www.findmyaddress.co.uk/ and entering in your address details\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/hastings_gov_uk.md.",
         "data": {
           "calendar_title": "Calendar Title",
-          "house_number": "House Number",
-          "postcode": "Postcode",
+          "house_number": "House Number (Deprecated, leave empty)",
+          "postcode": "Postcode (Deprecated, leave empty)",
           "uprn": "Unique Property Reference Number (UPRN)"
         },
         "data_description": {
+          "house_number": "Deprecated, leave mpty, will be ignored",
+          "postcode": "Deprecated, leave mpty, will be ignored",
           "uprn": "An easy way to discover your Unique Property Reference Number (UPRN) is by going to https://www.findmyaddress.co.uk/ and entering in your address details"
         }
       },
@@ -13691,6 +14034,7 @@
         "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/islington_gov_uk.md.",
         "data": {
           "calendar_title": "Calendar Title",
+          "postcode": "Postcode",
           "uprn": "UPRN"
         },
         "data_description": {
@@ -13703,6 +14047,7 @@
         "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/islington_gov_uk.md.",
         "data": {
           "calendar_title": "Calendar Title",
+          "postcode": "Postcode",
           "uprn": "UPRN"
         },
         "data_description": {
@@ -15616,6 +15961,33 @@
         },
         "data_description": {}
       },
+      "args_swale_gov_uk": {
+        "title": "Configure Source",
+        "description": "Configure your service provider. \n\nYou can find your UPRN by visiting https://www.findmyaddress.co.uk/ and entering in your address details.\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/swale_gov_uk.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "postcode": "Postcode",
+          "uprn": "UPRN"
+        },
+        "data_description": {
+          "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used.",
+          "postcode": "Postcode of the property",
+          "uprn": "Unique Property Reference Number (UPRN)"
+        }
+      },
+      "reconfigure_swale_gov_uk": {
+        "title": "Reconfigure Source",
+        "description": "Configure your service provider. \n\nYou can find your UPRN by visiting https://www.findmyaddress.co.uk/ and entering in your address details.\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/swale_gov_uk.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "postcode": "Postcode",
+          "uprn": "UPRN"
+        },
+        "data_description": {
+          "postcode": "Postcode of the property",
+          "uprn": "Unique Property Reference Number (UPRN)"
+        }
+      },
       "args_swansea_gov_uk": {
         "title": "Configure Source",
         "description": "Configure your service provider. More details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/swansea_gov_uk.md.",
@@ -15736,6 +16108,37 @@
         },
         "data_description": {
           "uprn": "An easy way to discover your Unique Property Reference Number (UPRN) is by going to https://www.findmyaddress.co.uk/ and entering in your address details."
+        }
+      },
+      "args_thanet_gov_uk": {
+        "title": "Configure Source",
+        "description": "Configure your service provider. \n\nEnter either your UPRN (available from [FindMyAddress.co.uk](https://www.findmyaddress.co.uk/))OR Enter your postcode and the first line of your address for street address e.g. '2 London Road' (anything before the first comma)UPRNs should work all of the time, Postcodes and Street Addresses will work if a match can be found.\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/thanet_gov_uk.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "postcode": "Postcode",
+          "street_address": "Street Address",
+          "uprn": "UPRN"
+        },
+        "data_description": {
+          "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used.",
+          "postcode": "Postcode",
+          "street_address": "House name OR Number and Street name",
+          "uprn": "Unique Property Reference Number (UPRN)"
+        }
+      },
+      "reconfigure_thanet_gov_uk": {
+        "title": "Reconfigure Source",
+        "description": "Configure your service provider. \n\nEnter either your UPRN (available from [FindMyAddress.co.uk](https://www.findmyaddress.co.uk/))OR Enter your postcode and the first line of your address for street address e.g. '2 London Road' (anything before the first comma)UPRNs should work all of the time, Postcodes and Street Addresses will work if a match can be found.\n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/thanet_gov_uk.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "postcode": "Postcode",
+          "street_address": "Street Address",
+          "uprn": "UPRN"
+        },
+        "data_description": {
+          "postcode": "Postcode",
+          "street_address": "House name OR Number and Street name",
+          "uprn": "Unique Property Reference Number (UPRN)"
         }
       },
       "args_kingston_gov_uk": {
@@ -15867,6 +16270,29 @@
         },
         "data_description": {
           "uprn": "An easy way to discover your Unique Property Reference Number (UPRN) is by going to https://www.findmyaddress.co.uk/ and entering in your address details."
+        }
+      },
+      "args_wakefield_gov_uk": {
+        "title": "Configure Source",
+        "description": "Configure your service provider. \n\nEnter your UPRN (available from [FindMyAddress.co.uk](https://www.findmyaddress.co.uk/)).Alternatively: you can also see it in the URL/location bar of your browser when you search the Wakefield site manually, look for 'uprn=' in the url and take the numbers immediately after. \n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/wakefield_gov_uk.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "uprn": "UPRN"
+        },
+        "data_description": {
+          "calendar_title": "A more readable, or user-friendly, name for the waste calendar. If nothing is provided, the name returned by the source will be used.",
+          "uprn": "Unique Property Reference Number (UPRN)"
+        }
+      },
+      "reconfigure_wakefield_gov_uk": {
+        "title": "Reconfigure Source",
+        "description": "Configure your service provider. \n\nEnter your UPRN (available from [FindMyAddress.co.uk](https://www.findmyaddress.co.uk/)).Alternatively: you can also see it in the URL/location bar of your browser when you search the Wakefield site manually, look for 'uprn=' in the url and take the numbers immediately after. \n\nMore details: https://github.com/mampfes/hacs_waste_collection_schedule/blob/master/doc/source/wakefield_gov_uk.md.",
+        "data": {
+          "calendar_title": "Calendar Title",
+          "uprn": "UPRN"
+        },
+        "data_description": {
+          "uprn": "Unique Property Reference Number (UPRN)"
         }
       },
       "args_walsall_gov_uk": {

@@ -46,7 +46,7 @@ adaptive_lighting:
     - light.livingroom
   min_brightness: 10
   max_brightness: 100
-  min_color_temp: 2000
+  min_color_temp: 2500
   max_color_temp: 5500
   take_over_control: true
   detect_non_ha_changes: true

@@ -1,5 +1,28 @@
 # Changelog
 
+## [4.0.0](https://github.com/aronnebrivio/homeassistant-config/compare/v3.4.0...v4.0.0) (2025-01-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade Zigbee2MQTT to 2.0.0
+
+### Features
+
+* **entities:** use 2 new TP-Link Tapo smart bulb for bed lights ([5b7d799](https://github.com/aronnebrivio/homeassistant-config/commit/5b7d799636911a6d6290a1c53a0f48b26ecd5a27))
+* upgrade HA to 2025.1.0 ([8b741ef](https://github.com/aronnebrivio/homeassistant-config/commit/8b741ef00f949703be19b1a979d08bbed785b926))
+* use Tapo Controller custom component to locally control Tapo smart bulbs ([28a9c56](https://github.com/aronnebrivio/homeassistant-config/commit/28a9c56766e2e6ecb044c88dfe34c06e1e64ba44))
+
+
+### Bug Fixes
+
+* **entities:** TEMP disable ac_mode to kitchen air conditioner to use it for heating ([b347497](https://github.com/aronnebrivio/homeassistant-config/commit/b3474979c001f28e249b3c238ad2502e4f6c32f2))
+
+
+### Miscellaneous Chores
+
+* upgrade Zigbee2MQTT to 2.0.0 ([8576f93](https://github.com/aronnebrivio/homeassistant-config/commit/8576f931e498fe1a384131ded62ee36fcb0f8d8d))
+
 ## [3.4.0](https://github.com/aronnebrivio/homeassistant-config/compare/v3.3.0...v3.4.0) (2024-12-22)
 
 

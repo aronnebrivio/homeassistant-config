@@ -15,7 +15,8 @@ bedroom:
     - light.luce_scrivania
     - switch.casse_pc
     - media_player.echo_dot_camera
-    - light.abat_jour_letto_sinistra
+    - light.letto_aronne
+    - light.letto_tate
     - sensor.termometro_camera_temperature
     - sensor.termometro_camera_humidity
     - climate.condizionatore_camera

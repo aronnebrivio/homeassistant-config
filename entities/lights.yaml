@@ -30,7 +30,8 @@
 - platform: group
   name: "Bed"
   entities:
-    - light.abat_jour_letto_sinistra
+    - light.letto_aronne
+    - light.letto_tate
 - platform: group
   name: "Bedroom"
   entities:

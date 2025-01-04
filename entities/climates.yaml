@@ -17,7 +17,7 @@
   min_temp: 15
   max_temp: 30
   precision: 0.5
-  ac_mode: true
+  ac_mode: false
   target_sensor: sensor.termometro_cucina_temperature
   initial_hvac_mode: "off"
   heater: switch.kitchen_air_conditioner

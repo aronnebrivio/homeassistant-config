@@ -1,2 +1,3 @@
 coordinator_backup.json
 state.json
+configuration_backup*.yaml

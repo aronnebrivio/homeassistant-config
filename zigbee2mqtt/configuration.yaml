@@ -1,55 +1,45 @@
-{
-  "external_converters": [],
-  "devices": [
-    "devices.yaml"
-  ],
-  "groups": [
-    "groups.yaml"
-  ],
-  "homeassistant": true,
-  "permit_join": false,
-  "mqtt": {
-    "base_topic": "zigbee2mqtt",
-    "server": "mqtt://core-mosquitto",
-    "user": "user",
-    "password": "passwd"
-  },
-  "serial": {
-    "port": "/dev/ttyACM0",
-    "disable_led": true
-  },
-  "advanced": {
-    "log_level": "info",
-    "pan_id": 6754,
-    "channel": 11,
-    "network_key": [
-      1,
-      3,
-      5,
-      7,
-      9,
-      11,
-      13,
-      15,
-      0,
-      2,
-      4,
-      6,
-      8,
-      10,
-      12,
-      13
-    ],
-    "availability_blocklist": [],
-    "availability_passlist": []
-  },
-  "device_options": {},
-  "blocklist": [],
-  "passlist": [],
-  "queue": {},
-  "frontend": {
-    "port": 8099
-  },
-  "experimental": {},
-  "availability": false
-}
+devices:
+  - devices.yaml
+groups:
+  - groups.yaml
+homeassistant:
+  enabled: true
+mqtt:
+  base_topic: zigbee2mqtt
+  server: mqtt://core-mosquitto
+  user: user
+  password: passwd
+serial:
+  port: /dev/ttyACM0
+  disable_led: true
+advanced:
+  log_level: info
+  pan_id: 6754
+  channel: 11
+  network_key:
+    - 1
+    - 3
+    - 5
+    - 7
+    - 9
+    - 11
+    - 13
+    - 15
+    - 0
+    - 2
+    - 4
+    - 6
+    - 8
+    - 10
+    - 12
+    - 13
+device_options: {}
+blocklist: []
+passlist: []
+queue: {}
+frontend:
+  enabled: true
+  port: 8099
+availability:
+  enabled: false
+version: 4

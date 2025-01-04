@@ -12,8 +12,8 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 480
-Number of sensors | 252
+Number of entities | 483
+Number of sensors | 251
 
 
 ## My installed extensions:
@@ -37,6 +37,7 @@ Number of sensors | 252
 - [Smartir](https://github.com/smartHomeHub/SmartIR)
 - [Spook 👻 Your Homie](https://github.com/frenck/spook)
 - [Spotcast](https://github.com/fondberg/spotcast)
+- [Tapo Controller](https://github.com/petretiandrea/home-assistant-tapo-p100)
 - [Thermal Comfort](https://github.com/dolezsa/thermal_comfort)
 - [Waste Collection Schedule](https://github.com/mampfes/hacs_waste_collection_schedule)
 

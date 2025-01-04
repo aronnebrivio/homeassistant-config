@@ -587,13 +587,12 @@ views:
     - title: Smart home
       type: custom:mushroom-title-card
     - collapsible_controls: true
-      entity: light.abat_jour_letto_sinistra
+      entity: light.bed
       grid_options:
-        columns: full
+        columns: 12
+        rows: 1
       icon: mdi:floor-lamp
-      layout_options:
-        grid_columns: full
-      name: Letto Nennè
+      name: Letto
       primary_info: name
       secondary_info: state
       show_brightness_control: true
@@ -715,6 +714,38 @@ views:
   - cards:
     - title: Extra
       type: custom:mushroom-title-card
+    - collapsible_controls: true
+      entity: light.letto_aronne
+      grid_options:
+        columns: 6
+        rows: 1
+      icon: mdi:floor-lamp
+      name: Aronne
+      primary_info: name
+      secondary_info: state
+      show_brightness_control: true
+      show_color_control: true
+      show_color_temp_control: true
+      tap_action:
+        action: toggle
+      type: custom:mushroom-light-card
+      use_light_color: true
+    - collapsible_controls: true
+      entity: light.letto_tate
+      grid_options:
+        columns: 6
+        rows: 1
+      icon: mdi:floor-lamp
+      name: Valentina
+      primary_info: name
+      secondary_info: state
+      show_brightness_control: true
+      show_color_control: true
+      show_color_temp_control: true
+      tap_action:
+        action: toggle
+      type: custom:mushroom-light-card
+      use_light_color: true
     - entity: switch.adaptive_lighting_default
       grid_options:
         columns: full

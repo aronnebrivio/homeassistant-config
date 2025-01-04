@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.1](https://github.com/aronnebrivio/homeassistant-config/compare/v4.1.0...v4.1.1) (2025-01-04)
+
+
+### Bug Fixes
+
+* **adaptive_lighting:** set min color temp to 2500 to match the values supported by Tapo bulbs ([af53e57](https://github.com/aronnebrivio/homeassistant-config/commit/af53e57e04d52bb8b6dfffc4e75aea0bf4b32899))
+
 ## [4.1.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.0.0...v4.1.0) (2025-01-04)
 
 

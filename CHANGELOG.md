@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.0.0...v4.1.0) (2025-01-04)
+
+
+### Features
+
+* **entities:** testing dual_smart_thermostat custom integration ([1a352b8](https://github.com/aronnebrivio/homeassistant-config/commit/1a352b86ea6494c8a8cd5b481bef6e5bbcc2b5ba))
+
 ## [4.0.0](https://github.com/aronnebrivio/homeassistant-config/compare/v3.4.0...v4.0.0) (2025-01-04)
 
 

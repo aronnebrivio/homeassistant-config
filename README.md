@@ -12,7 +12,7 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 483
+Number of entities | 491
 Number of sensors | 251
 
 
@@ -31,13 +31,13 @@ Number of sensors | 251
 ### Custom integrations
 - [Adaptive Lighting](https://github.com/basnijholt/adaptive-lighting)
 - [Alexa Media Player](https://github.com/alandtse/alexa_media_player)
+- [Dual Smart Thermostat](https://github.com/swingerman/ha-dual-smart-thermostat)
 - [Generate Readme](https://github.com/custom-components/readme)
 - [HACS](https://github.com/hacs/integration)
 - [Openrgb](https://github.com/koying/openrgb_ha)
 - [Smartir](https://github.com/smartHomeHub/SmartIR)
 - [Spook 👻 Your Homie](https://github.com/frenck/spook)
 - [Spotcast](https://github.com/fondberg/spotcast)
-- [Tapo Controller](https://github.com/petretiandrea/home-assistant-tapo-p100)
 - [Thermal Comfort](https://github.com/dolezsa/thermal_comfort)
 - [Waste Collection Schedule](https://github.com/mampfes/hacs_waste_collection_schedule)
 

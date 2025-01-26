@@ -12,7 +12,7 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 491
+Number of entities | 492
 Number of sensors | 251
 
 
@@ -34,7 +34,7 @@ Number of sensors | 251
 - [Dual Smart Thermostat](https://github.com/swingerman/ha-dual-smart-thermostat)
 - [Generate Readme](https://github.com/custom-components/readme)
 - [HACS](https://github.com/hacs/integration)
-- [Openrgb](https://github.com/koying/openrgb_ha)
+- [Openrgb](https://github.com/OpenRGB-for-HA/openrgb_ha)
 - [Smartir](https://github.com/smartHomeHub/SmartIR)
 - [Spook 👻 Your Homie](https://github.com/frenck/spook)
 - [Spotcast](https://github.com/fondberg/spotcast)

@@ -959,7 +959,9 @@ class DualSmartThermostat(ClimateEntity, RestoreEntity):
         """Handle ambient teperature changes."""
         data = event.data
 
-        await self._async_sensor_changed(data["new_state"])
+        trigger_control = self.hvac_device.hvac_mode != HVACMode.OFF
+
+        await self._async_sensor_changed(data["new_state"], trigger_control)
 
     async def _async_sensor_changed(
         self, new_state: State | None, trigger_control=True
@@ -1041,7 +1043,9 @@ class DualSmartThermostat(ClimateEntity, RestoreEntity):
     ) -> None:
         data = event.data
 
-        await self._async_sensor_floor_changed(data["new_state"])
+        trigger_control = self.hvac_device.hvac_mode != HVACMode.OFF
+
+        await self._async_sensor_floor_changed(data["new_state"], trigger_control)
 
     async def _async_sensor_floor_changed(
         self, new_state: State | None, trigger_control=True
@@ -1061,7 +1065,9 @@ class DualSmartThermostat(ClimateEntity, RestoreEntity):
     ) -> None:
         data = event.data
 
-        await self._async_sensor_outside_changed(data["new_state"])
+        trigger_control = self.hvac_device.hvac_mode != HVACMode.OFF
+
+        await self._async_sensor_outside_changed(data["new_state"], trigger_control)
 
     async def _async_sensor_outside_changed(
         self, new_state: State | None, trigger_control=True
@@ -1081,7 +1087,9 @@ class DualSmartThermostat(ClimateEntity, RestoreEntity):
     ) -> None:
         data = event.data
 
-        await self._async_sensor_humidity_changed(data["new_state"])
+        trigger_control = self.hvac_device.hvac_mode != HVACMode.OFF
+
+        await self._async_sensor_humidity_changed(data["new_state"], trigger_control)
 
     async def _async_sensor_humidity_changed(
         self, new_state: State | None, trigger_control=True
@@ -1147,7 +1155,7 @@ class DualSmartThermostat(ClimateEntity, RestoreEntity):
             _LOGGER.warning(
                 "The climate mode is OFF, but the device is ON. Turning off device"
             )
-            await self.hvac_device.async_turn_off()
+            # await self.hvac_device.async_turn_off()
 
     async def _async_opening_changed(self, event: Event[EventStateChangedData]) -> None:
         """Handle opening changes."""
@@ -1191,6 +1199,11 @@ class DualSmartThermostat(ClimateEntity, RestoreEntity):
         _LOGGER.info("Attempting to control climate, time %s, force %s", time, force)
 
         async with self._temp_lock:
+
+            if self.hvac_device.hvac_mode == HVACMode.OFF:
+                _LOGGER.debug("Climate is off, skipping control")
+                return
+
             await self.hvac_device.async_control_hvac(time, force)
 
             _LOGGER.info(

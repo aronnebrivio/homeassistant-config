@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.2.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.1.1...v4.2.0) (2025-01-26)
+
+
+### Features
+
+* upgrade custom components via HACS ([56a465b](https://github.com/aronnebrivio/homeassistant-config/commit/56a465b1f65fe11b5fb21170b27d7d0a1c9d8ce4))
+* upgrade HA to 2025.1.4 ([0977e2a](https://github.com/aronnebrivio/homeassistant-config/commit/0977e2af12118bc8bf4c0e3fa7d66215b8d3ee21))
+
 ## [4.1.1](https://github.com/aronnebrivio/homeassistant-config/compare/v4.1.0...v4.1.1) (2025-01-04)
 
 

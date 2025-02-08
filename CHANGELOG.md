@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.3.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.2.0...v4.3.0) (2025-02-08)
+
+
+### Features
+
+* add alexa shopping list custom component from source ([c48e264](https://github.com/aronnebrivio/homeassistant-config/commit/c48e2648716f239611537613d7ab2b0f7768d287))
+* removed scenes since were not used ([33db43b](https://github.com/aronnebrivio/homeassistant-config/commit/33db43bd86fdf125f3bdb12daf28c51ed9f6d4b2))
+* **z2m:** update devices list ([b78f8e0](https://github.com/aronnebrivio/homeassistant-config/commit/b78f8e05e9b7674d1b11de3ae24565cc818f3fa0))
+
 ## [4.2.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.1.1...v4.2.0) (2025-01-26)
 
 

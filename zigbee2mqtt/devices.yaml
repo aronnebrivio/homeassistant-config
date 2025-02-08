@@ -8,11 +8,8 @@
   friendly_name: Piantana Sala luce piccola
 '0x00124b0024ccfc38':
   friendly_name: Termometro Sala
-  temperature_precision: 1
-  humidity_precision: 1
-'0x588e81fffef78a9f':
-  friendly_name: Abat Jour Letto Sinistra
-  transition: 1
+  temperature_precision: 2
+  humidity_precision: 2
 '0x0015bc001b0226ac':
   friendly_name: Frient Energy Monitor
 '0x84fd27fffe9c5b51':
@@ -27,13 +24,11 @@
   friendly_name: Smart Plug 3
 '0x00124b0029334a0b':
   friendly_name: Termometro Cucina
-  temperature_precision: 1
-  humidity_precision: 1
+  temperature_precision: 2
+  humidity_precision: 2
 '0x00124b00292bcb3c':
   friendly_name: Termometro Bagno
-  humidity_precision: 1
-  temperature_precision: 1
+  humidity_precision: 2
+  temperature_precision: 2
 '0x00124b0024cce16f':
   friendly_name: Termometro Camera
-  temperature_precision: 1
-  humidity_precision: 1

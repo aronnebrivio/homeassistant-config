@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.4.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.3.0...v4.4.0) (2025-02-09)
+
+
+### Features
+
+* back to generic thermostat for kitchen air conditioner, since Dual Smart Thermostat does not work with same switch for heating and cooling ([159cbde](https://github.com/aronnebrivio/homeassistant-config/commit/159cbde4a443a92ad314b13e9929953cf8c761cd))
+* remove Alexa shopping list related custom components ([ee9aed6](https://github.com/aronnebrivio/homeassistant-config/commit/ee9aed67ad6798d9bbd3f2cbe7ff19911a05b554))
+
 ## [4.3.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.2.0...v4.3.0) (2025-02-08)
 
 

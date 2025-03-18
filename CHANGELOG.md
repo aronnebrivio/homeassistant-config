@@ -1,5 +1,15 @@
 # Changelog
 
+## [4.5.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.4.0...v4.5.0) (2025-03-18)
+
+
+### Features
+
+* back to RPC Shutdown to avoid depending on a Windows app to shutdown the PC ([512d9f9](https://github.com/aronnebrivio/homeassistant-config/commit/512d9f949a913240d8561c3012a8d295d6eb3c1e))
+* update custom components via HACS ([9472b2c](https://github.com/aronnebrivio/homeassistant-config/commit/9472b2c6d327371eca0c4897da67fb204b87abcf))
+* upgrade HA to 2025.3.3 ([25554aa](https://github.com/aronnebrivio/homeassistant-config/commit/25554aa5805c2e2f4c7dbdd746345f0930585266))
+* use HA Matter Hub to locally expose entities to Alexa ([23ed1ee](https://github.com/aronnebrivio/homeassistant-config/commit/23ed1eed8ff62e864b4c07037928de62867b17f7))
+
 ## [4.4.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.3.0...v4.4.0) (2025-02-09)
 
 

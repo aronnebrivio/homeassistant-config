@@ -26,7 +26,6 @@ api:
 
 smartir:
 
-alexa: !include voice_assistants/alexa.yaml
 google_assistant: !include voice_assistants/google_assistant.yaml
 homekit: !include voice_assistants/homekit.yaml
 

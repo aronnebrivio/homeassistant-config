@@ -4,10 +4,10 @@
   mac: !secret switch.fisso.mac
   host: !secret switch.fisso.ip
   turn_off:
-    service: button.press
-    target:
-      entity_id: button.fisso_shutdown
-    data: {}
+    service: hassio.addon_stdin
+    data:
+      addon: core_rpc_shutdown
+      input: fisso
 # Dummy switch
 - platform: template
   switches:

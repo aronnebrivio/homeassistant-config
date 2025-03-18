@@ -11,6 +11,9 @@ ORGB_DISCOVERY_NEW = "openrgb_discovery_new_{}"
 
 SERVICE_FORCE_UPDATE = "force_update"
 SERVICE_PULL_DEVICES = "pull_devices"
+SERVICE_LOAD_PROFILE = "load_profile"
+
+ATTR_PROFILE = "profile"
 
 ENTRY_IS_SETUP = "openrgb_entry_is_setup"
 
@@ -26,3 +29,7 @@ DEFAULT_CLIENT_ID = "Home Assistant"
 DEFAULT_ADD_LEDS = False
 
 CONN_TIMEOUT = 5.0
+
+EFFECT_DIRECT = "Direct"
+EFFECT_OFF = "Off"
+EFFECT_STATIC = "Static"

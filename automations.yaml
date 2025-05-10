@@ -56,30 +56,23 @@
       message: Domani passano a ritirare la spazzatura! [Dettagli](https://home.aronnebrivio.dev/lovelace/kitchen)
   mode: single
 - id: '1650473639566'
-  alias: Button 1 manage Piantana Sala
+  alias: Buttons 1 and 2 manages Bed
   description: ''
-  trigger:
-  - platform: mqtt
-    topic: zigbee2mqtt/Button 1/action
-    payload: single
-  condition: []
-  action:
-  - service: light.toggle
-    data: {}
-    target:
-      entity_id: light.piantana_sala
-  mode: single
-- id: '1650473927334'
-  alias: Button 2 manage Luce Letto
-  description: ''
-  trigger:
-  - platform: mqtt
-    topic: zigbee2mqtt/Button 2/action
-    payload: single
-  condition: []
-  action:
-  - service: light.toggle
-    data: {}
+  triggers:
+  - domain: mqtt
+    device_id: e16495c4292c04093abe72449fb4e420
+    type: action
+    subtype: single
+    trigger: device
+  - domain: mqtt
+    device_id: 0251771331478dd7458fcdb1dbadb35f
+    type: action
+    subtype: single
+    trigger: device
+  conditions: []
+  actions:
+  - data: {}
+    action: light.toggle
     target:
       entity_id: light.bed
   mode: single
@@ -143,7 +136,7 @@
       - update.home_assistant_supervisor_update
       - update.home_assistant_core_update
       - update.home_assistant_operating_system_update
-      mobile_app_device: da511411cc302530f0e489f1d099abbf
+      mobile_app_device: cf132f484fa5f5c742094b43402043b3
       mobile_app_device_2: 0aa5cbd661ef17ae46ea03b9fabf7ea9
 - id: '1658824207858'
   alias: Re-Load Speed Test
@@ -354,4 +347,131 @@
       title: "\U0001FA9F *Chiudi tutto!*"
       message: La qualità dell'aria fuori fa schifo, tappati in casa!
     action: notify.aronne
+  mode: single
+- id: '1746726664304'
+  alias: Remote Dimmer 1 on press Piantana Sala
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 9aa938026d3f8b95235300704c7fa455
+    type: action
+    subtype: on_press_release
+    trigger: device
+  conditions: []
+  actions:
+  - data: {}
+    target:
+      entity_id: light.piantana_sala
+    action: light.toggle
+  mode: single
+- id: '1746727135690'
+  alias: Remote Dimmer 1 up press Piantana Sala
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 9aa938026d3f8b95235300704c7fa455
+    type: action
+    subtype: up_press_release
+    trigger: device
+  conditions: []
+  actions:
+  - device_id: 01c9c8562a6a20b1ab0830e09a3a05c7
+    domain: light
+    entity_id: 0165dd4c86cdff9e3cf316879aca6e8d
+    type: brightness_increase
+  - device_id: e7e59260a8951fd7fe729e4408e80afa
+    domain: light
+    entity_id: 385f78d48816d02dbdd64c67d5479977
+    type: brightness_increase
+  mode: single
+- id: '1746727202712'
+  alias: Remote Dimmer 1 down press Piantana Sala
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 9aa938026d3f8b95235300704c7fa455
+    type: action
+    subtype: down_press_release
+    trigger: device
+  conditions: []
+  actions:
+  - device_id: 01c9c8562a6a20b1ab0830e09a3a05c7
+    domain: light
+    entity_id: 0165dd4c86cdff9e3cf316879aca6e8d
+    type: brightness_decrease
+  - device_id: e7e59260a8951fd7fe729e4408e80afa
+    domain: light
+    entity_id: 385f78d48816d02dbdd64c67d5479977
+    type: brightness_decrease
+  mode: single
+- id: '1746727322708'
+  alias: Remote Dimmer 1 off press Piantana Sala - Off
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 9aa938026d3f8b95235300704c7fa455
+    type: action
+    subtype: off_press_release
+    trigger: device
+  conditions:
+  - condition: device
+    type: is_off
+    device_id: 01c9c8562a6a20b1ab0830e09a3a05c7
+    entity_id: 0165dd4c86cdff9e3cf316879aca6e8d
+    domain: light
+  - condition: device
+    type: is_off
+    device_id: e7e59260a8951fd7fe729e4408e80afa
+    entity_id: 385f78d48816d02dbdd64c67d5479977
+    domain: light
+  actions:
+  - action: adaptive_lighting.set_manual_control
+    metadata: {}
+    data:
+      manual_control: true
+      lights:
+      - light.piantana_sala
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 30
+      transition: 0.5
+    target:
+      entity_id: light.piantana_sala
+  mode: single
+- id: '1746727673822'
+  alias: Remote Dimmer 1 off press Piantana Sala - On
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: 9aa938026d3f8b95235300704c7fa455
+    type: action
+    subtype: off_press_release
+    trigger: device
+  conditions:
+  - condition: device
+    type: is_on
+    device_id: 01c9c8562a6a20b1ab0830e09a3a05c7
+    entity_id: 0165dd4c86cdff9e3cf316879aca6e8d
+    domain: light
+  - condition: device
+    type: is_on
+    device_id: e7e59260a8951fd7fe729e4408e80afa
+    entity_id: 385f78d48816d02dbdd64c67d5479977
+    domain: light
+  actions:
+  - action: adaptive_lighting.set_manual_control
+    metadata: {}
+    data:
+      manual_control: true
+      lights:
+      - light.piantana_sala
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 100
+      transition: 0.5
+      color_temp_kelvin: 4980
+    target:
+      entity_id: light.piantana_sala
   mode: single

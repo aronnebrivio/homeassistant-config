@@ -93,8 +93,8 @@ views:
       icon_color: "{% if is_state('light.livingroom', 'on') %}\n  orange\n{% endif\
         \ %}"
       primary: Sala
-      secondary: '{{ states(''sensor.termometro_sala_temperature'') }}°C - {{ states(''sensor.termometro_sala_humidity'')
-        }}%'
+      secondary: '{{ states(''sensor.termometro_sala_temperature'')|round(1) }}°C
+        - {{ states(''sensor.termometro_sala_humidity'')|round(1) }}%'
       tap_action:
         action: navigate
         navigation_path: /lovelace/livingroom
@@ -108,8 +108,8 @@ views:
       icon: mdi:bed-double
       icon_color: "{% if is_state('light.bed', 'on') %}\n  orange\n{% endif %}"
       primary: Camera
-      secondary: '{{ states(''sensor.termometro_camera_temperature'') }}°C - {{ states(''sensor.termometro_camera_humidity'')
-        }}%'
+      secondary: '{{ states(''sensor.termometro_camera_temperature'')|round(1) }}°C
+        - {{ states(''sensor.termometro_camera_humidity'')|round(1) }}%'
       tap_action:
         action: navigate
         navigation_path: /lovelace/bedroom
@@ -121,8 +121,8 @@ views:
       icon_color: "{% if is_state('binary_sensor.garbage_collection_tomorrow', 'on')\
         \ %}\n  red\n{% endif %}"
       primary: Cucina
-      secondary: '{{ states(''sensor.termometro_cucina_temperature'') }}°C - {{ states(''sensor.termometro_cucina_humidity'')
-        }}%'
+      secondary: '{{ states(''sensor.termometro_cucina_temperature'')|round(1) }}°C
+        - {{ states(''sensor.termometro_cucina_humidity'')|round(1) }}%'
       tap_action:
         action: navigate
         navigation_path: /lovelace/kitchen
@@ -137,8 +137,8 @@ views:
       icon_color: "{% if is_state('switch.water_heater', 'on') %}\n  cyan\n{% endif\
         \ %}"
       primary: Bagno
-      secondary: '{{ states(''sensor.termometro_bagno_temperature'') }}°C - {{ states(''sensor.termometro_bagno_humidity'')
-        }}%'
+      secondary: '{{ states(''sensor.termometro_bagno_temperature'')|round(1) }}°C
+        - {{ states(''sensor.termometro_bagno_humidity'')|round(1) }}%'
       tap_action:
         action: navigate
         navigation_path: /lovelace/bathroom

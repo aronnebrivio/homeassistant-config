@@ -14,5 +14,6 @@ ignore: |
   blueprints/
   pyscript/
   automations.yaml
+  scripts.yaml
   scenes.yaml
   ui-lovelace.yaml

@@ -1,5 +1,20 @@
 # Changelog
 
+## [4.6.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.5.0...v4.6.0) (2025-05-10)
+
+
+### Features
+
+* add Hue Dimmer Remote Switch to control livingroom lights ([c3dc08a](https://github.com/aronnebrivio/homeassistant-config/commit/c3dc08af56954dff47bd003735d859f9eaf96d64))
+* **dashboard:** update dashboard yaml via service ([f312660](https://github.com/aronnebrivio/homeassistant-config/commit/f312660b69166c7d46a3da97929f4d4b98393911))
+* **dependencies:** update custom components via HACS ([6973da9](https://github.com/aronnebrivio/homeassistant-config/commit/6973da9d1e91461a7c39da937be6b67a625bf0de))
+* upgrade HA to 2025.5.1 ([9247271](https://github.com/aronnebrivio/homeassistant-config/commit/9247271e763ee414f832ba8152b9775c1b4620bb))
+
+
+### Bug Fixes
+
+* ignore scripts.yaml from yamllint since it's handled by HA UI ([cf9e290](https://github.com/aronnebrivio/homeassistant-config/commit/cf9e2906a86de8e36127914aaacb37e875b3dcab))
+
 ## [4.5.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.4.0...v4.5.0) (2025-03-18)
 
 

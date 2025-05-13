@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.6.0...v4.7.0) (2025-05-13)
+
+
+### Features
+
+* **dependencies:** update custom components via HACS ([f3ef44d](https://github.com/aronnebrivio/homeassistant-config/commit/f3ef44d6ab1227b58be5cd5439d9ad4fdc76ffc8))
+
 ## [4.6.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.5.0...v4.6.0) (2025-05-10)
 
 

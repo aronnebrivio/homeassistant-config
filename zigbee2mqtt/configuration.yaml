@@ -40,6 +40,7 @@ queue: {}
 frontend:
   enabled: true
   port: 8099
+  package: zigbee2mqtt-windfront
 availability:
-  enabled: false
+  enabled: true
 version: 4

@@ -427,16 +427,9 @@ views:
       visibility:
       - condition: screen
         media_query: '(min-width: 0px) and (max-width: 767px)'
-    - disable_battery_warning: true
-      disable_buttons: true
-      disable_eco: true
-      disable_heat: false
-      disable_menu: false
-      disable_summer: true
-      disable_window: true
-      entity: climate.condizionatore_sala
+    - entity: climate.condizionatore_sala
       name: Condizionatore
-      type: custom:better-thermostat-ui-card
+      type: thermostat
       visibility:
       - condition: screen
         media_query: '(min-width: 768px)'
@@ -655,16 +648,9 @@ views:
       visibility:
       - condition: screen
         media_query: '(min-width: 0px) and (max-width: 767px)'
-    - disable_battery_warning: true
-      disable_buttons: true
-      disable_eco: true
-      disable_heat: false
-      disable_menu: false
-      disable_summer: true
-      disable_window: true
-      entity: climate.condizionatore_camera
+    - entity: climate.condizionatore_camera
       name: Condizionatore
-      type: custom:better-thermostat-ui-card
+      type: thermostat
       visibility:
       - condition: screen
         media_query: '(min-width: 768px)'
@@ -714,7 +700,7 @@ views:
         action: toggle
       type: tile
     - collapsible_controls: true
-      entity: light.asus_tuf_gaming_b460_plus_0
+      entity: light.asus_tuf_gaming_b460_plus_0_2
       icon: ''
       name: Scheda madre
       show_brightness_control: true
@@ -940,16 +926,10 @@ views:
       visibility:
       - condition: screen
         media_query: '(min-width: 0px) and (max-width: 767px)'
-    - disable_battery_warning: true
-      disable_buttons: true
-      disable_eco: true
-      disable_heat: false
-      disable_menu: false
-      disable_summer: true
-      disable_window: true
-      entity: climate.condizionatore_cucina
+    - entity: climate.condizionatore_cucina
       name: Condizionatore
-      type: custom:better-thermostat-ui-card
+      show_current_as_primary: false
+      type: thermostat
       visibility:
       - condition: screen
         media_query: '(min-width: 768px)'
@@ -1128,13 +1108,15 @@ views:
         url_path: https://192.168.1.2:8006/
       type: tile
     - color: green
-      entity: binary_sensor.adguard_protection
+      entity: switch.adguard_home_protection
+      features_position: bottom
       icon: mdi:shield-check
       name: AdGuard Home
       tap_action:
         action: url
         url_path: http://192.168.1.5:3000/
       type: tile
+      vertical: false
     - color: accent
       entity: binary_sensor.transmission_switch
       icon: mdi:light-switch
@@ -1237,43 +1219,51 @@ views:
       type: tile
     type: grid
   - cards:
-    - grid_options:
-        columns: full
+    - columns: full
+      grid_options: null
       title: 🛡️ AdGuard Home
       type: custom:mushroom-title-card
     - detail: 1
-      entity: sensor.adguard_dns_queries
+      entity: sensor.adguard_home_dns_queries
       graph: line
       icon: ''
       name: Richieste
       type: sensor
     - detail: 1
-      entity: sensor.adguard_dns_queries_blocked_ratio
+      entity: sensor.adguard_home_dns_queries_blocked_ratio
       graph: line
       icon: ''
       name: Bloccate
       type: sensor
     - color: purple
-      entity: sensor.adguard_average_processing_speed
+      entity: sensor.adguard_home_average_processing_speed
+      features_position: bottom
       grid_options:
         columns: full
       name: Average processing speed
       type: tile
+      vertical: false
     - color: green
-      entity: switch.adguard_protection
+      entity: switch.adguard_home_protection
+      features_position: bottom
       grid_options:
         columns: full
       name: Protection
       type: tile
-    - entity: switch.adguard_filtering
+      vertical: false
+    - entity: switch.adguard_home_filtering
+      features_position: bottom
       icon: mdi:filter
       name: Filtering
       type: tile
+      vertical: false
     - color: light-blue
-      entity: switch.adguard_safe_search
+      entity: switch.adguard_home_safe_search
+      features_position: bottom
       icon: mdi:shield-search
       name: Safe search
       type: tile
+      vertical: false
     type: grid
   subview: true
   theme: Backend-selected

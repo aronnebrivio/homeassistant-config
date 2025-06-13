@@ -229,11 +229,13 @@
 - id: '1686580227765'
   alias: '[Climate] Turn Bedroom AC on during night if temp above 26.2'
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - sensor.termometro_camera_temperature
-  condition:
+    trigger: state
+  - trigger: time
+    at: '22:30:00'
+  conditions:
   - condition: time
     after: '22:30:00'
     before: 08:00:00
@@ -247,25 +249,24 @@
     - sat
   - condition: numeric_state
     entity_id: sensor.termometro_camera_temperature
-    attribute: temperature
     above: 26.2
   - condition: state
     entity_id: climate.condizionatore_camera
     state: 'off'
-  action:
-  - service: climate.turn_on
-    data: {}
+  actions:
+  - data: {}
     target:
       entity_id: climate.condizionatore_camera
+    action: climate.turn_on
   mode: single
 - id: '1687416869637'
   alias: '[Climate] Turn Bedroom AC off during night if temp under 25.2'
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - sensor.termometro_camera_temperature
-  condition:
+    trigger: state
+  conditions:
   - condition: time
     after: '22:30:00'
     before: 07:00:00
@@ -279,16 +280,15 @@
     - sat
   - condition: numeric_state
     entity_id: sensor.termometro_camera_temperature
-    attribute: temperature
     below: 25.2
   - condition: state
     entity_id: climate.condizionatore_camera
     state: cool
-  action:
-  - service: climate.turn_off
-    data: {}
+  actions:
+  - data: {}
     target:
       entity_id: climate.condizionatore_camera
+    action: climate.turn_off
   mode: single
 - id: '1728838134324'
   alias: '[NFC][Vetrina Ingresso] Light toggle'

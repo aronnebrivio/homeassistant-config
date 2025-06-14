@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.8.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.7.0...v4.8.0) (2025-06-13)
+
+
+### Features
+
+* **automations:** review climate automations with a time trigger too ([fc27407](https://github.com/aronnebrivio/homeassistant-config/commit/fc2740750a47c28f9ee3d37f0dd245280b095e2b))
+* update HA to 2025.6.0 ([19fa412](https://github.com/aronnebrivio/homeassistant-config/commit/19fa412bade5d9102415c0b5bdfc71d634f23610))
+* **z2m:** use new frontend ([2de4fd5](https://github.com/aronnebrivio/homeassistant-config/commit/2de4fd5dd8e8301fbbe62785f4655c942ad92893))
+
+
+### Bug Fixes
+
+* **entities:** set kitchen AC as a cooling device ([8ca1d30](https://github.com/aronnebrivio/homeassistant-config/commit/8ca1d30620d455c9a41177c74d7a348ce22c880e))
+
 ## [4.7.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.6.0...v4.7.0) (2025-05-13)
 
 

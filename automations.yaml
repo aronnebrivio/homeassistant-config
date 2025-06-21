@@ -238,7 +238,7 @@
   conditions:
   - condition: time
     after: '22:30:00'
-    before: 08:00:00
+    before: 07:00:00
     weekday:
     - sun
     - mon
@@ -247,6 +247,11 @@
     - thu
     - fri
     - sat
+  - type: is_not_open
+    condition: device
+    device_id: 5637589d3b0d75f6fcaca3854ec8a669
+    entity_id: 9b865db4cc02087c5c2c3316f71afb84
+    domain: binary_sensor
   - condition: numeric_state
     entity_id: sensor.termometro_camera_temperature
     above: 26.2

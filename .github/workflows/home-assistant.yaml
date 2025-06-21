@@ -1,5 +1,7 @@
 name: Home Assistant CI
 on: [push, pull_request] # yamllint disable-line rule:truthy
+permissions:
+  contents: read
 jobs:
   yamllint:
     runs-on: ubuntu-latest

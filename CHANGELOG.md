@@ -1,5 +1,20 @@
 # Changelog
 
+## [4.9.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.8.0...v4.9.0) (2025-06-21)
+
+
+### Features
+
+* **climate:** adjust bedroom AC automation to check for opened window ([5db6c86](https://github.com/aronnebrivio/homeassistant-config/commit/5db6c86e20421195b439f84f433a541caa7fac7f))
+* **custom_components:** update Adaptive Lighting via HACS ([517a220](https://github.com/aronnebrivio/homeassistant-config/commit/517a220ba96915f24d956c914bf3e24e887d84d3))
+* update HA to 2025.6.1 ([34b0418](https://github.com/aronnebrivio/homeassistant-config/commit/34b04187d71d964a8e2a25d937ec241a3a145f5d))
+* **z2m:** add new doors and windows sensor ([45a252d](https://github.com/aronnebrivio/homeassistant-config/commit/45a252d53ac6c0c587a435e0726ec4226e6a6323))
+
+
+### Bug Fixes
+
+* **custom_components:** use a fixed pre-release version for Generate Readme custom component ([f79d662](https://github.com/aronnebrivio/homeassistant-config/commit/f79d662b437a79daae1ed8dea6aad3e1a3e2a235))
+
 ## [4.8.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.7.0...v4.8.0) (2025-06-13)
 
 

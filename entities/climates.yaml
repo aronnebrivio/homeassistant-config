@@ -14,6 +14,7 @@
   humidity_sensor: sensor.termometro_camera_humidity
 - platform: generic_thermostat
   name: Condizionatore Cucina
+  unique_id: bdd1928d-a6d4-404f-b9c5-fbd3f74b511e
   min_temp: 15
   max_temp: 30
   precision: 0.5

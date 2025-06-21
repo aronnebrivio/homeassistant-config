@@ -36,3 +36,9 @@
   humidity_precision: 2
 '0x001788010e8d16fa':
   friendly_name: Remote Dimmer 1
+'0x00158d008b880ec9':
+  friendly_name: Bedroom Window Sensor
+'0x00158d008b87bdc8':
+  friendly_name: Livingroom Door Sensor
+'0x00158d008b87d34f':
+  friendly_name: Livingroom Window Sensor

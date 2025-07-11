@@ -56,14 +56,9 @@
       message: Domani passano a ritirare la spazzatura! [Dettagli](https://home.aronnebrivio.dev/lovelace/kitchen)
   mode: single
 - id: '1650473639566'
-  alias: Buttons 1 and 2 manages Bed
+  alias: Buttons 2 manages Bed
   description: ''
   triggers:
-  - domain: mqtt
-    device_id: e16495c4292c04093abe72449fb4e420
-    type: action
-    subtype: single
-    trigger: device
   - domain: mqtt
     device_id: 0251771331478dd7458fcdb1dbadb35f
     type: action
@@ -479,4 +474,26 @@
       color_temp_kelvin: 4980
     target:
       entity_id: light.piantana_sala
+  mode: single
+- id: '1751812485114'
+  alias: Button 1 toggles Work Station
+  description: ''
+  triggers:
+  - domain: mqtt
+    device_id: e16495c4292c04093abe72449fb4e420
+    type: action
+    subtype: single
+    trigger: device
+  conditions: []
+  actions:
+  - action: switch.toggle
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.casse_pc
+  - action: light.toggle
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.luce_scrivania
   mode: single

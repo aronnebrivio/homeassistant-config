@@ -1,5 +1,20 @@
 # Changelog
 
+## [4.10.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.9.0...v4.10.0) (2025-07-11)
+
+
+### Features
+
+* **automations:** use button 1 to toggle work station ([e3d964c](https://github.com/aronnebrivio/homeassistant-config/commit/e3d964cce254ecb527164114a216385a05319988))
+* **core:** upgrade HA to 2025.7.1 ([1b5b750](https://github.com/aronnebrivio/homeassistant-config/commit/1b5b75097f69a2d2168c7884303cc3e833d6d0ec))
+* **docs:** update screenshots ([573b1ef](https://github.com/aronnebrivio/homeassistant-config/commit/573b1ef6ab6d2844f3f7c1bcbac93a14375e1bbf))
+* update README.md and ui-lovelace.yaml via service ([301b12e](https://github.com/aronnebrivio/homeassistant-config/commit/301b12eefd7435f11279c2ebb5ebbcea4a5a368a))
+
+
+### Bug Fixes
+
+* remove telegram bot yaml configuration since it has been deprecated ([b180c1a](https://github.com/aronnebrivio/homeassistant-config/commit/b180c1a181ed6d17554c3cc4f3d0a3e8a2b4a05b))
+
 ## [4.9.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.8.0...v4.9.0) (2025-06-21)
 
 

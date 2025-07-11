@@ -201,6 +201,12 @@
       "id": "impactapps_com_au"
     },
     {
+      "title": "City of Casey",
+      "module": "casey_vic_gov_au",
+      "default_params": {},
+      "id": "casey_vic_gov_au"
+    },
+    {
       "title": "City of Charles Sturt",
       "module": "app_my_local_services_au",
       "default_params": {},
@@ -217,6 +223,18 @@
       "module": "darebin_vic_gov_au",
       "default_params": {},
       "id": "darebin_vic_gov_au"
+    },
+    {
+      "title": "City of Gosnells",
+      "module": "gosnells_wa_gov_au",
+      "default_params": {},
+      "id": "gosnells_wa_gov_au"
+    },
+    {
+      "title": "City of Greater Bendigo",
+      "module": "bendigo_vic_gov_au",
+      "default_params": {},
+      "id": "bendigo_vic_gov_au"
     },
     {
       "title": "City of Greater Geelong",
@@ -406,6 +424,12 @@
     },
     {
       "title": "District Council of Streaky Bay",
+      "module": "app_my_local_services_au",
+      "default_params": {},
+      "id": "app_my_local_services_au"
+    },
+    {
+      "title": "Fleurieu Regional Waste Authority",
       "module": "app_my_local_services_au",
       "default_params": {},
       "id": "app_my_local_services_au"
@@ -767,6 +791,12 @@
       "module": "sjshire_wa_gov_au",
       "default_params": {},
       "id": "sjshire_wa_gov_au"
+    },
+    {
+      "title": "Shoalhaven City Council",
+      "module": "shoalhaven_nsw_gov_au",
+      "default_params": {},
+      "id": "shoalhaven_nsw_gov_au"
     },
     {
       "title": "Snowy Valleys Council",
@@ -3925,6 +3955,15 @@
       "id": "ics_recollect"
     },
     {
+      "title": "Delta (BC)",
+      "module": "recyclecoach_com",
+      "default_params": {
+        "city": "Delta",
+        "state": "British Columbia"
+      },
+      "id": "recyclecoach_com"
+    },
+    {
       "title": "District of Saanich, BC",
       "module": "ics",
       "default_params": {
@@ -4714,6 +4753,12 @@
       "id": "abfalltermine_forchheim_de"
     },
     {
+      "title": "abfallverband-rheingau",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
       "title": "Abfallwirtschaft Alb-Donau-Kreis",
       "module": "buergerportal_de",
       "default_params": {
@@ -5148,6 +5193,12 @@
       "id": "lobbe_app"
     },
     {
+      "title": "Allensbach am Bodensee",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_gemeinde_allensbach_de"
+    },
+    {
       "title": "Altena",
       "module": "lobbe_app",
       "default_params": {
@@ -5360,6 +5411,12 @@
       "id": "abfall_io"
     },
     {
+      "title": "awb-wetterau.de (not all municipalities)",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
       "title": "AWG Bassum",
       "module": "ics",
       "default_params": {},
@@ -5497,6 +5554,18 @@
       "id": "app_abfallplus_de"
     },
     {
+      "title": "Bad Soden a.Ts.",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
+      "title": "Bad Vilbel",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
       "title": "Bad W\u00fcnnenberg",
       "module": "lobbe_app",
       "default_params": {
@@ -5628,6 +5697,12 @@
         "service_id": "mymuell"
       },
       "id": "jumomind_de"
+    },
+    {
+      "title": "Biebergem\u00fcnd",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "Bielefeld",
@@ -5917,6 +5992,12 @@
       "id": "lobbe_app"
     },
     {
+      "title": "Dienstleistungsbetrieb Dreieich und Neu-Isenburg A\u00f6R",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
       "title": "Dillingen Saar",
       "module": "dillingen_saar_de",
       "default_params": {},
@@ -5929,6 +6010,12 @@
         "service": "din"
       },
       "id": "abfallnavi_de"
+    },
+    {
+      "title": "Dormagen",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "Drekopf",
@@ -5980,6 +6067,12 @@
         "regex": "^(\\w*) \\d* .*"
       },
       "id": "ics_edg_de"
+    },
+    {
+      "title": "Egelsbach",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "EGN Abfallkalender",
@@ -6082,6 +6175,12 @@
       "id": "ics_entsorgungstermine_jena_de"
     },
     {
+      "title": "Eppstein",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
       "title": "Erbach",
       "module": "reso_gmbh_de",
       "default_params": {
@@ -6096,6 +6195,24 @@
         "regex": "(.*) - Bezirk \\d"
       },
       "id": "ics_abfallkalender_erftstadt_de"
+    },
+    {
+      "title": "Erlangen",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
+      "title": "Eschborn",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
+      "title": "Eschwege",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "Esens (MyMuell App)",
@@ -6213,6 +6330,12 @@
       "id": "app_abfallplus_de"
     },
     {
+      "title": "Friedrichsdorf",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
       "title": "Fr\u00e4nkisch-Crumbach",
       "module": "reso_gmbh_de",
       "default_params": {
@@ -6225,6 +6348,12 @@
       "module": "ics",
       "default_params": {},
       "id": "ics_gelbersack_stuttgart_de"
+    },
+    {
+      "title": "Gelnhausen",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "Gelsendienste Gelsenkirchen",
@@ -6299,6 +6428,12 @@
         "service_id": "mymuell"
       },
       "id": "jumomind_de"
+    },
+    {
+      "title": "Gr\u00e4felfing",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "Gr\u00e4venwiesbach (MyMuell App)",
@@ -6449,6 +6584,24 @@
       "module": "ics",
       "default_params": {},
       "id": "ics_herten_de"
+    },
+    {
+      "title": "Heusenstamm",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
+      "title": "Hochheim",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
+      "title": "Hofheim",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "Hohenlohekreis",
@@ -7110,6 +7263,12 @@
       "module": "kwu_de",
       "default_params": {},
       "id": "kwu_de"
+    },
+    {
+      "title": "K\u00f6nigstein",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "Landkreis Amberg-Sulzbach",
@@ -7780,6 +7939,12 @@
       "id": "jumomind_de"
     },
     {
+      "title": "Langen",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
       "title": "Lebacher Abfallzweckverband (LAZ)",
       "module": "ics",
       "default_params": {},
@@ -7816,6 +7981,12 @@
         "state": "Hessen"
       },
       "id": "lobbe_app"
+    },
+    {
+      "title": "Linsengericht",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "LK Schwandorf",
@@ -7900,6 +8071,12 @@
       "id": "app_abfallplus_de"
     },
     {
+      "title": "Marburg",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
       "title": "Marienm\u00fcnster",
       "module": "lobbe_app",
       "default_params": {
@@ -7957,6 +8134,12 @@
         "state": "Nordrhein-Westfalen"
       },
       "id": "lobbe_app"
+    },
+    {
+      "title": "Merzig",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "Meschede",
@@ -8089,6 +8272,12 @@
       "id": "jumomind_de"
     },
     {
+      "title": "Neu-Anspach",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
       "title": "Neu-Ulm",
       "module": "neu_ulm_de",
       "default_params": {},
@@ -8125,6 +8314,12 @@
       "id": "jumomind_de"
     },
     {
+      "title": "Nidderau",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
       "title": "Nordsachsen",
       "module": "app_abfallplus_de",
       "default_params": {
@@ -8145,6 +8340,12 @@
       "module": "ics",
       "default_params": {},
       "id": "ics_awu_oberhavel_de"
+    },
+    {
+      "title": "Obertshausen",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "Oberzent",
@@ -8200,6 +8401,24 @@
         "app_id": "de.albagroup.app"
       },
       "id": "app_abfallplus_de"
+    },
+    {
+      "title": "Petershagen",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
+      "title": "Pirmasens",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
+      "title": "Planegg",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "Plettenberg",
@@ -8327,6 +8546,18 @@
       "id": "ics_abfall_app_net"
     },
     {
+      "title": "Rodenbach",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
+      "title": "Rodgau",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
       "title": "Rosbach Vor Der H\u00f6he",
       "module": "jumomind_de",
       "default_params": {
@@ -8374,6 +8605,12 @@
         "service": "Rsa"
       },
       "id": "muellmax_de"
+    },
+    {
+      "title": "R\u00f6dermark",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "R\u00fcthen",
@@ -8503,6 +8740,18 @@
       "module": "ics",
       "default_params": {},
       "id": "ics_siegen_stadt_de"
+    },
+    {
+      "title": "St Ingbert",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
+      "title": "St. Ingbert",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "Stadt Aachen",
@@ -8721,6 +8970,12 @@
       "id": "awido_de"
     },
     {
+      "title": "Stadt Saarlouis",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
       "title": "Stadt Solingen",
       "module": "abfallnavi_de",
       "default_params": {
@@ -8838,6 +9093,12 @@
       "module": "staedteservice_de",
       "default_params": {},
       "id": "staedteservice_de"
+    },
+    {
+      "title": "Sulzbach",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "Sundern",
@@ -9067,6 +9328,12 @@
       "id": "lobbe_app"
     },
     {
+      "title": "Wasserburg",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
       "title": "WBO Wirtschaftsbetriebe Oberhausen",
       "module": "abfallnavi_de",
       "default_params": {
@@ -9081,6 +9348,12 @@
         "service_id": "mymuell"
       },
       "id": "jumomind_de"
+    },
+    {
+      "title": "Weilrod",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "Weimarer Land",
@@ -9126,6 +9399,12 @@
         "app_id": "de.k4systems.wabapp"
       },
       "id": "app_abfallplus_de"
+    },
+    {
+      "title": "Wetter",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "WGV Recycling GmbH",
@@ -9180,6 +9459,12 @@
       "id": "lobbe_app"
     },
     {
+      "title": "Witzenhausen",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
+    },
+    {
       "title": "Wolfsburger Abfallwirtschaft und Stra\u00dfenreinigung",
       "module": "was_wolfsburg_de",
       "default_params": {},
@@ -9216,6 +9501,12 @@
         "app_id": "de.k4systems.abfallappzak"
       },
       "id": "app_abfallplus_de"
+    },
+    {
+      "title": "zav Zweckverband Abfallwirtschaft Vogelsbergkres",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "ZAW Donau-Wald",
@@ -11694,6 +11985,18 @@
   ],
   "Lithuania": [
     {
+      "title": "Ecoservice atliekos",
+      "module": "ecoapp_ecoservice_lt",
+      "default_params": {},
+      "id": "ecoapp_ecoservice_lt"
+    },
+    {
+      "title": "Ecoservice atliekos",
+      "module": "ecoapp_ecoservice_lt",
+      "default_params": {},
+      "id": "ecoapp_ecoservice_lt"
+    },
+    {
       "title": "Kauno \u0161vara",
       "module": "grafikai_svara_lt",
       "default_params": {},
@@ -13298,6 +13601,12 @@
       "id": "affarsverken_se"
     },
     {
+      "title": "Avfall & \u00c5tervinning Skaraborg",
+      "module": "skaraborg_se",
+      "default_params": {},
+      "id": "skaraborg_se"
+    },
+    {
       "title": "Avfallsapp.se - Multi Source",
       "module": "avfallsapp_se",
       "default_params": {},
@@ -13332,10 +13641,32 @@
       "id": "gastrikeatervinnare_se"
     },
     {
+      "title": "Herrljunga & V\u00e5rg\u00e5rda kommun",
+      "module": "edpevent_se",
+      "default_params": {
+        "service_provider": "herrljunga-vargarda"
+      },
+      "id": "edpevent_se"
+    },
+    {
+      "title": "Hudiksvall",
+      "module": "hudiksvall_se",
+      "default_params": {},
+      "id": "hudiksvall_se"
+    },
+    {
       "title": "J\u00f6nk\u00f6ping - June Avfall & Milj\u00f6",
       "module": "juneavfall_se",
       "default_params": {},
       "id": "juneavfall_se"
+    },
+    {
+      "title": "Kiruna - Tekniska Verken",
+      "module": "edpevent_se",
+      "default_params": {
+        "service_provider": "kiruna-kommun"
+      },
+      "id": "edpevent_se"
     },
     {
       "title": "Kretslopp Sydost",
@@ -13364,10 +13695,26 @@
       "id": "lerum_se"
     },
     {
+      "title": "Lidk\u00f6pings kommun",
+      "module": "edpevent_se",
+      "default_params": {
+        "service_provider": "lidkopings-kommun"
+      },
+      "id": "edpevent_se"
+    },
+    {
       "title": "Link\u00f6ping - Tekniska Verken",
       "module": "tekniskaverken_se",
       "default_params": {},
       "id": "tekniskaverken_se"
+    },
+    {
+      "title": "Ljungby kommun",
+      "module": "edpevent_se",
+      "default_params": {
+        "service_provider": "ljungby-kommun"
+      },
+      "id": "edpevent_se"
     },
     {
       "title": "Lule\u00e5",
@@ -13380,6 +13727,14 @@
       "module": "lund_se",
       "default_params": {},
       "id": "lund_se"
+    },
+    {
+      "title": "Lycksele Kommun",
+      "module": "edpevent_se",
+      "default_params": {
+        "service_provider": "lycksele-kommun"
+      },
+      "id": "edpevent_se"
     },
     {
       "title": "Marks kommun",
@@ -13404,6 +13759,14 @@
       "id": "molndal_se"
     },
     {
+      "title": "Nodra",
+      "module": "edpevent_se",
+      "default_params": {
+        "service_provider": "nodra"
+      },
+      "id": "edpevent_se"
+    },
+    {
       "title": "Norrtalje Vatten & Avfall",
       "module": "nvaa_se",
       "default_params": {},
@@ -13414,6 +13777,14 @@
       "module": "rambo_se",
       "default_params": {},
       "id": "rambo_se"
+    },
+    {
+      "title": "Orust kommun",
+      "module": "edpevent_se",
+      "default_params": {
+        "service_provider": "orust-kommun"
+      },
+      "id": "edpevent_se"
     },
     {
       "title": "Region Gotland",
@@ -13442,6 +13813,12 @@
       "id": "samiljo_se"
     },
     {
+      "title": "Sj\u00f6bo kommun",
+      "module": "sjobo_se",
+      "default_params": {},
+      "id": "sjobo_se"
+    },
+    {
       "title": "Skellefte\u00e5",
       "module": "edpevent_se",
       "default_params": {
@@ -13466,6 +13843,14 @@
       "module": "edpevent_se",
       "default_params": {
         "service_provider": "ssam"
+      },
+      "id": "edpevent_se"
+    },
+    {
+      "title": "Stenungsunds kommun",
+      "module": "edpevent_se",
+      "default_params": {
+        "service_provider": "stenungsund-kommun"
       },
       "id": "edpevent_se"
     },
@@ -13520,6 +13905,14 @@
       "module": "okrab_se",
       "default_params": {},
       "id": "okrab_se"
+    },
+    {
+      "title": "\u00d6rebro kommun",
+      "module": "edpevent_se",
+      "default_params": {
+        "service_provider": "orebro-kommun"
+      },
+      "id": "edpevent_se"
     }
   ],
   "Switzerland": [
@@ -14073,6 +14466,12 @@
       "id": "ardsandnorthdown_gov_uk"
     },
     {
+      "title": "Armagh City Banbridge & Craigavon",
+      "module": "armaghbanbridgecraigavon_gov_uk",
+      "default_params": {},
+      "id": "armaghbanbridgecraigavon_gov_uk"
+    },
+    {
       "title": "Arun District Council",
       "module": "arun_gov_uk",
       "default_params": {},
@@ -14092,9 +14491,11 @@
     },
     {
       "title": "Aylesbury Vale District Council",
-      "module": "aylesburyvaledc_gov_uk",
-      "default_params": {},
-      "id": "aylesburyvaledc_gov_uk"
+      "module": "iapp_itouchvision_com",
+      "default_params": {
+        "municipality": "AYLESBURY VALE"
+      },
+      "id": "iapp_itouchvision_com"
     },
     {
       "title": "Barnsley Metropolitan Borough Council",
@@ -14249,7 +14650,7 @@
       "id": "broxtowe_gov_uk"
     },
     {
-      "title": "Buckinghamshire: Former (Chiltern, South Bucks, Wycombe)",
+      "title": "Buckinghamshire: Formerly (Chiltern, South Bucks, Wycombe)",
       "module": "iapp_itouchvision_com",
       "default_params": {
         "municipality": "BUCKINGHAMSHIRE"
@@ -14691,6 +15092,12 @@
       "module": "hart_gov_uk",
       "default_params": {},
       "id": "hart_gov_uk"
+    },
+    {
+      "title": "Hartlepool Borough Council",
+      "module": "hartlepool_gov_uk",
+      "default_params": {},
+      "id": "hartlepool_gov_uk"
     },
     {
       "title": "Hastings Borough Council",
@@ -15207,6 +15614,12 @@
       "module": "royalgreenwich_gov_uk",
       "default_params": {},
       "id": "royalgreenwich_gov_uk"
+    },
+    {
+      "title": "Rugby Borough Council",
+      "module": "rugby_gov_uk",
+      "default_params": {},
+      "id": "rugby_gov_uk"
     },
     {
       "title": "Runnymede Borough Council",
@@ -15798,6 +16211,12 @@
       "id": "okc_gov"
     },
     {
+      "title": "City of Philadelphia, PA",
+      "module": "phila_gov",
+      "default_params": {},
+      "id": "phila_gov"
+    },
+    {
       "title": "City of Pittsburgh",
       "module": "pgh_st",
       "default_params": {},
@@ -15866,6 +16285,14 @@
     },
     {
       "title": "ReCollect",
+      "module": "ics",
+      "default_params": {
+        "split_at": "\\, (?:and )?|(?: and )"
+      },
+      "id": "ics_recollect"
+    },
+    {
+      "title": "Recology San Francisco",
       "module": "ics",
       "default_params": {
         "split_at": "\\, (?:and )?|(?: and )"

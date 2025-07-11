@@ -65,12 +65,6 @@ influxdb:
   exclude:
     entity_globs: "*"
 
-telegram_bot:
-  - platform: polling
-    api_key: !secret telegram.bot.token
-    allowed_chat_ids:
-      - !secret telegram.aronne.chat_id
-
 notify:
   - platform: telegram
     name: !secret telegram.aronne.slug

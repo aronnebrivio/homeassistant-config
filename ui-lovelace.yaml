@@ -4,6 +4,17 @@ views:
     type: sections
     badges:
       - type: custom:mushroom-template-badge
+        color: teal
+        content: ''
+        visibility:
+          - condition: state
+            entity: vacuum.robottino_sguaterino
+            state: cleaning
+        tap_action:
+          action: more-info
+        entity: vacuum.robottino_sguaterino
+        icon: mdi:robot-vacuum
+      - type: custom:mushroom-template-badge
         icon: mdi:fan
         color: red
         content: ''
@@ -224,66 +235,96 @@ views:
             visibility:
               - condition: screen
                 media_query: '(min-width: 0px) and (max-width: 767px)'
-          - alert_classes:
+          - features:
+              - type: area-controls
+                controls:
+                  - light
+            alert_classes:
               - door
             sensor_classes:
               - temperature
               - humidity
+            features_position: inline
+            display_type: picture
             type: area
             area: soggiorno
             navigation_path: /lovelace/livingroom
             visibility:
               - condition: screen
                 media_query: '(min-width: 768px)'
-          - alert_classes:
+            color: ''
+            grid_options:
+              columns: 12
+              rows: 3
+          - features:
+              - type: area-controls
+            alert_classes:
               - motion
               - moisture
               - door
             sensor_classes:
               - temperature
               - humidity
+            features_position: inline
+            display_type: picture
             type: area
             area: camera_da_letto
             navigation_path: /lovelace/bedroom
             visibility:
               - condition: screen
                 media_query: '(min-width: 768px)'
+            color: ''
           - alert_classes:
               - motion
               - moisture
             sensor_classes:
               - temperature
               - humidity
+            features_position: inline
+            display_type: picture
             type: area
             area: bagno
             navigation_path: /lovelace/bathroom
             visibility:
               - condition: screen
                 media_query: '(min-width: 768px)'
+            color: ''
+            features:
+              - type: area-controls
           - alert_classes:
               - motion
               - moisture
             sensor_classes:
               - temperature
               - humidity
+            features_position: inline
+            display_type: picture
             type: area
             area: cucina
             navigation_path: /lovelace/kitchen
             visibility:
               - condition: screen
                 media_query: '(min-width: 768px)'
+            color: ''
+            features:
+              - type: area-controls
           - alert_classes:
               - motion
               - moisture
             sensor_classes:
               - temperature
               - humidity
+            features_position: inline
+            display_type: picture
             type: area
             area: ingresso
             navigation_path: /lovelace/entrance
             visibility:
               - condition: screen
                 media_query: '(min-width: 768px)'
+            color: ''
+            features:
+              - type: area-controls
         column_span: 4
       - type: grid
         cards:
@@ -1126,8 +1167,61 @@ views:
             tap_action:
               action: toggle
             grid_options:
-              columns: full
+              columns: 6
+              rows: 1
             color: light-blue
+            features_position: bottom
+            vertical: true
+          - type: custom:mushroom-vacuum-card
+            entity: vacuum.robottino_sguaterino
+            icon_animation: true
+            fill_container: false
+            commands:
+              - start_pause
+              - stop
+              - return_home
+      - type: grid
+        cards:
+          - type: custom:mushroom-title-card
+            title: Wall•E
+          - type: tile
+            entity: sensor.robottino_sguaterino_battery
+            features_position: bottom
+            vertical: false
+            name: Batteria
+          - type: tile
+            entity: binary_sensor.robottino_sguaterino_mop_attached
+            features_position: bottom
+            vertical: false
+            name: Modalitá lavaggio
+          - type: tile
+            entity: select.robottino_sguaterino_water_flow_level
+            features_position: bottom
+            vertical: false
+            name: Acqua da usare
+            color: light-blue
+          - type: tile
+            entity: sensor.robottino_sguaterino_total_cleanings
+            features_position: bottom
+            vertical: false
+            name: Cicli totali
+          - type: tile
+            entity: sensor.robottino_sguaterino_filter_lifespan
+            features_position: bottom
+            vertical: false
+            name: Vita filtro
+          - type: tile
+            entity: sensor.robottino_sguaterino_main_brush_lifespan
+            features_position: bottom
+            vertical: false
+            name: Vita spazzola
+          - type: tile
+            entity: sensor.robottino_sguaterino_side_brush_lifespan
+            features_position: bottom
+            vertical: false
+            name: Vita spazzolina
+          - type: tile
+            entity: sensor.robottino_sguaterino_unit_care_lifespan
     max_columns: 3
   - theme: Backend-selected
     title: Ingresso

@@ -56,7 +56,9 @@
     domain: mobile_app
     type: notify
     title: "\U0001F6AE *Raccolta rifiuti*"
-    message: Domani passano a ritirare la spazzatura! [Dettagli](https://home.aronnebrivio.dev/lovelace/kitchen)
+    message: Domani passano a ritirare la spazzatura!
+    data:
+      url: homeassistant://navigate/lovelace/kitchen
   mode: single
 - id: '1650473639566'
   alias: Buttons 2 manages Bed
@@ -96,7 +98,9 @@
     type: notify
     title: "\U0001F6BF *Ho spento il boiler per limitare i consumi*"
     message: I consumi istantanei hanno superato i 4.6kW, cosí ho spento il boiler
-      per cercare di limitarli. [Dettagli](https://iqf2y6yscdio5ilo35kpfrxbyqfpreyl.ui.nabu.casa/lovelace/kitchen)
+      per cercare di limitarli.
+    data:
+      url: homeassistant://navigate/lovelace/kitchen
   mode: single
 - id: '1651526561767'
   alias: '[Boiler] Turn on at 5:00 AM on working days'

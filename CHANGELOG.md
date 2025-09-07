@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.11.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.10.0...v4.11.0) (2025-09-07)
+
+
+### Features
+
+* add soil sensor for our beloved Mimosa and new balcony area ([0665513](https://github.com/aronnebrivio/homeassistant-config/commit/06655137a8bf99fee84887af05c4c318b293f68a))
+* **automations:** use push notifications instead of Telegram bot ([95a0c0a](https://github.com/aronnebrivio/homeassistant-config/commit/95a0c0a1f055f155be0654abdd82b62121ec7cf7))
+* update HA to 2025.9.1 ([16d3b0d](https://github.com/aronnebrivio/homeassistant-config/commit/16d3b0df76c5dad5a720c6477459f7e31572dbf3))
+
+
+### Bug Fixes
+
+* **esphome:** remove trailing spaces ([70b9d6c](https://github.com/aronnebrivio/homeassistant-config/commit/70b9d6c4b65f8d0b84d0bad7c488c6e6662a08d4))
+
 ## [4.10.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.9.0...v4.10.0) (2025-07-11)
 
 

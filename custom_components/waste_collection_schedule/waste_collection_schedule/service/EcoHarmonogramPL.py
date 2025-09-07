@@ -21,6 +21,7 @@ SUPPORTED_APPS_LITERAL = Literal[
     "slupsk",
     "trzebownisko",
     "zory",
+    "opole"
 ]
 
 SUPPORTED_APPS = get_args(SUPPORTED_APPS_LITERAL)
@@ -150,7 +151,7 @@ class Ecoharmonogram:
         params["appVersion"] = 107
         params["systemId"] = 1
         params["clientId"] = self._client_id
-        params["lng"] = "en"
+        params["lng"] = "pl"
 
         response = requests.post(url, headers=self._headers, data=params)
         response.encoding = "utf-8-sig"

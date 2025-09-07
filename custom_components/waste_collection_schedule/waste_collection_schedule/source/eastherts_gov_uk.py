@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 import time
 from datetime import datetime
 
@@ -34,6 +35,11 @@ ICON_MAP = {
     "Refuse": "mdi:trash-can",
     "Recycling": "mdi:recycle",
     "Garden Waste": "mdi:leaf",
+    "Paper": "mdi:newspaper",
+    "Food": "mdi:food",
+}
+REGEX = {
+    "SID": r"sid=(.+)",
 }
 
 HOW_TO_GET_ARGUMENTS_DESCRIPTION = {  # Optional dictionary to describe how to get the arguments, will be shown in the GUI configuration form above the input fields, does not need to be translated in all languages
@@ -122,19 +128,17 @@ class Source:
 
         # set up session
         r = s.get(
-            "https://myaccount.eastherts.gov.uk/apibroker/domain/myaccount.eastherts.gov.uk",
+            "https://eastherts-self.achieveservice.com/service/Bins___When_are_my_Bin_Collection_days",
             headers=HEADERS,
         )
         r.raise_for_status()
-
-        # get session key
-        authRequest = s.get(
-            "https://myaccount.eastherts.gov.uk/authapi/isauthenticated?uri=https%253A%252F%252Fmyaccount.eastherts.gov.uk%252Fen%252FAchieveForms%252F%253Fform_uri%253Dsandbox-publish%253A%252F%252FAF-Process-98782935-6101-4962-9a55-5923e76057b6%252FAF-Stage-dcd0ec18-dfb4-496a-a266-bd8fadaa28a7%252Fdefinition.json%2526redirectlink%253D%25252Fen%2526cancelRedirectLink%253D%25252Fen%2526consentMessage%253Dyes&hostname=myaccount.eastherts.gov.uk&withCredentials=true",
-            headers=HEADERS,
-        )
-        authRequest.raise_for_status()
-        authData = authRequest.json()
-        sessionKey = authData["auth-session"]
+        soup = BeautifulSoup(r.content, "html.parser")
+        # get session id
+        links = soup.find_all("link", {"href": True})
+        for link in links:
+            if "apibroker" in link.get("href"):
+                sid = re.findall(REGEX["SID"], link.get("href"))[0]
+                break
 
         # now query using the uprn
         timestamp = time.time_ns() // 1_000_000  # epoch time in milliseconds
@@ -142,7 +146,7 @@ class Source:
             "formValues": {"Collection Days": {"inputUPRN": {"value": self._uprn}}}
         }
         scheduleRequest = s.post(
-            f"https://myaccount.eastherts.gov.uk/apibroker/runLookup?id=683d9ff0e299d&repeat_against=&noRetry=true&getOnlyTokens=undefined&log_id=&app_name=AF-Renderer::Self&_={timestamp}&sid={sessionKey}",
+            f"https://eastherts-self.achieveservice.com/apibroker/runLookup?id=683d9ff0e299d&repeat_against=&noRetry=true&getOnlyTokens=undefined&log_id=&app_name=AF-Renderer::Self&_={timestamp}&sid={sid}",
             headers=HEADERS,
             json=payload,
         )

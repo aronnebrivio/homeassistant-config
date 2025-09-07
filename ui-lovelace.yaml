@@ -235,6 +235,20 @@ views:
             visibility:
               - condition: screen
                 media_query: '(min-width: 0px) and (max-width: 767px)'
+          - type: custom:mushroom-template-card
+            primary: Balcone
+            secondary: '{{ states(''sensor.soil_sensor_1_temperature'')|round(1) }}°C
+              - {{ states(''sensor.soil_sensor_1_soil_moisture'')|round(1) }}%'
+            icon: mdi:balcony
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/balcony
+            hold_action:
+              action: toggle
+            visibility:
+              - condition: screen
+                media_query: '(min-width: 0px) and (max-width: 767px)'
+            entity: switch.dummy_switch
           - features:
               - type: area-controls
                 controls:
@@ -325,6 +339,23 @@ views:
             color: ''
             features:
               - type: area-controls
+          - features:
+              - type: area-controls
+            alert_classes:
+              - motion
+              - moisture
+            sensor_classes:
+              - temperature
+              - humidity
+            features_position: inline
+            display_type: picture
+            type: area
+            area: balcone
+            navigation_path: /lovelace/balcony
+            visibility:
+              - condition: screen
+                media_query: '(min-width: 768px)'
+            color: ''
         column_span: 4
       - type: grid
         cards:
@@ -1180,6 +1211,7 @@ views:
               - start_pause
               - stop
               - return_home
+            name: Wall•E
       - type: grid
         cards:
           - type: custom:mushroom-title-card
@@ -1190,16 +1222,27 @@ views:
             vertical: false
             name: Batteria
           - type: tile
-            entity: binary_sensor.robottino_sguaterino_mop_attached
-            features_position: bottom
-            vertical: false
-            name: Modalitá lavaggio
-          - type: tile
             entity: select.robottino_sguaterino_water_flow_level
             features_position: bottom
             vertical: false
             name: Acqua da usare
             color: light-blue
+            tap_action:
+              action: more-info
+          - type: tile
+            entity: image.robottino_sguaterino_map
+            show_entity_picture: true
+            features_position: bottom
+            vertical: false
+            grid_options:
+              columns: full
+              rows: 1
+            name: Mappa
+          - type: tile
+            entity: binary_sensor.robottino_sguaterino_mop_attached
+            features_position: bottom
+            vertical: false
+            name: Modalitá lavaggio
           - type: tile
             entity: sensor.robottino_sguaterino_total_cleanings
             features_position: bottom
@@ -1765,3 +1808,27 @@ views:
                 icon: mdi:snowflake
     title: Devices
     cards: []
+  - type: sections
+    max_columns: 4
+    icon: mdi:balcony
+    path: balcony
+    sections:
+      - type: grid
+        cards:
+          - type: custom:mushroom-title-card
+            title: Smart home
+          - type: custom:mushroom-template-card
+            primary: Mimosa
+            secondary: '{{ states(''sensor.soil_sensor_1_temperature'')|round(1) }}°C
+              - {{ states(''sensor.soil_sensor_1_soil_moisture'')|round(1) }}%'
+            icon: mdi:palm-tree
+            icon_color: "{% if states('sensor.soil_sensor_1_soil_moisture')|float\
+              \ > 50 %}\n  green\n{% elif states('sensor.soil_sensor_1_soil_moisture')|float\
+              \ < 50 %}\n  yellow\n{% elif states('sensor.soil_sensor_1_soil_moisture')|float\
+              \ < 20 %}\n  red\n{% endif %}"
+            entity: sensor.soil_sensor_1_soil_moisture
+            tap_action:
+              action: more-info
+    subview: true
+    cards: []
+    title: Balcone

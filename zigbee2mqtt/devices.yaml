@@ -30,10 +30,6 @@
   friendly_name: Termometro Bagno
   humidity_precision: 2
   temperature_precision: 2
-'0x00124b0024cce16f':
-  friendly_name: Termometro Camera
-  temperature_precision: 2
-  humidity_precision: 2
 '0x001788010e8d16fa':
   friendly_name: Remote Dimmer 1
 '0x00158d008b880ec9':
@@ -42,3 +38,7 @@
   friendly_name: Livingroom Door Sensor
 '0x00158d008b87d34f':
   friendly_name: Livingroom Window Sensor
+'0xffffb40e0605b718':
+  friendly_name: Soil Sensor 1
+'0x00124b0024cce16f':
+  friendly_name: Termometro Camera

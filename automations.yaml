@@ -17,23 +17,22 @@
   - device_id: cf132f484fa5f5c742094b43402043b3
     domain: mobile_app
     type: notify
-    title: "⚡️ *Sto consumando troppo!*"
-    message: I consumi hanno superato i 4.6kW per 20 secondi e il boiler è già spento,
-      se non spegni qualcosa salterà la corrente!
+    title: ⚡️ Sto consumando troppo!
+    message: I consumi hanno superato i 4.6kW per 20 secondi e il boiler è già spento, se non spegni qualcosa salterà la corrente!
   mode: single
 - id: '1644433874893'
   alias: '[Notify][Proxmox] High Memory Usage'
   description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.proxmox_memory_usage
+  triggers:
+  - entity_id: sensor.proxmox_memory_usage
     above: '13'
-  condition: []
-  action:
+    trigger: numeric_state
+  conditions: []
+  actions:
   - device_id: cf132f484fa5f5c742094b43402043b3
     domain: mobile_app
     type: notify
-    title: "⚠️ *Proxmox high memory usage*"
+    title: ⚠️ Proxmox high memory usage
     message: Superati i 13GB di RAM occupata
   mode: single
 - id: '1650365699588'
@@ -55,7 +54,7 @@
   - device_id: cf132f484fa5f5c742094b43402043b3
     domain: mobile_app
     type: notify
-    title: "\U0001F6AE *Raccolta rifiuti*"
+    title: "\U0001F6AE Raccolta rifiuti"
     message: Domani passano a ritirare la spazzatura!
   mode: single
 - id: '1650473639566'
@@ -94,9 +93,8 @@
   - device_id: cf132f484fa5f5c742094b43402043b3
     domain: mobile_app
     type: notify
-    title: "\U0001F6BF *Ho spento il boiler per limitare i consumi*"
-    message: I consumi istantanei hanno superato i 4.6kW, cosí ho spento il boiler
-      per cercare di limitarli.
+    title: "\U0001F6BF Ho spento il boiler per limitare i consumi"
+    message: I consumi istantanei hanno superato i 4.6kW, cosí ho spento il boiler per cercare di limitarli.
   mode: single
 - id: '1651526561767'
   alias: '[Boiler] Turn on at 5:00 AM on working days'
@@ -329,9 +327,8 @@
   - device_id: cf132f484fa5f5c742094b43402043b3
     domain: mobile_app
     type: notify
-    title: "\U0001F4A8 *Apri le finestre!*"
-    message: La qualità dell'aria di casa è scarsa, fai cambiare aria che non si
-      respira!
+    title: "\U0001F4A8 Apri le finestre!"
+    message: La qualità dell'aria di casa è scarsa, fai cambiare aria che non si respira!
   mode: single
 - id: '1730656544836'
   alias: '[Notify][Air Quality] High Outdoor AQI'
@@ -351,7 +348,7 @@
   - device_id: cf132f484fa5f5c742094b43402043b3
     domain: mobile_app
     type: notify
-    title: "\U0001FA9F *Chiudi tutto!*"
+    title: "\U0001FA9F Chiudi tutto!"
     message: La qualità dell'aria fuori fa schifo, tappati in casa!
   mode: single
 - id: '1746726664304'

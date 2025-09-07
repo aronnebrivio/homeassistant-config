@@ -1,5 +1,31 @@
+#ESPHome Particulate Sensor using PMSX003
+
+# - Measures Particulates every 150seconds (2.5 minutes)
+# - Sends data back to home assistant
+# - Shutdowns PMS Sensors laser/ fan beteween readings so maximise the sensors limited life
+# - Flashes onboard LED when a measurement is taken
+
+#Hardware
+#PMS5003T
+#Pin 1 5v (VCC+)
+#    2 GND from ESP32
+#    3 SET Not connected, and not required see note below
+#    4 RX connected to ESP32 TX 
+#    5 TX connected to ESP32 RX
+#    6,7,8 not connected
+
+#NOTE: FAN spin
+#  The fan is spun down by the ESP32's pmsx003 module using a software/UART command rather
+#  than using PIN 3
+#  This is documented here:
+#    (Jan16-May10, 2022) https://github.com/esphome/esphome/pull/3053 
+#    and more background: https://github.com/esphome/feature-requests/issues/2033 & the links is request
+
+
 substitutions:
   name: "esp32-01"
+  #Time between measurement samples
+  measurement_interval: "250s" #250s = 2.5minutes
 
 esphome:
   name: ${name}
@@ -61,7 +87,7 @@ sensor:
       on_value:
         then:
           - script.execute: flash_sample
-    update_interval: 300s
+    update_interval: ${measurement_interval}
 
 script:
   - id: boot_flash

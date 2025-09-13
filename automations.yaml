@@ -500,3 +500,17 @@
     target:
       entity_id: light.luce_scrivania
   mode: single
+- id: '1757750523015'
+  alias: Run speedtest via addon
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    hours: '*'
+    minutes: '0'
+    seconds: '0'
+  conditions: []
+  actions:
+  - action: hassio.addon_start
+    data:
+      addon: 6b87c29e_speedtest_addon
+  mode: single

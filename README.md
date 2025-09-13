@@ -13,7 +13,7 @@ I regularly update my configuration files. You can check my current Home Assista
 Description | value
 -- | --
 Number of entities | 544
-Number of sensors | 283
+Number of sensors | 281
 
 
 ## My installed extensions:
@@ -28,6 +28,7 @@ Number of sensors | 283
 - Mosquitto broker
 - RPC Shutdown
 - Samba share
+- Speedtest
 - Zigbee2MQTT
 
 ### Custom integrations

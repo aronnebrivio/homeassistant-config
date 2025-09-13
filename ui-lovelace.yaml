@@ -376,6 +376,11 @@ views:
             name: Stats
             color: teal
             hide_state: true
+            features_position: bottom
+            vertical: false
+            icon_tap_action:
+              action: navigate
+              navigation_path: /lovelace/stats
           - type: custom:mushroom-template-card
             primary: ''
             secondary: ''
@@ -384,12 +389,17 @@ views:
               action: navigate
               navigation_path: /lovelace/lab
             hold_action:
-              action: toggle
+              action: none
             grid_options:
               columns: 3
               rows: 1
             entity: switch.dummy_switch
-            icon_color: purple
+            color: purple
+            features_position: bottom
+            icon_tap_action:
+              action: navigate
+              navigation_path: /lovelace/lab
+            vertical: true
           - type: custom:mushroom-template-card
             primary: ''
             secondary: ''
@@ -399,12 +409,14 @@ views:
               navigation_path: /lovelace/devices
             hold_action:
               action: toggle
-            icon_color: yellow
             double_tap_action:
               action: none
             grid_options:
               columns: 3
               rows: 1
+            color: yellow
+            features_position: bottom
+            vertical: true
         column_span: 4
     max_columns: 2
   - theme: Backend-selected

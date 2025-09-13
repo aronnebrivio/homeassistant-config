@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.12.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.11.0...v4.12.0) (2025-09-13)
+
+
+### Features
+
+* update HA to 2025.9.2 ([394af27](https://github.com/aronnebrivio/homeassistant-config/commit/394af27ba71ed2b927d3c5a46f24d8ab87719114))
+
+
+### Bug Fixes
+
+* **speedtest:** use speedtest addon for more accurate measures instead of the official integration. ([2966da4](https://github.com/aronnebrivio/homeassistant-config/commit/2966da415604dfba519659fba8958e6140fb0e06))
+
 ## [4.11.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.10.0...v4.11.0) (2025-09-07)
 
 

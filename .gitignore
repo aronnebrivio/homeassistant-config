@@ -28,3 +28,5 @@ known_devices.yaml
 
 .shopping_list.json
 google_calendars.yaml
+
+.ha_run.lock

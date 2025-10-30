@@ -46,6 +46,12 @@ views:
               - condition: state
                 entity: binary_sensor.livingroom_door_sensor_contact
                 state: 'on'
+              - condition: state
+                entity: binary_sensor.kitchen_door_sensor_contact
+                state: 'on'
+              - condition: state
+                entity: binary_sensor.bathroom_window_sensor_contact
+                state: 'on'
       - type: entity
         show_name: false
         show_state: true
@@ -135,22 +141,28 @@ views:
             visibility:
               - condition: screen
                 media_query: '(min-width: 0px) and (max-width: 767px)'
-          - type: custom:mushroom-person-card
+          - type: tile
+            grid_options:
+              columns: 6
+              rows: 1
+            visibility:
+              - condition: screen
+                media_query: '(min-width: 768px)'
             entity: person.aronne
-            fill_container: true
-            layout: vertical
-            icon_type: entity-picture
+            show_entity_picture: true
+            vertical: true
+            features_position: bottom
+          - type: tile
+            grid_options:
+              columns: 6
+              rows: 1
             visibility:
               - condition: screen
                 media_query: '(min-width: 768px)'
-          - type: custom:mushroom-person-card
             entity: person.valentina
-            fill_container: true
-            layout: vertical
-            icon_type: entity-picture
-            visibility:
-              - condition: screen
-                media_query: '(min-width: 768px)'
+            show_entity_picture: true
+            vertical: true
+            features_position: bottom
       - type: grid
         cards:
           - type: custom:mushroom-title-card
@@ -170,11 +182,15 @@ views:
               navigation_path: /lovelace/livingroom
             hold_action:
               action: toggle
-            icon_color: "{% if is_state('light.livingroom', 'on') %}\n  orange\n{%\
-              \ endif %}"
             visibility:
               - condition: screen
                 media_query: '(min-width: 0px) and (max-width: 767px)'
+            color: "{% if is_state('light.livingroom', 'on') %}\n  orange\n{% endif\
+              \ %}"
+            features_position: bottom
+            area: soggiorno
+            icon_tap_action:
+              action: none
           - type: custom:mushroom-template-card
             primary: Camera
             secondary: '{{ states(''sensor.termometro_camera_temperature'')|round(1)
@@ -185,12 +201,15 @@ views:
               navigation_path: /lovelace/bedroom
             hold_action:
               action: toggle
-            icon_color: "{% if is_state('light.bed', 'on') %}\n  orange\n{% endif\
-              \ %}"
             entity: light.bed
             visibility:
               - condition: screen
                 media_query: '(min-width: 0px) and (max-width: 767px)'
+            color: "{% if is_state('light.bed', 'on') %}\n  orange\n{% endif %}"
+            features_position: bottom
+            icon_tap_action:
+              action: none
+            area: camera_da_letto
           - type: custom:mushroom-template-card
             primary: Cucina
             secondary: '{{ states(''sensor.termometro_cucina_temperature'')|round(1)
@@ -199,11 +218,13 @@ views:
             tap_action:
               action: navigate
               navigation_path: /lovelace/kitchen
-            icon_color: "{% if is_state('binary_sensor.garbage_collection_tomorrow',\
-              \ 'on') %}\n  red\n{% endif %}"
             visibility:
               - condition: screen
                 media_query: '(min-width: 0px) and (max-width: 767px)'
+            color: "{% if is_state('binary_sensor.garbage_collection_tomorrow', 'on')\
+              \ %}\n  red\n{% endif %}"
+            features_position: bottom
+            area: cucina
           - type: custom:mushroom-template-card
             primary: Bagno
             secondary: '{{ states(''sensor.termometro_bagno_temperature'')|round(1)
@@ -212,17 +233,22 @@ views:
             tap_action:
               action: navigate
               navigation_path: /lovelace/bathroom
-            icon_color: "{% if is_state('switch.water_heater', 'on') %}\n  cyan\n\
-              {% endif %}"
             entity: switch.water_heater
             hold_action:
               action: toggle
             visibility:
               - condition: screen
                 media_query: '(min-width: 0px) and (max-width: 767px)'
+            color: "{% if is_state('switch.water_heater', 'on') %}\n  cyan\n{% endif\
+              \ %}"
+            features_position: bottom
+            icon_tap_action:
+              action: none
+            area: bagno
           - type: custom:mushroom-template-card
             primary: Ingresso
-            secondary: ''
+            secondary: '{{ states(''sensor.termometro_ingresso_temperature'')|round(1)
+              }}°C - {{ states(''sensor.termometro_ingresso_humidity'')|round(1) }}%'
             icon: mdi:door
             entity: light.vetrina_ingresso
             tap_action:
@@ -230,11 +256,15 @@ views:
               navigation_path: /lovelace/entrance
             hold_action:
               action: toggle
-            icon_color: "{% if is_state('light.entrance', 'on') %}\n  orange\n{% endif\
-              \ %}"
             visibility:
               - condition: screen
                 media_query: '(min-width: 0px) and (max-width: 767px)'
+            color: "{% if is_state('light.entrance', 'on') %}\n  orange\n{% endif\
+              \ %}"
+            features_position: bottom
+            icon_tap_action:
+              action: none
+            area: ingresso
           - type: custom:mushroom-template-card
             primary: Balcone
             secondary: '{{ states(''sensor.soil_sensor_1_temperature'')|round(1) }}°C
@@ -248,7 +278,10 @@ views:
             visibility:
               - condition: screen
                 media_query: '(min-width: 0px) and (max-width: 767px)'
-            entity: switch.dummy_switch
+            features_position: bottom
+            icon_tap_action:
+              action: none
+            area: balcone
           - features:
               - type: area-controls
                 controls:
@@ -279,8 +312,8 @@ views:
             sensor_classes:
               - temperature
               - humidity
+            display_type: icon
             features_position: inline
-            display_type: picture
             type: area
             area: camera_da_letto
             navigation_path: /lovelace/bedroom
@@ -288,14 +321,18 @@ views:
               - condition: screen
                 media_query: '(min-width: 768px)'
             color: ''
-          - alert_classes:
+            vertical: false
+          - features:
+              - type: area-controls
+            alert_classes:
               - motion
               - moisture
+              - door
             sensor_classes:
               - temperature
               - humidity
-            features_position: inline
             display_type: picture
+            features_position: inline
             type: area
             area: bagno
             navigation_path: /lovelace/bathroom
@@ -303,16 +340,18 @@ views:
               - condition: screen
                 media_query: '(min-width: 768px)'
             color: ''
-            features:
+            vertical: false
+          - features:
               - type: area-controls
-          - alert_classes:
+            alert_classes:
               - motion
               - moisture
+              - door
             sensor_classes:
               - temperature
               - humidity
-            features_position: inline
             display_type: picture
+            features_position: inline
             type: area
             area: cucina
             navigation_path: /lovelace/kitchen
@@ -320,8 +359,7 @@ views:
               - condition: screen
                 media_query: '(min-width: 768px)'
             color: ''
-            features:
-              - type: area-controls
+            vertical: false
           - alert_classes:
               - motion
               - moisture
@@ -379,8 +417,7 @@ views:
             features_position: bottom
             vertical: false
             icon_tap_action:
-              action: navigate
-              navigation_path: /lovelace/stats
+              action: none
           - type: custom:mushroom-template-card
             primary: ''
             secondary: ''
@@ -393,12 +430,10 @@ views:
             grid_options:
               columns: 3
               rows: 1
-            entity: switch.dummy_switch
             color: purple
             features_position: bottom
             icon_tap_action:
-              action: navigate
-              navigation_path: /lovelace/lab
+              action: none
             vertical: true
           - type: custom:mushroom-template-card
             primary: ''
@@ -408,7 +443,7 @@ views:
               action: navigate
               navigation_path: /lovelace/devices
             hold_action:
-              action: toggle
+              action: none
             double_tap_action:
               action: none
             grid_options:
@@ -1110,6 +1145,21 @@ views:
             collapsible_controls: true
             grid_options:
               columns: full
+      - type: grid
+        cards:
+          - type: custom:mushroom-title-card
+            title: Extra
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: binary_sensor.kitchen_door_sensor_contact
+            name: Porta
+            icon: ''
+            show_entity_picture: false
+            hide_state: true
+            vertical: false
+            features_position: bottom
     max_columns: 3
   - theme: Backend-selected
     title: Bagno
@@ -1277,6 +1327,21 @@ views:
             name: Vita spazzolina
           - type: tile
             entity: sensor.robottino_sguaterino_unit_care_lifespan
+      - type: grid
+        cards:
+          - type: custom:mushroom-title-card
+            title: Extra
+          - type: tile
+            grid_options:
+              columns: 12
+              rows: 1
+            entity: binary_sensor.bathroom_window_sensor_contact
+            name: Finestra
+            icon: ''
+            show_entity_picture: false
+            hide_state: true
+            vertical: false
+            features_position: bottom
     max_columns: 3
   - theme: Backend-selected
     title: Ingresso
@@ -1287,6 +1352,86 @@ views:
     cards: []
     subview: true
     sections:
+      - type: grid
+        cards:
+          - graph: line
+            hours_to_show: 24
+            type: sensor
+            detail: 1
+            entity: sensor.termometro_ingresso_temperature
+            name: Temperatura
+            visibility:
+              - condition: screen
+                media_query: '(min-width: 0px) and (max-width: 767px)'
+          - graph: line
+            hours_to_show: 24
+            type: sensor
+            detail: 1
+            entity: sensor.termometro_ingresso_humidity
+            name: Umidità
+            visibility:
+              - condition: screen
+                media_query: '(min-width: 0px) and (max-width: 767px)'
+          - type: custom:mini-graph-card
+            entities:
+              - entity: sensor.termometro_ingresso_temperature
+                show_legend: false
+              - entity: sun.sun
+                color: gray
+                name: Night
+                show_line: false
+                show_points: false
+                show_legend: false
+                y_axis: secondary
+            name: Temperatura
+            animate: true
+            show:
+              labels: true
+              labels_secondary: true
+            state_map:
+              - value: below_horizon
+                label: Night
+              - value: above_horizon
+                label: Day
+            color_thresholds:
+              - value: 20
+                color: '#f39c12'
+              - value: 21
+                color: '#d35400'
+              - value: 21.5
+                color: '#c0392b'
+            hours_to_show: 168
+            points_per_hour: 0.25
+            visibility:
+              - condition: screen
+                media_query: '(min-width: 768px)'
+          - type: custom:mini-graph-card
+            entities:
+              - entity: sensor.termometro_ingresso_humidity
+                show_legend: false
+                color: '#89cff0'
+              - entity: sun.sun
+                color: gray
+                name: Night
+                show_line: false
+                show_points: false
+                show_legend: false
+                y_axis: secondary
+            name: Umidità
+            animate: true
+            show:
+              labels: true
+              labels_secondary: true
+            state_map:
+              - value: below_horizon
+                label: Night
+              - value: above_horizon
+                label: Day
+            hours_to_show: 168
+            points_per_hour: 0.25
+            visibility:
+              - condition: screen
+                media_query: '(min-width: 768px)'
       - type: grid
         cards:
           - type: custom:mushroom-title-card
@@ -1320,6 +1465,11 @@ views:
             tap_action:
               action: url
               url_path: http://192.168.1.1/
+            features_position: bottom
+            vertical: false
+            icon_tap_action:
+              action: url
+              url_path: http://192.168.1.1/
           - type: tile
             entity: binary_sensor.proxmox_is_running
             name: Proxmox
@@ -1328,6 +1478,8 @@ views:
             tap_action:
               action: url
               url_path: https://192.168.1.2:8006/
+            features_position: bottom
+            vertical: false
           - type: tile
             entity: switch.adguard_home_protection
             name: AdGuard Home
@@ -1355,6 +1507,11 @@ views:
               columns: full
             hide_state: true
             tap_action:
+              action: url
+              url_path: http://192.168.1.13:8080/
+            features_position: bottom
+            vertical: false
+            icon_tap_action:
               action: url
               url_path: http://192.168.1.13:8080/
       - type: grid
@@ -1438,6 +1595,16 @@ views:
             color: deep-orange
             show_entity_picture: false
             state_content: state
+          - type: tile
+            entity: input_button.speedtest
+            features_position: bottom
+            vertical: false
+            name: Run speedtest
+            color: primary
+            show_entity_picture: true
+            grid_options:
+              columns: full
+              rows: 1
       - type: grid
         cards:
           - grid_options: null

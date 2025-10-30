@@ -12,8 +12,8 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 544
-Number of sensors | 281
+Number of entities | 558
+Number of sensors | 292
 
 
 ## My installed extensions:
@@ -71,12 +71,12 @@ Number of sensors | 281
 
 <details>
   <summary>Mobile</summary>
-    <img src="docs/images/mobile/home.jpg" alt="Home"/>
+    <img src="docs/images/mobile/home.png" alt="Home"/>
     <img src="docs/images/mobile/livingroom.jpg" alt="Livingroom"/>
     <img src="docs/images/mobile/bedroom.jpg" alt="Bedroom"/>
-    <img src="docs/images/mobile/kitchen.jpg" alt="Kitchen"/>
-    <img src="docs/images/mobile/bathroom.jpg" alt="Bathroom"/>
-    <img src="docs/images/mobile/entrance.jpg" alt="Entrance"/>
+    <img src="docs/images/mobile/kitchen.png" alt="Kitchen"/>
+    <img src="docs/images/mobile/bathroom.png" alt="Bathroom"/>
+    <img src="docs/images/mobile/entrance.png" alt="Entrance"/>
     <img src="docs/images/mobile/lab.jpg" alt="Lab"/>
     <img src="docs/images/mobile/devices.jpg" alt="Devices"/>
     <img src="docs/images/mobile/stats_1.jpg" alt="Stats 1"/>

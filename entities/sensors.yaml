@@ -68,13 +68,43 @@
     # Home temperature
     home_temperature:
       unit_of_measurement: "°C"
-      value_template: "{{ '%.1f' | format(((float(states('sensor.termometro_sala_temperature')) + float(states('sensor.termometro_camera_temperature')) + float(states('sensor.termometro_cucina_temperature')) + float(states('sensor.termometro_bagno_temperature'))) / 4) | float) }}"
+      value_template: >-
+        {% set sensors = [
+          'sensor.termometro_sala_temperature',
+          'sensor.termometro_camera_temperature',
+          'sensor.termometro_cucina_temperature',
+          'sensor.termometro_bagno_temperature',
+          'sensor.termometro_ingresso_temperature'
+        ] %}
+        {% set temps = namespace(valid=[], count=0) %}
+        {% for sensor in sensors %}
+          {% if states(sensor) not in ['unknown', 'unavailable', 'none'] %}
+            {% set temps.valid = temps.valid + [states(sensor) | float] %}
+            {% set temps.count = temps.count + 1 %}
+          {% endif %}
+        {% endfor %}
+        {{ '%.1f' | format((temps.valid | sum / temps.count) if temps.count > 0 else 'unavailable') }}
       friendly_name: "Home Temperature"
       icon_template: mdi:thermometer
     # Home humidity
     home_humidity:
       unit_of_measurement: "%"
-      value_template: "{{ '%.1f' | format(((float(states('sensor.termometro_sala_humidity')) + float(states('sensor.termometro_camera_humidity')) + float(states('sensor.termometro_cucina_humidity')) + float(states('sensor.termometro_bagno_humidity'))) / 4) | float) }}"
+      value_template: >-
+        {% set sensors = [
+          'sensor.termometro_sala_humidity',
+          'sensor.termometro_camera_humidity',
+          'sensor.termometro_cucina_humidity',
+          'sensor.termometro_bagno_humidity',
+          'sensor.termometro_ingresso_humidity'
+        ] %}
+        {% set humidity = namespace(valid=[], count=0) %}
+        {% for sensor in sensors %}
+          {% if states(sensor) not in ['unknown', 'unavailable', 'none'] %}
+            {% set humidity.valid = humidity.valid + [states(sensor) | float] %}
+            {% set humidity.count = humidity.count + 1 %}
+          {% endif %}
+        {% endfor %}
+        {{ '%.1f' | format((humidity.valid | sum / humidity.count) if humidity.count > 0 else 'unavailable') }}
       friendly_name: "Home Humidity"
       icon_template: mdi:water-percent
     # External temperature

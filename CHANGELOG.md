@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.14.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.13.0...v4.14.0) (2025-10-30)
+
+
+### Features
+
+* **entities:** refactor home temperature and humidity template sensors to consider entrance values ([7e05a80](https://github.com/aronnebrivio/homeassistant-config/commit/7e05a80893d269c9b53c1e9cf78f0e9a86898172))
+
 ## [4.13.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.12.0...v4.13.0) (2025-10-30)
 
 

@@ -14,8 +14,6 @@
   friendly_name: Frient Energy Monitor
 '0x84fd27fffe9c5b51':
   friendly_name: Smart Plug 2
-'0x00124b0022ea5144':
-  friendly_name: Button 1
 '0x00124b0022eae493':
   friendly_name: Button 2
 '0x001788010bb1d1be':
@@ -26,10 +24,6 @@
   friendly_name: Termometro Cucina
   temperature_precision: 2
   humidity_precision: 2
-'0x00124b00292bcb3c':
-  friendly_name: Termometro Bagno
-  humidity_precision: 2
-  temperature_precision: 2
 '0x001788010e8d16fa':
   friendly_name: Remote Dimmer 1
 '0x00158d008b880ec9':
@@ -41,4 +35,14 @@
 '0xffffb40e0605b718':
   friendly_name: Soil Sensor 1
 '0x00124b0024cce16f':
+  friendly_name: Termometro Ingresso
+'0x00158d008bbeab03':
+  friendly_name: Bathroom Window Sensor
+'0x00158d008bbeace0':
+  friendly_name: Kitchen Door Sensor
+'0x00158d008bc29284':
   friendly_name: Termometro Camera
+'0x00124b00292bcb3c':
+  friendly_name: Termometro Bagno
+'0x00124b0022ea5144':
+  friendly_name: Button 1

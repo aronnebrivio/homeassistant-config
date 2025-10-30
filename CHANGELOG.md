@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.13.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.12.0...v4.13.0) (2025-10-30)
+
+
+### Features
+
+* **automations:** run speedtest on-demand only ([3b5c43c](https://github.com/aronnebrivio/homeassistant-config/commit/3b5c43c3b790547d2be6e14f490fb4897cf86a51))
+* **components:** update custom components via HACS ([a7ab348](https://github.com/aronnebrivio/homeassistant-config/commit/a7ab3487e69a8d7e30e06525774c390e289b8f63))
+* **docs:** update readme and Lovelace screenshots ([687746e](https://github.com/aronnebrivio/homeassistant-config/commit/687746e0cccd366b2ad401e8f76adeab616267db))
+* upgrade HA to 2025.10.4 ([47024cf](https://github.com/aronnebrivio/homeassistant-config/commit/47024cfe1080de7c439822d0cc26be0cedccaebc))
+* **zigbee2mqtt:** add new window and temperature sensors ([fb7eab3](https://github.com/aronnebrivio/homeassistant-config/commit/fb7eab38b53ac30b7a91c4e9de4602a67bc9f481))
+
 ## [4.12.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.11.0...v4.12.0) (2025-09-13)
 
 

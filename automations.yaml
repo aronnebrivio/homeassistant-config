@@ -18,7 +18,8 @@
     domain: mobile_app
     type: notify
     title: ⚡️ Sto consumando troppo!
-    message: I consumi hanno superato i 4.6kW per 20 secondi e il boiler è già spento, se non spegni qualcosa salterà la corrente!
+    message: I consumi hanno superato i 4.6kW per 20 secondi e il boiler è già spento,
+      se non spegni qualcosa salterà la corrente!
   mode: single
 - id: '1644433874893'
   alias: '[Notify][Proxmox] High Memory Usage'
@@ -94,7 +95,8 @@
     domain: mobile_app
     type: notify
     title: "\U0001F6BF Ho spento il boiler per limitare i consumi"
-    message: I consumi istantanei hanno superato i 4.6kW, cosí ho spento il boiler per cercare di limitarli.
+    message: I consumi istantanei hanno superato i 4.6kW, cosí ho spento il boiler
+      per cercare di limitarli.
   mode: single
 - id: '1651526561767'
   alias: '[Boiler] Turn on at 5:00 AM on working days'
@@ -504,10 +506,10 @@
   alias: Run speedtest via addon
   description: ''
   triggers:
-  - trigger: time_pattern
-    hours: '*'
-    minutes: '0'
-    seconds: '0'
+  - trigger: state
+    entity_id:
+    - input_button.speedtest
+    to:
   conditions: []
   actions:
   - action: hassio.addon_start

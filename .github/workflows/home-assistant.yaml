@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ⤵️ Check out configuration from GitHub
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v5.0.1
       - name: 🚀 Run yamllint
         uses: ibiqlik/action-yamllint@v3
         with:
@@ -22,7 +22,7 @@ jobs:
         version: ["stable", "beta", "dev"]
     steps:
       - name: ⤵️ Check out configuration from GitHub
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v5.0.1
       - name: 🚀 Run Home Assistant Configuration Check
         uses: frenck/action-home-assistant@v1.4
         with:
@@ -36,7 +36,7 @@ jobs:
     needs: [yamllint]
     steps:
       - name: ⤵️ Check out configuration from GitHub
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v5.0.1
       - name: Set up Python 3.12
         uses: actions/setup-python@v6
         with:

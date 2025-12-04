@@ -516,3 +516,42 @@
     data:
       addon: 6b87c29e_speedtest_addon
   mode: single
+- id: '1698743264000'
+  alias: '[Notify][Wall-E] Component lifespan low'
+  description: Send notification when any Wall-E component lifespan drops below 10%
+  triggers:
+  - entity_id:
+    - sensor.robottino_sguaterino_filter_lifespan
+    - sensor.robottino_sguaterino_main_brush_lifespan
+    - sensor.robottino_sguaterino_side_brush_lifespan
+    - sensor.robottino_sguaterino_unit_care_lifespan
+    - sensor.wall_e_dust_bag_lifespan
+    - sensor.wall_e_round_mop_lifespan
+    below: 10
+    trigger: numeric_state
+  conditions: []
+  actions:
+  - device_id: cf132f484fa5f5c742094b43402043b3
+    domain: mobile_app
+    type: notify
+    title: "\U0001F527 Wall-E ha bisogno di essere pulito"
+    message: Il componente {{ trigger.to_state.name }} è quasi esaurito ({{ trigger.to_state.state
+      }}%)
+  mode: single
+- id: '1761922422568'
+  alias: '[Notify][Wall-E] Cleaning error'
+  description: Send notification when Wall-E goes in error
+  triggers:
+  - trigger: state
+    entity_id:
+    - sensor.robottino_sguaterino_error
+    to:
+    from: '0'
+  conditions: []
+  actions:
+  - device_id: cf132f484fa5f5c742094b43402043b3
+    domain: mobile_app
+    type: notify
+    title: "\U0001F527 Wall-E si è bloccato"
+    message: 'Wall-E é in errore: {{ trigger.to_state.attributes.description }}'
+  mode: single

@@ -565,12 +565,7 @@ views:
             tap_action:
               action: toggle
           - type: tile
-            entity: light.spada_suprema
-            icon: mdi:sword
-            tap_action:
-              action: toggle
-            color: cyan
-            show_entity_picture: false
+            entity: light.mobile_tv
           - type: custom:mushroom-climate-card
             entity: climate.condizionatore_sala
             show_temperature_control: true
@@ -593,17 +588,26 @@ views:
             features:
               - type: climate-hvac-modes
           - type: tile
-            entity: light.albero_di_natale
-            icon: mdi:pine-tree
+            entity: light.spada_suprema
+            icon: mdi:sword
             tap_action:
               action: toggle
+            color: cyan
+            show_entity_picture: false
+          - type: tile
             grid_options:
-              columns: full
+              rows: 1
             visibility:
               - condition: state
                 entity: binary_sensor.christmas_time
                 state: 'on'
+            entity: light.albero_di_natale_2
+            icon: mdi:pine-tree
             color: green
+            vertical: false
+            tap_action:
+              action: toggle
+            features_position: bottom
       - type: grid
         cards:
           - type: custom:mushroom-title-card
@@ -831,18 +835,6 @@ views:
                 media_query: '(min-width: 768px)'
             features:
               - type: climate-hvac-modes
-          - type: tile
-            entity: switch.mosquitto_repellent
-            name: Antizanzare
-            icon: mdi:bee
-            tap_action:
-              action: toggle
-            grid_options:
-              columns: full
-              rows: 1
-            layout_options:
-              grid_columns: full
-            color: light-green
       - type: grid
         cards:
           - type: custom:mushroom-title-card
@@ -864,11 +856,15 @@ views:
               grid_columns: full
           - type: tile
             entity: switch.fisso
+            name: PC
             icon: mdi:desktop-classic
+            color: green
+            vertical: false
             tap_action:
               action: toggle
-            name: PC
-            color: green
+            icon_tap_action:
+              action: more-info
+            features_position: bottom
           - type: tile
             entity: switch.casse_pc
             icon: mdi:speaker
@@ -1285,48 +1281,44 @@ views:
             name: Batteria
           - type: tile
             entity: select.robottino_sguaterino_water_flow_level
-            features_position: bottom
-            vertical: false
-            name: Acqua da usare
+            name: Quantità d'acqua
             color: light-blue
+            vertical: false
             tap_action:
               action: more-info
-          - type: tile
-            entity: image.robottino_sguaterino_map
-            show_entity_picture: true
             features_position: bottom
-            vertical: false
+          - type: tile
             grid_options:
               columns: full
+            entity: sensor.robottino_sguaterino_error
+            name: Errore
+            show_entity_picture: false
+            hide_state: false
+            state_content: description
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: select.wall_e_work_mode
+            name: Modalità pulizia
+            color: accent
+            vertical: false
+            features_position: bottom
+          - type: tile
+            grid_options:
               rows: 1
+              columns: 6
+            entity: image.robottino_sguaterino_map
             name: Mappa
-          - type: tile
-            entity: binary_sensor.robottino_sguaterino_mop_attached
-            features_position: bottom
+            show_entity_picture: true
+            hide_state: true
             vertical: false
-            name: Modalitá lavaggio
-          - type: tile
-            entity: sensor.robottino_sguaterino_total_cleanings
             features_position: bottom
-            vertical: false
-            name: Cicli totali
-          - type: tile
-            entity: sensor.robottino_sguaterino_filter_lifespan
-            features_position: bottom
-            vertical: false
-            name: Vita filtro
-          - type: tile
-            entity: sensor.robottino_sguaterino_main_brush_lifespan
-            features_position: bottom
-            vertical: false
-            name: Vita spazzola
-          - type: tile
-            entity: sensor.robottino_sguaterino_side_brush_lifespan
-            features_position: bottom
-            vertical: false
-            name: Vita spazzolina
-          - type: tile
-            entity: sensor.robottino_sguaterino_unit_care_lifespan
+          - type: heading
+            heading_style: subtitle
+            heading: Altro
+            tap_action:
+              action: navigate
+              navigation_path: /lovelace/wall-e
       - type: grid
         cards:
           - type: custom:mushroom-title-card
@@ -2011,3 +2003,212 @@ views:
     subview: true
     cards: []
     title: Balcone
+  - type: sections
+    path: wall-e
+    icon: mdi:robot-vacuum
+    subview: true
+    cards: []
+    title: Wall-E
+    sections:
+      - type: grid
+        cards:
+          - type: custom:mushroom-vacuum-card
+            entity: vacuum.robottino_sguaterino
+            grid_options:
+              columns: full
+            icon_animation: true
+            fill_container: true
+            layout: vertical
+            commands:
+              - start_pause
+              - stop
+              - locate
+              - return_home
+            tap_action:
+              action: more-info
+          - type: tile
+            entity: sensor.robottino_sguaterino_battery
+            features_position: bottom
+            vertical: false
+            name: Batteria
+          - type: tile
+            entity: select.robottino_sguaterino_water_flow_level
+            name: Quantità d'acqua
+            color: light-blue
+            vertical: false
+            tap_action:
+              action: more-info
+            features_position: bottom
+          - type: tile
+            grid_options:
+              columns: full
+            entity: sensor.robottino_sguaterino_error
+            name: Errore
+            show_entity_picture: false
+            hide_state: false
+            state_content: description
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: select.wall_e_work_mode
+            name: Modalità pulizia
+            color: accent
+            vertical: false
+            features_position: bottom
+          - type: tile
+            grid_options:
+              rows: 1
+              columns: 6
+            entity: image.robottino_sguaterino_map
+            name: Mappa
+            show_entity_picture: true
+            hide_state: true
+            vertical: false
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: custom:xiaomi-vacuum-map-card
+            entity: vacuum.robottino_sguaterino
+            vacuum_platform: DeebotUniverse/Deebot-4-Home-Assistant
+            map_source:
+              camera: image.robottino_sguaterino_map
+              attributes:
+                - calibration_points
+                - rooms
+            map_locked: true
+        column_span: 1
+      - type: grid
+        cards:
+          - type: custom:mushroom-title-card
+            title: Stazione
+          - type: tile
+            grid_options:
+              columns: full
+              rows: 1
+            entity: sensor.wall_e_station_state
+            name: Stato
+            color: accent
+            show_entity_picture: false
+            vertical: false
+            features_position: bottom
+          - type: tile
+            grid_options:
+              columns: full
+            entity: button.wall_e_clean_base
+            name: Pulizia piatto di lavaggio
+            icon: mdi:water
+            vertical: false
+            features_position: bottom
+          - type: tile
+            entity: button.wall_e_empty_dustbin
+            name: Svuotamento sacchetto
+            vertical: false
+            features_position: bottom
+            grid_options:
+              columns: full
+          - type: tile
+            grid_options:
+              columns: full
+            entity: button.wall_e_dry_mop
+            name: Asciugatura panni
+            icon: mdi:hair-dryer
+            vertical: false
+            features_position: bottom
+      - type: grid
+        cards:
+          - type: custom:mushroom-title-card
+            title: Manutenzione
+          - type: tile
+            grid_options:
+              columns: 9
+              rows: 1
+            entity: sensor.wall_e_dust_bag_lifespan
+            name: Sacco della polvere
+            vertical: false
+            features_position: bottom
+          - show_name: false
+            show_icon: true
+            type: button
+            grid_options:
+              columns: 3
+              rows: 1
+            entity: button.wall_e_reset_dust_bag_lifespan
+            icon: mdi:play
+            tap_action:
+              action: toggle
+          - type: tile
+            grid_options:
+              columns: 9
+              rows: 1
+            entity: sensor.robottino_sguaterino_filter_lifespan
+            name: Filtro
+            vertical: false
+            features_position: bottom
+          - show_name: false
+            show_icon: true
+            type: button
+            entity: button.robottino_sguaterino_reset_filter_lifespan
+            icon: mdi:play
+            tap_action:
+              action: toggle
+          - type: tile
+            grid_options:
+              columns: 9
+              rows: 1
+            entity: sensor.robottino_sguaterino_main_brush_lifespan
+            name: Spazzola principale
+            vertical: false
+            features_position: bottom
+          - show_name: false
+            show_icon: true
+            type: button
+            entity: button.robottino_sguaterino_reset_main_brush_lifespan
+            icon: mdi:play
+            tap_action:
+              action: toggle
+          - type: tile
+            grid_options:
+              columns: 9
+              rows: 1
+            entity: sensor.robottino_sguaterino_side_brush_lifespan
+            name: Spazzolina laterale
+            vertical: false
+            features_position: bottom
+          - show_name: false
+            show_icon: true
+            type: button
+            entity: button.robottino_sguaterino_reset_side_brush_lifespan
+            icon: mdi:play
+            tap_action:
+              action: toggle
+          - type: tile
+            grid_options:
+              columns: 9
+              rows: 1
+            entity: sensor.wall_e_round_mop_lifespan
+            name: Panni
+            vertical: false
+            features_position: bottom
+          - show_name: false
+            show_icon: true
+            type: button
+            entity: button.wall_e_reset_round_mop_lifespan
+            tap_action:
+              action: toggle
+            icon: mdi:play
+          - type: tile
+            grid_options:
+              columns: 9
+              rows: 1
+            entity: sensor.robottino_sguaterino_unit_care_lifespan
+            name: Generale
+            vertical: false
+            features_position: bottom
+          - show_name: false
+            show_icon: true
+            type: button
+            entity: button.robottino_sguaterino_reset_unit_care_lifespan
+            icon: mdi:play
+            tap_action:
+              action: toggle
+    max_columns: 4

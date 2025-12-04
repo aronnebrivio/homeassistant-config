@@ -12,8 +12,8 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 558
-Number of sensors | 292
+Number of entities | 581
+Number of sensors | 298
 
 
 ## My installed extensions:
@@ -49,6 +49,7 @@ Number of sensors | 292
 - [Mushroom](https://github.com/piitaya/lovelace-mushroom)
 - [Simple Weather Card](https://github.com/kalkih/simple-weather-card)
 - [Stack In Card](https://github.com/custom-cards/stack-in-card)
+- [Xiaomi Vacuum Map Card](https://github.com/PiotrMachowski/lovelace-xiaomi-vacuum-map-card)
 
 ### Themes
 

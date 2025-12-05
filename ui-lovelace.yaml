@@ -565,7 +565,9 @@ views:
             tap_action:
               action: toggle
           - type: tile
-            entity: light.mobile_tv
+            entity: light.libreria
+            vertical: false
+            features_position: bottom
           - type: custom:mushroom-climate-card
             entity: climate.condizionatore_sala
             show_temperature_control: true

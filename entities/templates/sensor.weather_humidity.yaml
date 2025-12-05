@@ -1,0 +1,6 @@
+sensor:
+  - default_entity_id: sensor.weather_humidity
+    unique_id: g7h8i9j0-k1l2-4m3n-o4p5-q6r7s8t9u0v1
+    unit_of_measurement: '%'
+    state: "{{ state_attr('weather.casa', 'humidity') }}"
+    name: "Weather Humidity"

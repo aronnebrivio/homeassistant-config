@@ -1,0 +1,10 @@
+binary_sensor:
+  - default_entity_id: binary_sensor.garbage_collection_tomorrow
+    name: Raccolta rifiuti domani
+    unique_id: 3a946f65-d4b6-4915-aa6e-8a5ec020f7d4
+    state: >-
+      {{ is_state_attr('sensor.garbage_collection_glass_and_metal', 'daysTo', 1)
+      or is_state_attr('sensor.garbage_collection_organic', 'daysTo', 1)
+      or is_state_attr('sensor.garbage_collection_paper', 'daysTo', 1)
+      or is_state_attr('sensor.garbage_collection_plastic', 'daysTo', 1)
+      or is_state_attr('sensor.garbage_collection_trash', 'daysTo', 1) }}

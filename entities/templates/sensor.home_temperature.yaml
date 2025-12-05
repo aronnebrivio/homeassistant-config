@@ -1,0 +1,22 @@
+sensor:
+  - default_entity_id: sensor.home_temperature
+    unique_id: d4e5f6g7-h8i9-4j0k-l1m2-n3o4p5q6r7s8
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+    state: >-
+      {% set sensors = [
+        'sensor.termometro_sala_temperature',
+        'sensor.termometro_camera_temperature',
+        'sensor.termometro_cucina_temperature',
+        'sensor.termometro_bagno_temperature',
+        'sensor.termometro_ingresso_temperature'
+      ] %}
+      {% set temps = namespace(valid=[], count=0) %}
+      {% for sensor in sensors %}
+        {% if states(sensor) not in ['unknown', 'unavailable', 'none'] %}
+          {% set temps.valid = temps.valid + [states(sensor) | float] %}
+          {% set temps.count = temps.count + 1 %}
+        {% endif %}
+      {% endfor %}
+      {{ '%.1f' | format((temps.valid | sum / temps.count) if temps.count > 0 else 'unavailable') }}
+    name: "Home Temperature"

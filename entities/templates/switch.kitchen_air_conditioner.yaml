@@ -1,0 +1,14 @@
+switch:
+  - turn_on:
+    - data:
+        deviceId: 01-202304161616-91401355
+        command: turnOn
+      action: rest_command.switchbot_device_command
+    turn_off:
+    - data:
+        deviceId: 01-202304161616-91401355
+        command: turnOff
+      action: rest_command.switchbot_device_command
+    default_entity_id: switch.kitchen_air_conditioner
+    name: Kitchen Air Conditioner
+    unique_id: f649586b-29f3-48d0-8ad2-b72e1913c6aa

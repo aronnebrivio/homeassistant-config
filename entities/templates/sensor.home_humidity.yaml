@@ -1,0 +1,22 @@
+sensor:
+  - default_entity_id: sensor.home_humidity
+    unique_id: e5f6g7h8-i9j0-4k1l-m2n3-o4p5q6r7s8t9
+    unit_of_measurement: "%"
+    icon: mdi:water-percent
+    state: >-
+      {% set sensors = [
+        'sensor.termometro_sala_humidity',
+        'sensor.termometro_camera_humidity',
+        'sensor.termometro_cucina_humidity',
+        'sensor.termometro_bagno_humidity',
+        'sensor.termometro_ingresso_humidity'
+      ] %}
+      {% set humidity = namespace(valid=[], count=0) %}
+      {% for sensor in sensors %}
+        {% if states(sensor) not in ['unknown', 'unavailable', 'none'] %}
+          {% set humidity.valid = humidity.valid + [states(sensor) | float] %}
+          {% set humidity.count = humidity.count + 1 %}
+        {% endif %}
+      {% endfor %}
+      {{ '%.1f' | format((humidity.valid | sum / humidity.count) if humidity.count > 0 else 'unavailable') }}
+    name: "Home Humidity"

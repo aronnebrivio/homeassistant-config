@@ -1,0 +1,27 @@
+sensor:
+  - default_entity_id: sensor.indoor_aqi
+    unique_id: h8i9j0k1-l2m3-4n4o-p5q6-r7s8t9u0v1w2
+    device_class: aqi
+    unit_of_measurement: AQI
+    icon: mdi:chemical-weapon
+    state: >-
+      {% macro aqi(val, val_l, val_h, aqi_l, aqi_h) -%}
+        {{(((aqi_h-aqi_l)/(val_h - val_l) * (val - val_l)) + aqi_l)|round(0)}}
+      {%- endmacro %}
+      {% set v = states('sensor.esp32_01_particulate_matter_2_5_m_concentration')|round(1) %}
+      {% if v <= 12.0 %}
+        {{aqi(v, 0, 12.0, 0, 50)}}
+      {% elif 12.0 < v <= 35.4 %}
+        {{aqi(v, 12.1, 35.4, 51, 100)}}
+      {% elif 35.4 < v <= 55.4 %}
+        {{aqi(v, 35.5, 55.4, 101, 150)}}
+      {% elif 55.4 < v <= 150.5 %}
+        {{aqi(v, 55.5, 150.4, 151, 200)}}
+      {% elif 150.4 < v <= 250.4 %}
+        {{aqi(v, 150.4, 250.4, 201, 300)}}
+      {% elif 250.5 < v <= 500.4 %}
+        {{aqi(v, 250.5, 500.4, 301, 500)}}
+      {% else %}
+        500
+      {% endif %}
+    name: "Indoor AQI"

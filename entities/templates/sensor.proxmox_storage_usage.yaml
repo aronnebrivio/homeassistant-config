@@ -1,0 +1,6 @@
+sensor:
+  - default_entity_id: sensor.proxmox_storage_usage
+    unique_id: c3d4e5f6-g7h8-4i9j-k0l1-m2n3o4p5q6r7
+    unit_of_measurement: "%"
+    state: "{{ '%.2f' | format((states('sensor.proxmox_raw_storage_usage') | float / states('sensor.proxmox_raw_storage_total') | float) * 100) }}"
+    name: "Proxmox Storage Usage"

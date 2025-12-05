@@ -1,0 +1,9 @@
+binary_sensor:
+  - device_class: POWER
+    default_entity_id: binary_sensor.firestick_state
+    name: Firestick
+    unique_id: dc070f75-c03a-4c2c-bd4b-f5f306997b8d
+    state: >-
+      {% if states('media_player.firestick') == 'off' %} off
+      {% else %} on
+      {% endif %}

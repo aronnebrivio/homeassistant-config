@@ -1,0 +1,9 @@
+switch:
+  - turn_on:
+    - action: script.gaming_station_on
+    turn_off:
+    - action: script.gaming_station_off
+    default_entity_id: switch.gaming_station
+    name: Gaming Station
+    state: "{{ is_state('light.luce_scrivania', 'on') and is_state('switch.casse_pc', 'on') and is_state('switch.fisso', 'on') }}"
+    unique_id: fd5f10d7-6b9f-4e5a-8803-1c66aea7936c

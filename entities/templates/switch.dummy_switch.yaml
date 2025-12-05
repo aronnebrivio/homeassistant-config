@@ -1,0 +1,4 @@
+switch:
+  - default_entity_id: switch.dummy_switch
+    name: Dummy Switch
+    unique_id: af0cc97f-9806-41a1-8262-4264ae506f08

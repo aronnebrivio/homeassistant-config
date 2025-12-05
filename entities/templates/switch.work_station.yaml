@@ -1,0 +1,9 @@
+switch:
+  - turn_on:
+    - action: script.work_station_on
+    turn_off:
+    - action: script.work_station_off
+    default_entity_id: switch.work_station
+    name: Work Station
+    state: "{{ is_state('light.luce_scrivania', 'on') and is_state('switch.casse_pc', 'on') and is_state('switch.fisso', 'off') }}"
+    unique_id: 2f6c0142-4320-48ec-bd48-3981929ef533

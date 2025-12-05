@@ -1,0 +1,6 @@
+sensor:
+  - default_entity_id: sensor.proxmox_cpu_usage
+    unique_id: a1b2c3d4-e5f6-4g7h-i8j9-k0l1m2n3o4p5
+    unit_of_measurement: "%"
+    state: "{{ '%.2f' | format(states('sensor.proxmox_raw_cpu_usage') | float ) }}"
+    name: "Proxmox CPU Usage"

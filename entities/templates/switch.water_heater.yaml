@@ -1,0 +1,14 @@
+switch:
+  - turn_on:
+    - target:
+        entity_id:
+        - switch.bot_81bb
+      action: switch.turn_on
+    turn_off:
+    - target:
+        entity_id:
+        - switch.bot_81bb
+      action: switch.turn_off
+    default_entity_id: switch.water_heater
+    name: Boiler
+    unique_id: e07da697-d085-4cb6-a096-125761d2b6ad

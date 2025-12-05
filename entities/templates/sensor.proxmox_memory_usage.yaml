@@ -1,0 +1,6 @@
+sensor:
+  - default_entity_id: sensor.proxmox_memory_usage
+    unique_id: b2c3d4e5-f6g7-4h8i-j9k0-l1m2n3o4p5q6
+    unit_of_measurement: "GB"
+    state: "{{ '%.2f' | format(states('sensor.proxmox_raw_memory_usage') | float ) }}"
+    name: "Proxmox Memory Usage"

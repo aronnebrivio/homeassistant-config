@@ -1,0 +1,6 @@
+sensor:
+  - default_entity_id: sensor.weather_temperature
+    unique_id: f6g7h8i9-j0k1-4l2m-n3o4-p5q6r7s8t9u0
+    unit_of_measurement: "°C"
+    state: "{{ state_attr('weather.casa', 'temperature') }}"
+    name: "Weather Temperature"

@@ -1,5 +1,24 @@
 # Changelog
 
+## [4.15.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.14.0...v4.15.0) (2026-03-04)
+
+
+### Features
+
+* 2026-03 configuration bump ([cdad095](https://github.com/aronnebrivio/homeassistant-config/commit/cdad0950f1a2665efca2fb2a38b313bdfb26567c))
+* **automations:** get a notification when any Wall-E component needs maintenance ([89b2c6f](https://github.com/aronnebrivio/homeassistant-config/commit/89b2c6f0f061de4cf302327112e17fa3d16b2df5))
+* **entities:** migrate all template-based entities to new template format. ([19a3a70](https://github.com/aronnebrivio/homeassistant-config/commit/19a3a70dce314c1e5df9674a03224523d21e6034))
+* **entities:** remove mosquito repellent switch and reuse the smart plug for new lights ([431e44f](https://github.com/aronnebrivio/homeassistant-config/commit/431e44f0c9e763c2bdaa90edebbf9c961e0e7320))
+* upgrade HA to 2025.12.0 ([72997bd](https://github.com/aronnebrivio/homeassistant-config/commit/72997bd097708ae6450ea343d26868244e0f6634))
+
+
+### Bug Fixes
+
+* **entities:** correct indentation ([e05d794](https://github.com/aronnebrivio/homeassistant-config/commit/e05d7942984dec6057260eac56a7372b8afa7bb5))
+* **entities:** fix indentation ([79b0912](https://github.com/aronnebrivio/homeassistant-config/commit/79b0912397ce3699c82ec0110663b00dc245facf))
+* keep InfluxDB secrets to make sensors work ([078adb0](https://github.com/aronnebrivio/homeassistant-config/commit/078adb00be5e32c7e434550bd77c35d9ea4ece30))
+* use LF instead of CRLF as \n char ([f84368a](https://github.com/aronnebrivio/homeassistant-config/commit/f84368a306c274907d8a4a6e468131378097c36b))
+
 ## [4.14.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.13.0...v4.14.0) (2025-10-30)
 
 

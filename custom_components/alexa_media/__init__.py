@@ -22,35 +22,31 @@ from alexapy import (
     AlexapyLoginError,
     HTTP2EchoClient,
     __version__ as alexapy_version,
-    hide_email,
     hide_serial,
     obfuscate,
 )
 from alexapy.helpers import delete_cookie as alexapy_delete_cookie
 import async_timeout
-from homeassistant import util
 from homeassistant.components.persistent_notification import (
     async_create as async_create_persistent_notification,
     async_dismiss as async_dismiss_persistent_notification,
 )
-from homeassistant.config_entries import SOURCE_IMPORT, SOURCE_REAUTH
+from homeassistant.config_entries import SOURCE_REAUTH
 from homeassistant.const import (
     CONF_EMAIL,
-    CONF_NAME,
     CONF_PASSWORD,
-    CONF_SCAN_INTERVAL,
     CONF_URL,
     EVENT_HOMEASSISTANT_STARTED,
     EVENT_HOMEASSISTANT_STOP,
 )
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import UnknownFlow
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import config_validation as cv, device_registry as dr
-from homeassistant.helpers.discovery import async_load_platform
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.helpers.issue_registry import IssueSeverity, async_create_issue
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.helpers.update_coordinator import UpdateFailed
+from homeassistant.loader import async_get_integration
 from homeassistant.util import dt, slugify
 import voluptuous as vol
 
@@ -67,6 +63,7 @@ from .const import (
     CONF_OTPSECRET,
     CONF_PUBLIC_URL,
     CONF_QUEUE_DELAY,
+    CONF_SCAN_INTERVAL,
     DATA_ALEXAMEDIA,
     DATA_LISTENER,
     DEFAULT_EXTENDED_ENTITY_DISCOVERY,
@@ -79,16 +76,22 @@ from .const import (
     MIN_TIME_BETWEEN_FORCED_SCANS,
     MIN_TIME_BETWEEN_SCANS,
     SCAN_INTERVAL,
-    STARTUP,
+    STARTUP_MESSAGE,
 )
+from .coordinator import AlexaMediaCoordinator
 from .exceptions import TimeoutException
 from .helpers import (
     _catch_login_errors,
     _existing_serials,
     alarm_just_dismissed,
     calculate_uuid,
+    hide_email,
+    report_relogin_required,
+    safe_get,
 )
+from .metrics import AlexaMetrics, get_metrics
 from .notify import async_unload_entry as notify_async_unload_entry
+from .runtime_data import AlexaRuntimeData
 from .services import AlexaMediaServices
 
 _LOGGER = logging.getLogger(__name__)
@@ -99,6 +102,15 @@ NOTIFICATION_COOLDOWN = 60
 NOTIFY_REFRESH_BACKOFF = 15.0
 # Maximum number of retries
 NOTIFY_REFRESH_MAX_RETRIES = 3
+
+
+def _valid_voice_summary(summary: object) -> bool:
+    """Return True if summary looks like a real spoken utterance."""
+    if not isinstance(summary, str):
+        return False
+    summary = summary.strip()
+    return bool(summary) and any(ch.isalnum() for ch in summary)
+
 
 ACCOUNT_CONFIG_SCHEMA = vol.Schema(
     {
@@ -132,113 +144,214 @@ CONFIG_SCHEMA = vol.Schema(
 )
 
 
-async def async_setup(hass, config, discovery_info=None):
-    # pylint: disable=unused-argument
+def _entity_backed_device_identifiers(account_dict: dict) -> set[str]:
+    """Collect device identifier strings for devices that are backed by entities.
+
+    Alexa Media Player historically prunes stale HA Device Registry entries by comparing
+    device identifiers against the current *media_player* serials. That works for Echoes,
+    but fails for entity-only devices (e.g., Amazon Indoor Air Quality Monitor) which have
+    no media_player entity. Those devices would get pruned unless we also consider the
+    identifiers referenced by entities we created.
+    """
+    identifiers: set[str] = set()
+
+    def _collect_from_device_info(device_info) -> None:
+        if not device_info:
+            return
+        try:
+            # dr.DeviceInfo
+            di_idents = getattr(device_info, "identifiers", None)
+            if di_idents:
+                for ident in di_idents:
+                    if isinstance(ident, tuple) and len(ident) == 2:
+                        identifiers.add(ident[1])
+                return
+        except Exception as exc:  # pylint: disable=broad-except
+            _LOGGER.debug("Could not extract identifiers from device_info: %s", exc)
+        # dict-style device_info
+        if isinstance(device_info, dict):
+            di_idents = device_info.get("identifiers")
+            if di_idents:
+                for ident in di_idents:
+                    if isinstance(ident, tuple) and len(ident) == 2:
+                        identifiers.add(ident[1])
+
+    # Recursively walk nested entity structures (dict/list/tuple/set) and collect any device_info found.
+    def _walk(obj) -> None:
+        if obj is None:
+            return
+
+        # Entity-ish object
+        _collect_from_device_info(getattr(obj, "device_info", None))
+
+        if isinstance(obj, dict):
+            for v in obj.values():
+                _walk(v)
+        elif isinstance(obj, (list, tuple, set)):
+            for v in obj:
+                _walk(v)
+
+    _walk(account_dict.get("entities", {}))
+    return identifiers
+
+
+def _entity_backed_serials(account: dict) -> set[str]:
+    """Return serials that exist only because we created entity-backed devices.
+
+    These serials may not be discoverable via media player inventory, but should
+    still be considered 'current' so we don't prune/ignore them.
+    """
+    serials: set[str] = set()
+    entities = account.get("entities")
+    if not isinstance(entities, dict):
+        return serials
+
+    # Sensors are stored keyed by serial; this is where AIAQM lives.
+    sensors = entities.get("sensor")
+    if isinstance(sensors, dict):
+        serials.update(s for s in sensors.keys() if isinstance(s, str) and s)
+
+    return serials
+
+
+async def async_setup(hass, config):
     """Set up the Alexa domain."""
-    if DOMAIN not in config:
-        _LOGGER.debug(
-            "Nothing to import from configuration.yaml, loading from Integrations",
-        )
-        return True
+    # Initialize metrics
+    hass.data.setdefault(DOMAIN, {})
+    hass.data[DOMAIN]["metrics"] = AlexaMetrics(hass)
+    metrics = hass.data[DOMAIN]["metrics"]
+    metrics.start_boot_tracking()
 
-    async_create_issue(
-        hass,
-        DOMAIN,
-        "deprecated_yaml_configuration",
-        is_fixable=False,
-        issue_domain=DOMAIN,
-        severity=IssueSeverity.WARNING,
-        translation_key="deprecated_yaml_configuration",
-        learn_more_url="https://github.com/alandtse/alexa_media_player/wiki/Configuration#configurationyaml",
-    )
-    _LOGGER.warning(
-        "YAML configuration of Alexa Media Player is deprecated "
-        "and will be removed in version 4.14.0."
-        "There will be no automatic import of this. "
-        "Please remove it from your configuration, "
-        "restart Home Assistant and use the UI to configure it instead. "
-        "Settings > Devices and services > Integrations > ADD INTEGRATION"
-    )
-
-    domainconfig = config.get(DOMAIN)
-    for account in domainconfig[CONF_ACCOUNTS]:
-        entry_found = False
-        _LOGGER.debug(
-            "Importing config information for %s - %s from configuration.yaml",
-            hide_email(account[CONF_EMAIL]),
-            account[CONF_URL],
+    integration = await async_get_integration(hass, DOMAIN)
+    integration_name = integration.name or "<not available>"
+    _LOGGER.info(
+        STARTUP_MESSAGE.format(
+            name=integration_name,
+            ISSUE_URL=ISSUE_URL,
+            DOMAIN=DOMAIN,
+            version=integration.version,
+            alexapy_version=alexapy_version,
         )
-        if hass.config_entries.async_entries(DOMAIN):
-            _LOGGER.debug("Found existing config entries")
-            for entry in hass.config_entries.async_entries(DOMAIN):
-                if (
-                    entry.data.get(CONF_EMAIL) == account[CONF_EMAIL]
-                    and entry.data.get(CONF_URL) == account[CONF_URL]
-                ):
-                    _LOGGER.debug("Updating existing entry")
-                    hass.config_entries.async_update_entry(
-                        entry,
-                        data={
-                            CONF_EMAIL: account[CONF_EMAIL],
-                            CONF_PASSWORD: account[CONF_PASSWORD],
-                            CONF_URL: account[CONF_URL],
-                            CONF_INCLUDE_DEVICES: account[CONF_INCLUDE_DEVICES],
-                            CONF_EXCLUDE_DEVICES: account[CONF_EXCLUDE_DEVICES],
-                            CONF_SCAN_INTERVAL: account[
-                                CONF_SCAN_INTERVAL
-                            ].total_seconds(),
-                            CONF_QUEUE_DELAY: account[CONF_QUEUE_DELAY],
-                            CONF_OAUTH: account.get(
-                                CONF_OAUTH, entry.data.get(CONF_OAUTH, {})
-                            ),
-                            CONF_OTPSECRET: account.get(
-                                CONF_OTPSECRET, entry.data.get(CONF_OTPSECRET, "")
-                            ),
-                            CONF_EXTENDED_ENTITY_DISCOVERY: account[
-                                CONF_EXTENDED_ENTITY_DISCOVERY
-                            ],
-                            CONF_DEBUG: account[CONF_DEBUG],
-                        },
-                    )
-                    entry_found = True
-                    break
-        if not entry_found:
-            _LOGGER.debug("Creating new config entry")
-            hass.async_create_task(
-                hass.config_entries.flow.async_init(
-                    DOMAIN,
-                    context={"source": SOURCE_IMPORT},
-                    data={
-                        CONF_URL: account[CONF_URL],
-                        CONF_EMAIL: account[CONF_EMAIL],
-                        CONF_PASSWORD: account[CONF_PASSWORD],
-                        CONF_PUBLIC_URL: account[CONF_PUBLIC_URL],
-                        CONF_INCLUDE_DEVICES: account[CONF_INCLUDE_DEVICES],
-                        CONF_EXCLUDE_DEVICES: account[CONF_EXCLUDE_DEVICES],
-                        CONF_SCAN_INTERVAL: account[CONF_SCAN_INTERVAL].total_seconds(),
-                        CONF_QUEUE_DELAY: account[CONF_QUEUE_DELAY],
-                        CONF_OAUTH: account.get(CONF_OAUTH, {}),
-                        CONF_OTPSECRET: account.get(CONF_OTPSECRET, ""),
-                        CONF_EXTENDED_ENTITY_DISCOVERY: account[
-                            CONF_EXTENDED_ENTITY_DISCOVERY
-                        ],
-                        CONF_DEBUG: account[CONF_DEBUG],
-                    },
-                )
-            )
+    )
+    metrics.record_boot_stage("domain_setup")
+    if DOMAIN in config:
+        async_create_issue(
+            hass,
+            DOMAIN,
+            "deprecated_yaml_configuration",
+            is_fixable=False,
+            issue_domain=DOMAIN,
+            severity=IssueSeverity.ERROR,
+            translation_key="deprecated_yaml_configuration",
+            learn_more_url="https://github.com/alandtse/alexa_media_player/wiki/Configuration#configurationyaml",
+        )
+        _LOGGER.error(
+            "YAML configuration of Alexa Media Player is no longer supported. "
+            "Please remove `alexa_media` from your configuration, "
+            "restart Home Assistant and use the UI to configure it instead. "
+            "Settings > Devices & services > Integrations > ADD INTEGRATION"
+        )
+        return False
     return True
+
+
+def _store_and_dispatch_last_called(
+    hass: HomeAssistant,
+    email: str,
+    last_called: dict,
+    force: bool = False,
+) -> None:
+    """Store last_called data and dispatch change event if needed.
+
+    Shared helper used by both the closure-based update_last_called
+    and the module-level _async_update_last_called_global.
+    """
+    accounts = hass.data.get(DATA_ALEXAMEDIA, {}).get("accounts", {})
+    if email not in accounts:
+        _LOGGER.debug("%s: Account removed during update, skipping", hide_email(email))
+        return
+    stored_data = accounts[email]
+    if (
+        force
+        or ("last_called" in stored_data and last_called != stored_data["last_called"])
+    ) or ("last_called" not in stored_data and last_called is not None):
+        _LOGGER.debug(
+            "%s: last_called changed",
+            hide_email(email),
+        )
+        async_dispatcher_send(
+            hass,
+            f"{DOMAIN}_{hide_email(email)}"[0:32],
+            {"last_called_change": last_called},
+        )
+    stored_data["last_called"] = last_called
+
+
+async def _async_update_last_called_global(
+    hass: HomeAssistant,
+    login_obj,
+    email: str,
+    last_called: dict | None = None,
+    force: bool = False,
+) -> None:
+    """Update the last called device globally (standalone function).
+
+    This version is defined at module level for use in background tasks.
+    It delegates storage/dispatch to _store_and_dispatch_last_called.
+    """
+    if not isinstance(last_called, dict) or not last_called.get("summary"):
+        try:
+            async with async_timeout.timeout(10):
+                last_called = await AlexaAPI.get_last_device_serial(login_obj)
+        except AlexapyLoginError:
+            _LOGGER.debug(
+                "%s: Login error during last_called update", hide_email(email)
+            )
+            report_relogin_required(hass, login_obj, email)
+            return
+        except TypeError:
+            _LOGGER.debug(
+                "%s: Error updating last_called: %s",
+                hide_email(email),
+                repr(last_called),
+            )
+            return
+        if not isinstance(last_called, dict):
+            _LOGGER.debug(
+                "%s: Error updating last_called: unexpected response %s",
+                hide_email(email),
+                repr(last_called),
+            )
+            return
+
+    if not _valid_voice_summary(last_called.get("summary")):
+        _LOGGER.debug(
+            "%s: Ignoring last_called with invalid summary",
+            hide_email(email),
+        )
+        return
+
+    _LOGGER.debug(
+        "%s: Updated last_called: %s", hide_email(email), hide_serial(last_called)
+    )
+    _store_and_dispatch_last_called(hass, email, last_called, force)
 
 
 # @retry_async(limit=5, delay=5, catch_exceptions=True)
 async def async_setup_entry(hass, config_entry):
-    # noqa: MC0001
-    """Set up Alexa Media Player as config entry."""
+    """Set up Alexa Media Player as config entry.
+
+    This function uses the new runtime_data pattern for type-safe data storage.
+    Legacy hass.data[DATA_ALEXAMEDIA] is maintained for backward compatibility
+    during the migration period.
+    """
+    _boot_start = time.monotonic()
 
     async def close_alexa_media(event=None) -> None:
         """Clean up Alexa connections."""
         _LOGGER.debug("Received shutdown request: %s", event)
-        if hass.data.get(DATA_ALEXAMEDIA, {}).get("accounts"):
-            for email, _ in hass.data[DATA_ALEXAMEDIA]["accounts"].items():
+        if accounts := safe_get(hass.data, [DATA_ALEXAMEDIA, "accounts"], {}):
+            for email, _ in accounts.items():
                 await close_connections(hass, email)
 
     async def complete_startup(event=None) -> None:
@@ -288,17 +401,10 @@ async def async_setup_entry(hass, config_entry):
             )
             await setup_alexa(hass, config_entry, login_obj)
 
-    if not hass.data.get(DATA_ALEXAMEDIA):
-        _LOGGER.debug(STARTUP)
-        _LOGGER.debug("Loaded alexapy==%s", alexapy_version)
-    hass.data.setdefault(
-        DATA_ALEXAMEDIA, {"accounts": {}, "config_flows": {}, "notify_service": None}
-    )
-    if not hass.data[DATA_ALEXAMEDIA].get("accounts"):
-        hass.data[DATA_ALEXAMEDIA] = {
-            "accounts": {},
-            "config_flows": {},
-        }
+    hass.data.setdefault(DATA_ALEXAMEDIA, {})
+    hass.data[DATA_ALEXAMEDIA].setdefault("accounts", {})
+    hass.data[DATA_ALEXAMEDIA].setdefault("config_flows", {})
+    hass.data[DATA_ALEXAMEDIA].setdefault("notify_service", None)
     account = config_entry.data
     email = account.get(CONF_EMAIL)
     password = account.get(CONF_PASSWORD)
@@ -382,15 +488,32 @@ async def async_setup_entry(hass, config_entry):
     )
     hass.data[DATA_ALEXAMEDIA]["accounts"][email]["login_obj"] = login
     hass.data[DATA_ALEXAMEDIA]["accounts"][email]["last_push_activity"] = 0
+
+    # Create runtime_data for optimized architecture
+    # This provides type-safe access to account data
+    if not hasattr(config_entry, "runtime_data") or config_entry.runtime_data is None:
+        config_entry.runtime_data = AlexaRuntimeData(
+            login_obj=login,
+            config_entry=config_entry,
+            second_account_index=uuid_dict["index"],
+        )
     if not hass.data[DATA_ALEXAMEDIA]["accounts"][email]["second_account_index"]:
         hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, close_alexa_media)
         hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STARTED, complete_startup)
     hass.bus.async_listen("alexa_media_relogin_required", relogin)
     hass.bus.async_listen("alexa_media_relogin_success", login_success)
     try:
+        _t = time.monotonic()
         await login.login(cookies=await login.load_cookie())
+        _LOGGER.debug("[BOOT] login completed in %.2fs", time.monotonic() - _t)
+        _t = time.monotonic()
         if await test_login_status(hass, config_entry, login):
+            _LOGGER.debug("[BOOT] test_login_status in %.2fs", time.monotonic() - _t)
+            _t = time.monotonic()
             await setup_alexa(hass, config_entry, login)
+            _LOGGER.debug(
+                "[BOOT] setup_entry total: %.2fs", time.monotonic() - _boot_start
+            )
             return True
         return False
     except AlexapyConnectionError as err:
@@ -400,6 +523,12 @@ async def async_setup_entry(hass, config_entry):
 async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
     # pylint: disable=too-many-statements,too-many-locals
     """Set up a alexa api based on host parameter."""
+
+    # Record metrics
+    metrics = get_metrics(hass)
+    email = login_obj.email
+    if metrics:
+        metrics.record_boot_stage(f"setup_alexa_start_{hide_email(email)}")
 
     # Initialize throttling state and lock
     last_dnd_update_times: dict[str, datetime] = {}
@@ -416,8 +545,8 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         This will ping Alexa API to identify all devices, bluetooth, and the last
         called device.
 
-        If any guards, temperature sensors, or lights are configured, their
-        current state will be acquired. This data is returned directly so that it is available on the coordinator.
+        If any guards, sensors, switches or lights are configured, their current state will be acquired.
+        This data is returned directly so that it is available on the coordinator.
 
         This will add new devices and services when discovered. By default this
         runs every SCAN_INTERVAL seconds unless another method calls it. if
@@ -437,7 +566,9 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
             or login_obj.close_requested
         ):
             return
-        existing_serials = _existing_serials(hass, login_obj)
+        account = hass.data[DATA_ALEXAMEDIA]["accounts"][email]
+        existing_serials = set(_existing_serials(hass, login_obj))
+        existing_serials |= _entity_backed_serials(account)
         existing_entities = hass.data[DATA_ALEXAMEDIA]["accounts"][email]["entities"][
             "media_player"
         ].values()
@@ -446,52 +577,92 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         extended_entity_discovery = hass.data[DATA_ALEXAMEDIA]["accounts"][email][
             "options"
         ].get(CONF_EXTENDED_ENTITY_DISCOVERY)
-        should_get_network = (
-            extended_entity_discovery
-            and hass.data[DATA_ALEXAMEDIA]["accounts"][email]["should_get_network"]
-        )
-
+        should_get_network = hass.data[DATA_ALEXAMEDIA]["accounts"][email][
+            "should_get_network"
+        ]
         devices = {}
         bluetooth = {}
         preferences = {}
         dnd = {}
         entity_state = {}
-        tasks = [
-            AlexaAPI.get_devices(login_obj),
-            AlexaAPI.get_bluetooth(login_obj),
-            AlexaAPI.get_device_preferences(login_obj),
-            AlexaAPI.get_dnd_state(login_obj),
-        ]
+
+        # Try to get cached data for faster boot
+        entry_id = config_entry.entry_id if config_entry else ""
+        cache_key_prefix = f"{email}_{entry_id}"
+        cached_devices = None
+        _used_cached_devices = False
+        if metrics:
+            cached_devices = metrics.api_cache.get(f"{cache_key_prefix}_devices")
+
+        if cached_devices and not new_devices:
+            _LOGGER.debug("%s: Using cached devices data", hide_email(email))
+            devices = cached_devices
+            _used_cached_devices = True
+            # Still need fresh bluetooth, preferences, and DND
+            tasks = [
+                AlexaAPI.get_bluetooth(login_obj),
+                AlexaAPI.get_device_preferences(login_obj),
+                AlexaAPI.get_dnd_state(login_obj),
+            ]
+        else:
+            tasks = [
+                AlexaAPI.get_devices(login_obj),
+                AlexaAPI.get_bluetooth(login_obj),
+                AlexaAPI.get_device_preferences(login_obj),
+                AlexaAPI.get_dnd_state(login_obj),
+            ]
         if new_devices:
             tasks.append(AlexaAPI.get_authentication(login_obj))
 
         entities_to_monitor = set()
-        for sensor in hass.data[DATA_ALEXAMEDIA]["accounts"][email]["entities"][
+
+        # Temperature sensors (stored as entities["sensor"][serial]["Temperature"] = sensor)
+        for per_serial in hass.data[DATA_ALEXAMEDIA]["accounts"][email]["entities"][
             "sensor"
         ].values():
-            temp = sensor.get("Temperature")
+            if not isinstance(per_serial, dict):
+                continue
+
+            temp = per_serial.get("Temperature")
             if temp and temp.enabled:
                 entities_to_monitor.add(temp.alexa_entity_id)
 
-            temp = sensor.get("Air_Quality")
-            if temp and temp.enabled:
-                entities_to_monitor.add(temp.alexa_entity_id)
+            # Air Quality sensors:
+            # entities["sensor"][serial]["Air_Quality"][unique_id] = sensor
+            airq = per_serial.get("Air_Quality")
+            if isinstance(airq, dict):
+                for aq_sensor in airq.values():
+                    if aq_sensor and aq_sensor.enabled:
+                        entities_to_monitor.add(aq_sensor.alexa_entity_id)
+            elif airq and getattr(airq, "enabled", False):
+                # Backwards compat if some installs still have a single sensor stored
+                entities_to_monitor.add(airq.alexa_entity_id)
 
-        for light in hass.data[DATA_ALEXAMEDIA]["accounts"][email]["entities"]["light"]:
+        for light in hass.data[DATA_ALEXAMEDIA]["accounts"][email]["entities"].get(
+            "light", []
+        ):
             if light.enabled:
                 entities_to_monitor.add(light.alexa_entity_id)
 
-        for binary_sensor in hass.data[DATA_ALEXAMEDIA]["accounts"][email]["entities"][
-            "binary_sensor"
-        ]:
+        for binary_sensor in hass.data[DATA_ALEXAMEDIA]["accounts"][email][
+            "entities"
+        ].get("binary_sensor", []):
             if binary_sensor.enabled:
                 entities_to_monitor.add(binary_sensor.alexa_entity_id)
 
-        for guard in hass.data[DATA_ALEXAMEDIA]["accounts"][email]["entities"][
-            "alarm_control_panel"
-        ].values():
+        for guard in (
+            hass.data[DATA_ALEXAMEDIA]["accounts"][email]["entities"]
+            .get("alarm_control_panel", {})
+            .values()
+        ):
             if guard.enabled:
                 entities_to_monitor.add(guard.unique_id)
+
+        for smart_switch in hass.data[DATA_ALEXAMEDIA]["accounts"][email][
+            "entities"
+        ].get("smart_switch", []):
+            if smart_switch.enabled:
+                entities_to_monitor.add(smart_switch.alexa_entity_id)
 
         if entities_to_monitor:
             tasks.append(get_entity_data(login_obj, list(entities_to_monitor)))
@@ -499,66 +670,120 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         if should_get_network:
             tasks.append(AlexaAPI.get_network_details(login_obj))
 
+        optional_task_results = []
         try:
-            # Note: asyncio.TimeoutError and aiohttp.ClientError are already
-            # handled by the data update coordinator.
-            # Increase timeout from 30s to 45s to permit
-            # get_network_details() retries which could up to 30s.
-            async with async_timeout.timeout(45):
-                (
-                    devices,
-                    bluetooth,
-                    preferences,
-                    dnd,
-                    *optional_task_results,
-                ) = await asyncio.gather(*tasks)
-
-                if should_get_network:
-                    _LOGGER.info("%s: Network Discovery: Checking", hide_email(email))
-                    api_devices = optional_task_results.pop()
-                    if not api_devices:
-                        _LOGGER.warning(
-                            "%s: Network Discovery: AlexaAPI returned an unexpected response. Retrying on next polling cycle",
-                            hide_email(email),
-                        )
+            if tasks:
+                # Note: asyncio.TimeoutError and aiohttp.ClientError are already
+                # handled by the data update coordinator.
+                # Increase timeout from 30s to 45s to permit
+                # get_network_details() retries which could up to 30s.
+                async with async_timeout.timeout(45):
+                    start_fetch = time.monotonic()
+                    if _used_cached_devices:
+                        (
+                            bluetooth,
+                            preferences,
+                            dnd,
+                            *optional_task_results,
+                        ) = await asyncio.gather(*tasks)
                     else:
-                        _LOGGER.debug(
-                            "%s: Network Discovery: Success, processing response",
-                            hide_email(email),
+                        (
+                            devices,
+                            bluetooth,
+                            preferences,
+                            dnd,
+                            *optional_task_results,
+                        ) = await asyncio.gather(*tasks)
+
+                    fetch_time = time.monotonic() - start_fetch
+                    _LOGGER.debug(
+                        "[BOOT] API fetch (%d tasks, cached=%s) in %.2fs",
+                        len(tasks) if tasks else 0,
+                        _used_cached_devices,
+                        fetch_time,
+                    )
+                    # Record API call metrics
+                    if metrics:
+                        metrics.record_api_call("initial_fetch", fetch_time)
+                        # Cache the devices for faster next boot (only freshly fetched)
+                        if not _used_cached_devices:
+                            metrics.api_cache.set(
+                                f"{cache_key_prefix}_devices", devices
+                            )
+
+                    _t_post = time.monotonic()
+                    if should_get_network and optional_task_results:
+                        # First run is a special case. Get the state of all entities(including disabled)
+                        # This ensures all entities have state during startup without needing to request coordinator refresh
+
+                        _LOGGER.info(
+                            "%s: Network Discovery: Checking", hide_email(email)
                         )
-                        # Only process this once after success
-                        hass.data[DATA_ALEXAMEDIA]["accounts"][email][
-                            "should_get_network"
-                        ] = False
+                        api_devices = optional_task_results.pop()
+                        if not api_devices:
+                            _LOGGER.warning(
+                                "%s: Network Discovery: AlexaAPI returned an unexpected response. Retrying on next polling cycle",
+                                hide_email(email),
+                            )
+                        else:
+                            _LOGGER.debug(
+                                "%s: Network Discovery: Success, processing response",
+                                hide_email(email),
+                            )
+                            # Only process this once after success
+                            hass.data[DATA_ALEXAMEDIA]["accounts"][email][
+                                "should_get_network"
+                            ] = False
 
-                        # Discard the entities_to_monitor results since we now have full network details
-                        if entities_to_monitor:
-                            optional_task_results.pop()
-                            entities_to_monitor.clear()
+                            # Discard the entities_to_monitor results since we now have full network details
+                            if entities_to_monitor and optional_task_results:
+                                optional_task_results.pop()
+                                entities_to_monitor.clear()
 
-                        alexa_entities = parse_alexa_entities(api_devices)
+                        alexa_entities = parse_alexa_entities(
+                            api_devices,
+                            debug=hass.data[DATA_ALEXAMEDIA]["accounts"][email][
+                                "options"
+                            ].get(CONF_DEBUG, False),
+                        )
                         hass.data[DATA_ALEXAMEDIA]["accounts"][email]["devices"].update(
                             alexa_entities
                         )
 
-                        # First run is a special case. Get the state of all entities(including disabled)
-                        # This ensures all entities have state during startup without needing to request coordinator refresh
-
                         _entities_to_monitor = set()
                         for type_of_entity, entities in alexa_entities.items():
-                            if type_of_entity == "guard" or extended_entity_discovery:
+                            if (
+                                type_of_entity
+                                in {"guard", "temperature", "air_quality", "aiaqm"}
+                                or extended_entity_discovery
+                            ):
                                 for entity in entities:
                                     _entities_to_monitor.add(entity.get("id"))
+                                    _LOGGER.debug("Monitoring: %s", entity.get("name"))
                         _LOGGER.debug(
                             "%s: Network Discovery: %s entities will be monitored",
                             hide_email(email),
                             len(list(_entities_to_monitor)),
                         )
-                        entity_state = await get_entity_data(
-                            login_obj, list(_entities_to_monitor)
+                        # Use shorter timeout for entity data to avoid blocking
+                        _t_ed = time.monotonic()
+                        try:
+                            entity_state = await asyncio.wait_for(
+                                get_entity_data(login_obj, list(_entities_to_monitor)),
+                                timeout=10.0,
+                            )
+                        except asyncio.TimeoutError:
+                            _LOGGER.warning(
+                                "%s: get_entity_data timed out after 10s, "
+                                "entity states will be fetched on next cycle",
+                                hide_email(email),
+                            )
+                        _LOGGER.debug(
+                            "[BOOT] get_entity_data (network) in %.2fs",
+                            time.monotonic() - _t_ed,
                         )
 
-                if entities_to_monitor:
+                if entities_to_monitor and optional_task_results:
                     entity_state = optional_task_results.pop()
                     _LOGGER.debug(
                         "%s: Processing %s entities to monitor",
@@ -566,7 +791,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                         len(list(entities_to_monitor)),
                     )
 
-                if new_devices:
+                if new_devices and optional_task_results:
                     auth_info = optional_task_results.pop()
                     _LOGGER.debug(
                         "%s: Found %s devices, %s bluetooth",
@@ -579,11 +804,55 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                         ),
                     )
 
-                # Always keep notifications in sync; internal cooldown prevents API spam
-                await process_notifications(login_obj)
+                # Process notifications in background to avoid blocking boot
+                # (process_notifications has a 4s sleep + API call)
+                _LOGGER.debug(
+                    "[BOOT] post-fetch processing in %.2fs", time.monotonic() - _t_post
+                )
 
-                # Process last_called data to fire events
-                await update_last_called(login_obj)
+                existing_notif_task = hass.data[DATA_ALEXAMEDIA]["accounts"][email].get(
+                    "notifications_init_task"
+                )
+                if existing_notif_task and not existing_notif_task.done():
+                    _LOGGER.debug(
+                        "%s: Notifications background task already running, skipping",
+                        hide_email(email),
+                    )
+                else:
+
+                    async def _bg_process_notifications():
+                        try:
+                            await process_notifications(login_obj)
+                        except (
+                            AlexapyConnectionError,
+                            AlexapyLoginError,
+                            asyncio.TimeoutError,
+                            JSONDecodeError,
+                        ):
+                            _LOGGER.debug(
+                                "%s: Background notifications failed, retrying once",
+                                hide_email(email),
+                            )
+                            try:
+                                await asyncio.sleep(5)
+                                await process_notifications(login_obj)
+                            except (
+                                AlexapyConnectionError,
+                                AlexapyLoginError,
+                                asyncio.TimeoutError,
+                                JSONDecodeError,
+                            ):
+                                _LOGGER.debug(
+                                    "%s: Background notifications retry failed",
+                                    hide_email(email),
+                                )
+
+                    hass.data[DATA_ALEXAMEDIA]["accounts"][email][
+                        "notifications_init_task"
+                    ] = hass.async_create_background_task(
+                        _bg_process_notifications(),
+                        f"{DOMAIN}_notifications_init",
+                    )
 
         except (AlexapyLoginError, JSONDecodeError):
             _LOGGER.debug(
@@ -600,6 +869,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         except BaseException as err:
             raise UpdateFailed(f"Error communicating with API: {err}") from err
 
+        _t_proc = time.monotonic()
         new_alexa_clients = []  # list of newly discovered device names
         exclude_filter = []
         include_filter = []
@@ -695,9 +965,13 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                 .get(serial)
                 .enabled
             ):
-                await hass.data[DATA_ALEXAMEDIA]["accounts"][email]["entities"][
-                    "media_player"
-                ].get(serial).refresh(device, skip_api=True)
+                await (
+                    hass.data[DATA_ALEXAMEDIA]["accounts"][email]["entities"][
+                        "media_player"
+                    ]
+                    .get(serial)
+                    .refresh(device, skip_api=True)
+                )
         _LOGGER.debug(
             "%s: Existing: %s New: %s;"
             " Filtered out by not being in include: %s "
@@ -709,6 +983,8 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
             exclude_filter,
         )
 
+        _LOGGER.debug("[BOOT] device processing in %.2fs", time.monotonic() - _t_proc)
+
         if new_alexa_clients:
             cleaned_config = config.copy()
             cleaned_config.pop(CONF_PASSWORD, None)
@@ -716,9 +992,13 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
             # Load multiple platforms in parallel using async_forward_entry_setups
             _LOGGER.debug("Loading platforms: %s", ", ".join(ALEXA_COMPONENTS))
             try:
+                _t = time.monotonic()
                 await hass.config_entries.async_forward_entry_setups(
                     config_entry, ALEXA_COMPONENTS
                 )
+                _LOGGER.debug("[BOOT] platform loading in %.2fs", time.monotonic() - _t)
+                if metrics:
+                    metrics.record_boot_stage(f"platforms_loaded_{hide_email(email)}")
             except (asyncio.TimeoutError, TimeoutException) as ex:
                 _LOGGER.error(f"Error while loading platforms: {ex}")
                 raise ConfigEntryNotReady(
@@ -728,23 +1008,34 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         hass.data[DATA_ALEXAMEDIA]["accounts"][email]["new_devices"] = False
         # prune stale devices
         device_registry = dr.async_get(hass)
+        entity_backed_ids = _entity_backed_device_identifiers(
+            hass.data[DATA_ALEXAMEDIA]["accounts"][email]
+        )
         for device_entry in dr.async_entries_for_config_entry(
             device_registry, config_entry.entry_id
         ):
             for _, identifier in device_entry.identifiers:
-                if identifier in hass.data[DATA_ALEXAMEDIA]["accounts"][email][
-                    "devices"
-                ]["media_player"].keys() or identifier in map(
-                    lambda x: slugify(f"{x}_{email}"),
-                    hass.data[DATA_ALEXAMEDIA]["accounts"][email]["devices"][
+                if (
+                    identifier
+                    in hass.data[DATA_ALEXAMEDIA]["accounts"][email]["devices"][
                         "media_player"
-                    ].keys(),
+                    ]
+                    or identifier
+                    in map(
+                        lambda x: slugify(f"{x}_{email}"),
+                        hass.data[DATA_ALEXAMEDIA]["accounts"][email]["devices"][
+                            "media_player"
+                        ].keys(),
+                    )
+                    or identifier in entity_backed_ids
                 ):
                     break
             else:
                 device_registry.async_remove_device(device_entry.id)
                 _LOGGER.debug(
-                    "%s: Removing stale device %s", hide_email(email), device_entry.name
+                    "%s: Removing stale device %s",
+                    hide_email(email),
+                    device_entry.name,
                 )
 
         await login_obj.save_cookiefile()
@@ -763,6 +1054,8 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                     },
                 },
             )
+        if not hass.data[DATA_ALEXAMEDIA]["accounts"][email]["http2"]:
+            await update_last_called(login_obj)
         return entity_state
 
     @_catch_login_errors
@@ -818,9 +1111,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                     notification["date_time"] = (
                         f"{n_date} {n_time}" if n_date and n_time else None
                     )
-                    previous_alarm = (
-                        previous.get(n_dev_id, {}).get("Alarm", {}).get(n_id)
-                    )
+                    previous_alarm = safe_get(previous, [n_dev_id, "Alarm", n_id], {})
                     if previous_alarm and alarm_just_dismissed(
                         notification,
                         previous_alarm.get("status"),
@@ -856,47 +1147,77 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         )
         return True
 
+    def _build_last_called_payload(
+        last: dict | None,
+        account: dict,
+        existing_serials_local: set[str],
+    ) -> dict | None:
+        """Validate an alexapy history record and return an AMP last_called payload."""
+        if not isinstance(last, dict):
+            return None
+
+        summary = last.get("summary")
+        if not _valid_voice_summary(summary):
+            return None
+        summary = summary.strip()
+
+        serial_num = last.get("serialNumber")
+        ts = int(last.get("timestamp") or 0)
+        if not serial_num or ts <= 0:
+            return None
+
+        if ts <= int(account.get("last_called_customer_history_ts") or 0):
+            return None
+
+        if serial_num not in existing_serials_local:
+            return None
+
+        return {"serialNumber": serial_num, "timestamp": ts, "summary": summary}
+
     @_catch_login_errors
     async def update_last_called(login_obj, last_called=None, force=False):
         """Update the last called device for the login_obj.
 
         This will store the last_called in hass.data and also fire an event
-        to notify listeners.
+        to notify listeners. Delegates storage/dispatch to the module-level
+        _store_and_dispatch_last_called helper.
         """
-        if not last_called or not (last_called and last_called.get("summary")):
+
+        if not isinstance(last_called, dict) or not last_called.get("summary"):
             try:
                 async with async_timeout.timeout(10):
                     last_called = await AlexaAPI.get_last_device_serial(login_obj)
+            except asyncio.CancelledError:
+                return
             except TypeError:
                 _LOGGER.debug(
                     "%s: Error updating last_called: %s",
                     hide_email(email),
-                    hide_serial(last_called),
+                    repr(last_called),
                 )
                 return
+            # AlexaAPI can return None or non-dict under some failure/throttle cases
+            if not isinstance(last_called, dict):
+                _LOGGER.debug(
+                    "%s: Error updating last_called: unexpected response %s",
+                    hide_email(email),
+                    repr(last_called),
+                )
+                return
+
+        # ---- Central voice-only gate (covers both passed-in and fetched cases) ----
+        if not _valid_voice_summary(last_called.get("summary")):
+            _LOGGER.debug(
+                "%s: Ignoring last_called with invalid/non-voice summary: %s",
+                hide_email(email),
+                repr(last_called.get("summary")),
+            )
+            return
+
         _LOGGER.debug(
             "%s: Updated last_called: %s", hide_email(email), hide_serial(last_called)
         )
-        stored_data = hass.data[DATA_ALEXAMEDIA]["accounts"][email]
-        if (
-            force
-            or "last_called" in stored_data
-            and last_called != stored_data["last_called"]
-        ) or ("last_called" not in stored_data and last_called is not None):
-            _LOGGER.debug(
-                "%s: last_called changed: %s to %s",
-                hide_email(email),
-                hide_serial(
-                    stored_data["last_called"] if "last_called" in stored_data else None
-                ),
-                hide_serial(last_called),
-            )
-            async_dispatcher_send(
-                hass,
-                f"{DOMAIN}_{hide_email(email)}"[0:32],
-                {"last_called_change": last_called},
-            )
-        hass.data[DATA_ALEXAMEDIA]["accounts"][email]["last_called"] = last_called
+        _store_and_dispatch_last_called(hass, email, last_called, force)
 
     @_catch_login_errors
     async def update_bluetooth_state(login_obj, device_serial):
@@ -1092,7 +1413,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
             # If we fall through, give up for now but leave pending set alone
             if account["notifications_pending"]:
                 _LOGGER.debug(
-                    "%s: Giving up notifications refresh after %s retries; "
+                    "%s: Giving up notifications refresh after %s attempts; "
                     "still pending=%s",
                     hide_email(email),
                     retries,
@@ -1125,7 +1446,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                 error_callback=http2_error_handler,
                 loop=hass.loop,
             )
-            _LOGGER.debug("%s: HTTP2 created: %s", hide_email(email), http2)
+            _LOGGER.debug("%s: Starting HTTP2: %s", hide_email(email), http2)
             await http2.async_run()
         except AlexapyLoginError as exception_:
             _LOGGER.debug(
@@ -1143,6 +1464,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                 "%s: HTTP2 creation failed: %s", hide_email(email), exception_
             )
             return
+        _LOGGER.debug("%s: HTTP2 created: %s", hide_email(email), http2)
         return http2
 
     @callback
@@ -1154,6 +1476,92 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         and media state.
         """
         coordinator = hass.data[DATA_ALEXAMEDIA]["accounts"][email].get("coordinator")
+
+        # --- Near-real-time last_called probing (customer history) ---
+        # Volume/equalizer/doppler pushes often follow a voice request. These pushes can be bursty,
+        # so we debounce and throttle the probe to avoid hammering Amazon and to coalesce events.
+        account = hass.data[DATA_ALEXAMEDIA]["accounts"][email]
+        account.setdefault("last_called_probe_task", None)
+        account.setdefault("last_called_probe_lock", asyncio.Lock())
+        account.setdefault("last_called_probe_last_run", 0.0)  # monotonic seconds
+        account.setdefault("last_called_customer_history_ts", 0)  # ms epoch
+
+        def _cancel_last_called_probe() -> None:
+            task = account.get("last_called_probe_task")
+            if task and not task.done():
+                _LOGGER.debug("Cancelling last_called probe")
+                task.cancel()
+            account["last_called_probe_task"] = None
+
+        def _schedule_last_called_probe(trigger_command: str) -> None:
+            """Debounce + throttle a voice-history probe to update last_called."""
+            _cancel_last_called_probe()
+
+            async def _runner() -> None:
+                # Debounce: coalesce push bursts
+                await asyncio.sleep(0.6)
+
+                async with account["last_called_probe_lock"]:
+                    now = time.monotonic()
+                    # Throttle: avoid hammering Amazon on storms
+                    if (
+                        now - float(account.get("last_called_probe_last_run", 0.0))
+                        < 2.0
+                    ):
+                        return
+                    account["last_called_probe_last_run"] = now
+
+                    # Prefer a recent-window helper if present in the installed alexapy.
+                    get_recent = getattr(
+                        AlexaAPI, "get_last_device_serial_recent", None
+                    )
+                    try:
+                        if callable(get_recent):
+                            last = await get_recent(
+                                login_obj,
+                                lookback_ms=60_000,
+                                items=10,
+                            )
+                        else:
+                            last = await AlexaAPI.get_last_device_serial(
+                                login_obj, items=10
+                            )
+                    except asyncio.CancelledError:
+                        # Expected when push bursts reschedule probes
+                        return
+                    except AlexapyLoginError:
+                        _LOGGER.debug(
+                            "%s: last_called probe login error (%s); skipping",
+                            hide_email(email),
+                            trigger_command,
+                        )
+                        return
+                    except AlexapyConnectionError as exc:
+                        _LOGGER.debug(
+                            "%s: last_called probe connection error (%s): %s",
+                            hide_email(email),
+                            trigger_command,
+                            exc,
+                        )
+                        return
+
+                    existing_serials_local = set(_existing_serials(hass, login_obj))
+                    payload = _build_last_called_payload(
+                        last, account, existing_serials_local
+                    )
+                    if not payload:
+                        return
+
+                    _LOGGER.debug(
+                        "%s: Updating last_called via %s: %s",
+                        hide_email(email),
+                        trigger_command,
+                        hide_serial(payload["serialNumber"]),
+                    )
+                    await update_last_called(login_obj, payload)
+                    account["last_called_customer_history_ts"] = payload["timestamp"]
+
+            account["last_called_probe_task"] = hass.async_create_task(_runner())
 
         updates = (
             message_obj.get("directive", {})
@@ -1172,7 +1580,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                 if isinstance(resource, dict) and "payload" in resource
                 else None
             )
-            existing_serials = _existing_serials(hass, login_obj)
+            existing_serials = set(_existing_serials(hass, login_obj))
             seen_commands = hass.data[DATA_ALEXAMEDIA]["accounts"][email][
                 "http2_commands"
             ]
@@ -1207,28 +1615,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                 else:
                     serial = None
 
-                if command == "PUSH_ACTIVITY":
-                    #  Last_Alexa Updated
-                    last_called = {
-                        "serialNumber": serial,
-                        "timestamp": json_payload["timestamp"],
-                    }
-                    try:
-                        if coordinator:
-                            await coordinator.async_request_refresh()
-
-                        if serial and serial in existing_serials:
-                            await update_last_called(login_obj, last_called)
-                        _LOGGER.debug("Updating last_called: %s", last_called)
-                        async_dispatcher_send(
-                            hass,
-                            f"{DOMAIN}_{hide_email(email)}"[0:32],
-                            {"push_activity": json_payload},
-                        )
-                    except AlexapyConnectionError:
-                        # Catch case where activities doesn't report valid json
-                        pass
-                elif command in (
+                if command in (
                     "PUSH_AUDIO_PLAYER_STATE",
                     "PUSH_MEDIA_CHANGE",
                     "PUSH_MEDIA_PROGRESS_CHANGE",
@@ -1254,6 +1641,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                         )
                 elif command == "PUSH_VOLUME_CHANGE":
                     # Player volume update
+                    _schedule_last_called_probe(command)
                     if serial and serial in existing_serials:
                         _LOGGER.debug(
                             "Updating media_player volume: %s",
@@ -1269,6 +1657,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                     "PUSH_EQUALIZER_STATE_CHANGE",
                 ):
                     # Player availability update
+                    _schedule_last_called_probe(command)
                     if serial and serial in existing_serials:
                         _LOGGER.debug(
                             "Updating media_player availability %s",
@@ -1338,12 +1727,22 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                             {"notification_update": json_payload},
                         )
                 elif command in [
-                    "PUSH_DELETE_DOPPLER_ACTIVITIES",  # delete Alexa history
-                    "PUSH_LIST_CHANGE",  # clear a shopping list https://github.com/alandtse/alexa_media_player/issues/1190
-                    "PUSH_LIST_ITEM_CHANGE",  # update shopping list
-                    "PUSH_CONTENT_FOCUS_CHANGE",  # likely prime related refocus
-                    "PUSH_DEVICE_SETUP_STATE_CHANGE",  # likely device changes mid setup
-                    "PUSH_MEDIA_PREFERENCE_CHANGE",  # disliking or liking songs, https://github.com/alandtse/alexa_media_player/issues/1599
+                    "PUSH_DELETE_DOPPLER_ACTIVITIES",  # Delete Alexa history
+                ]:
+                    pass
+                elif command in [
+                    "PUSH_LIST_CHANGE",  # Clear a shopping list https://github.com/alandtse/alexa_media_player/issues/1190
+                    "PUSH_LIST_ITEM_CHANGE",  # Update shopping list
+                ]:
+                    # To-do
+                    pass
+                elif command in [
+                    "PUSH_CONTENT_FOCUS_CHANGE",  # Likely prime related refocus
+                    "PUSH_DEVICE_SETUP_STATE_CHANGE",  # Likely device changes mid setup
+                ]:
+                    pass
+                elif command in [
+                    "PUSH_MEDIA_PREFERENCE_CHANGE",  # Disliking or liking songs, https://github.com/alandtse/alexa_media_player/issues/1599
                 ]:
                     pass
                 else:
@@ -1396,9 +1795,7 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
                     )
                 ):
                     _LOGGER.debug("Discovered new media_player %s", hide_serial(serial))
-                    (hass.data[DATA_ALEXAMEDIA]["accounts"][email]["new_devices"]) = (
-                        True
-                    )
+                    hass.data[DATA_ALEXAMEDIA]["accounts"][email]["new_devices"] = True
                     if coordinator:
                         await coordinator.async_request_refresh()
 
@@ -1468,6 +1865,11 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
             coordinator.update_interval = timedelta(
                 seconds=scan_interval * 10 if http2_enabled else scan_interval
             )
+            _LOGGER.debug(
+                "HTTP2push: %s, Polling interval: %s",
+                http2_enabled,
+                coordinator.update_interval,
+            )
             await coordinator.async_request_refresh()
 
     @callback
@@ -1520,55 +1922,132 @@ async def setup_alexa(hass, config_entry, login_obj: AlexaLogin):
         else config.get(CONF_SCAN_INTERVAL)
     )
     hass.data[DATA_ALEXAMEDIA]["accounts"][email]["login_obj"] = login_obj
+    _t = time.monotonic()
     http2_enabled = hass.data[DATA_ALEXAMEDIA]["accounts"][email]["http2"] = (
         await http2_connect()
     )
+    _LOGGER.debug("[BOOT] http2_connect in %.2fs", time.monotonic() - _t)
     coordinator = hass.data[DATA_ALEXAMEDIA]["accounts"][email].get("coordinator")
-    if coordinator is None:
-        _LOGGER.debug("%s: Creating coordinator", hide_email(email))
-        hass.data[DATA_ALEXAMEDIA]["accounts"][email]["coordinator"] = coordinator = (
-            DataUpdateCoordinator(
-                hass,
-                _LOGGER,
-                # Name of the data. For logging purposes.
-                name="alexa_media",
-                update_method=async_update_data,
-                # Polling interval. Will only be polled if there are subscribers.
-                update_interval=timedelta(
-                    seconds=scan_interval * 10 if http2_enabled else scan_interval
-                ),
-            )
-        )
-    else:
-        _LOGGER.debug("%s: Reusing coordinator", hide_email(email))
-        coordinator.update_interval = timedelta(
-            seconds=scan_interval * 10 if http2_enabled else scan_interval
-        )
-    # Fetch initial data so we have data when entities subscribe
-    _LOGGER.debug("%s: Refreshing coordinator", hide_email(email))
-    await coordinator.async_refresh()
 
+    # Get runtime_data for optimized coordinator
+    runtime_data = (
+        config_entry.runtime_data if hasattr(config_entry, "runtime_data") else None
+    )
+
+    if coordinator is None:
+        _LOGGER.debug("%s: Creating optimized coordinator", hide_email(email))
+
+        # Use optimized coordinator with debouncing
+        coordinator = AlexaMediaCoordinator(
+            hass=hass,
+            runtime_data=runtime_data,
+            update_method=async_update_data,
+            scan_interval=scan_interval,
+        )
+
+        hass.data[DATA_ALEXAMEDIA]["accounts"][email]["coordinator"] = coordinator
+        # Set correct interval now that http2 status is known
+        coordinator.set_http2_status(bool(http2_enabled))
+
+        # Also store in runtime_data for type-safe access
+        if runtime_data:
+            runtime_data.coordinator = coordinator
+    else:
+        _LOGGER.debug("%s: setup_alexa: Reusing coordinator", hide_email(email))
+        # Use the optimized set_http2_status method if available
+        if isinstance(coordinator, AlexaMediaCoordinator):
+            coordinator.set_http2_status(bool(http2_enabled))
+        else:
+            coordinator.update_interval = timedelta(
+                seconds=scan_interval * 10 if http2_enabled else scan_interval
+            )
+    # Fetch initial data
+    _LOGGER.debug("%s: setup_alexa: Starting coordinator refresh", hide_email(email))
+    _t = time.monotonic()
+    await coordinator.async_config_entry_first_refresh()
+    _LOGGER.debug("[BOOT] first_refresh in %.2fs", time.monotonic() - _t)
+
+    # Register services (fast - just registers callbacks)
     hass.data[DATA_ALEXAMEDIA]["services"] = alexa_services = AlexaMediaServices(
         hass, functions={"update_last_called": update_last_called}
     )
     await alexa_services.register()
+
+    # Update last_called in background to avoid blocking
+    _LOGGER.debug("%s: setup_alexa: Scheduling last_called update", hide_email(email))
+    hass.data[DATA_ALEXAMEDIA]["accounts"][email]["last_called_init_task"] = (
+        hass.async_create_background_task(
+            _async_update_last_called_background(hass, login_obj, email),
+            f"{DOMAIN}_last_called_init",
+        )
+    )
+
     return True
+
+
+async def _async_update_last_called_background(
+    hass: HomeAssistant, login_obj, email: str
+) -> None:
+    """Update last_called in background to avoid blocking startup."""
+    try:
+        await _async_update_last_called_global(hass, login_obj, email)
+        _LOGGER.debug("%s: Background last_called update completed", hide_email(email))
+
+        # Record metrics
+        metrics = get_metrics(hass)
+        if metrics:
+            metrics.record_boot_stage(f"last_called_{hide_email(email)}")
+    except asyncio.CancelledError:
+        raise
+    except Exception as err:
+        _LOGGER.debug(
+            "%s: Background last_called update failed: %s", hide_email(email), err
+        )
 
 
 async def async_unload_entry(hass, entry) -> bool:
     """Unload a config entry"""
     email = entry.data["email"]
-    login_obj = hass.data[DATA_ALEXAMEDIA]["accounts"][email]["login_obj"]
     _LOGGER.debug("Unloading entry: %s", hide_email(email))
-    refresh_task = hass.data[DATA_ALEXAMEDIA]["accounts"][email].get(
-        "notifications_refresh_task"
+    for task_key in (
+        "notifications_refresh_task",
+        "notifications_init_task",
+        "last_called_init_task",
+    ):
+        task = hass.data[DATA_ALEXAMEDIA]["accounts"][email].get(task_key)
+        if task and not task.done():
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
+    last_called_task = hass.data[DATA_ALEXAMEDIA]["accounts"][email].get(
+        "last_called_probe_task"
     )
-    if refresh_task and not refresh_task.done():
-        refresh_task.cancel()
+    if last_called_task and not last_called_task.done():
+        last_called_task.cancel()
         try:
-            await refresh_task
+            await last_called_task
         except asyncio.CancelledError:
+            # Expected during unload
             pass
+        except Exception as err:  # pragma: no cover
+            _LOGGER.debug(
+                "%s: Exception while cancelling last_called_probe_task: %s",
+                hide_email(email),
+                err,
+            )
+    hass.data[DATA_ALEXAMEDIA]["accounts"][email]["last_called_probe_task"] = None
+
+    debouncer = hass.data[DATA_ALEXAMEDIA]["accounts"][email].get(
+        "confirm_refresh_debouncer"
+    )
+    if debouncer:
+        debouncer.async_cancel()
+        hass.data[DATA_ALEXAMEDIA]["accounts"][email][
+            "confirm_refresh_debouncer"
+        ] = None
+
     for component in ALEXA_COMPONENTS + DEPENDENT_ALEXA_COMPONENTS:
         try:
             if component == "notify":
@@ -1576,7 +2055,7 @@ async def async_unload_entry(hass, entry) -> bool:
             else:
                 _LOGGER.debug("Forwarding unload entry to %s", component)
                 await hass.config_entries.async_forward_entry_unload(entry, component)
-        except Exception as ex:
+        except Exception:
             _LOGGER.error("Error unloading: %s", component)
     await close_connections(hass, email)
     for listener in hass.data[DATA_ALEXAMEDIA]["accounts"][email][DATA_LISTENER]:

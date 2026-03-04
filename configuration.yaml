@@ -43,6 +43,7 @@ adaptive_lighting:
     - light.bed
     - light.luce_scrivania
     - light.livingroom
+    - light.nzxt_smart_device_v2
   min_brightness: 10
   max_brightness: 100
   min_color_temp: 2500
@@ -55,13 +56,6 @@ spotcast:
   sp_key: !secret spotify.key
 
 influxdb:
-  api_version: 2
-  ssl: false
-  host: !secret influxdb.ip
-  port: !secret influxdb.port
-  token: !secret influxdb.token
-  organization: !secret influxdb.organization_id
-  bucket: !secret influxdb.bucket
   exclude:
     entity_globs: "*"
 

@@ -195,6 +195,12 @@
       "id": "impactapps_com_au"
     },
     {
+      "title": "City of Canning (WA)",
+      "module": "canning_wa_gov_au",
+      "default_params": {},
+      "id": "canning_wa_gov_au"
+    },
+    {
       "title": "City of Casey",
       "module": "casey_vic_gov_au",
       "default_params": {},
@@ -265,6 +271,12 @@
       "module": "app_my_local_services_au",
       "default_params": {},
       "id": "app_my_local_services_au"
+    },
+    {
+      "title": "City of Monash",
+      "module": "monash_vic_gov_au",
+      "default_params": {},
+      "id": "monash_vic_gov_au"
     },
     {
       "title": "City of Mount Gambier",
@@ -545,12 +557,6 @@
         "service": "Ku-ring-gai Council"
       },
       "id": "impactapps_com_au"
-    },
-    {
-      "title": "Ku-ring-gai Council",
-      "module": "kuringgai_nsw_gov_au",
-      "default_params": {},
-      "id": "kuringgai_nsw_gov_au"
     },
     {
       "title": "Lake Macquarie City Council",
@@ -4038,6 +4044,12 @@
       "id": "recyclecoach_com"
     },
     {
+      "title": "Longueuil (QC)",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_longueuil_quebec"
+    },
+    {
       "title": "L\u00e9vis / Qu\u00e9bec",
       "module": "ics",
       "default_params": {},
@@ -4048,6 +4060,12 @@
       "module": "montreal_ca",
       "default_params": {},
       "id": "montreal_ca"
+    },
+    {
+      "title": "MRC de Roussillon (QC)",
+      "module": "info_collectes_ca",
+      "default_params": {},
+      "id": "info_collectes_ca"
     },
     {
       "title": "MRC Marguerite-D'Youville",
@@ -4521,6 +4539,14 @@
         "city": "M\u00e9rignac"
       },
       "id": "opendata_bordeauxmetropole_fr"
+    },
+    {
+      "title": "M\u00e9tropole Europ\u00e9enne de Lille",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 875
+      },
+      "id": "publidata_fr"
     },
     {
       "title": "Orl\u00e9ans M\u00e9tropole",
@@ -5156,10 +5182,12 @@
       "id": "c_trace_de"
     },
     {
-      "title": "Abfallwirtschaftsverbandes Lippe",
-      "module": "abfall_lippe_de",
-      "default_params": {},
-      "id": "abfall_lippe_de"
+      "title": "Abfallwirtschaftsverband Lippe",
+      "module": "abfallnavi_de",
+      "default_params": {
+        "service": "awvlippe"
+      },
+      "id": "abfallnavi_de"
     },
     {
       "title": "Abfallwirtschaftszweckverband Wartburgkreis (AZV)",
@@ -7403,12 +7431,6 @@
       "id": "kwu_de"
     },
     {
-      "title": "K\u00f6nigstein",
-      "module": "ics",
-      "default_params": {},
-      "id": "ics_mein_abfallkalender_online"
-    },
-    {
       "title": "Landkreis Amberg-Sulzbach",
       "module": "ics",
       "default_params": {},
@@ -8861,15 +8883,6 @@
       "id": "ics_asf_online_de"
     },
     {
-      "title": "Schmallenberg",
-      "module": "lobbe_app",
-      "default_params": {
-        "city": "Schmallenberg",
-        "state": "Nordrhein-Westfalen"
-      },
-      "id": "lobbe_app"
-    },
-    {
       "title": "Schmitten im Taunus (MyMuell App)",
       "module": "jumomind_de",
       "default_params": {
@@ -9108,6 +9121,14 @@
       "id": "ics_koblenz_de"
     },
     {
+      "title": "Stadt K\u00f6nigstein im Taunus",
+      "module": "awido_de",
+      "default_params": {
+        "customer": "koenigstein"
+      },
+      "id": "awido_de"
+    },
+    {
       "title": "Stadt Landshut",
       "module": "abfall_io",
       "default_params": {
@@ -9278,6 +9299,18 @@
       "module": "ics",
       "default_params": {},
       "id": "ics_stadtwerke_huerth_de"
+    },
+    {
+      "title": "Stadtwerke R\u00f6srath",
+      "module": "stadtwerke_roesrath_de",
+      "default_params": {},
+      "id": "stadtwerke_roesrath_de"
+    },
+    {
+      "title": "Stadtwerke Speyer",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_gipsprojekt_de"
     },
     {
       "title": "Steinheim",
@@ -9939,6 +9972,12 @@
       "module": "junker_app",
       "default_params": {},
       "id": "junker_app"
+    },
+    {
+      "title": "AMSA",
+      "module": "amsa_it",
+      "default_params": {},
+      "id": "amsa_it"
     },
     {
       "title": "AnconAmbiente",
@@ -12213,12 +12252,6 @@
       "id": "ecoapp_ecoservice_lt"
     },
     {
-      "title": "Ecoservice atliekos",
-      "module": "ecoapp_ecoservice_lt",
-      "default_params": {},
-      "id": "ecoapp_ecoservice_lt"
-    },
-    {
       "title": "Kauno \u0161vara",
       "module": "grafikai_svara_lt",
       "default_params": {},
@@ -12237,6 +12270,12 @@
       "module": "ics",
       "default_params": {},
       "id": "ics_bettembourg_lu"
+    },
+    {
+      "title": "Betzdorf",
+      "module": "betzdorf_lu",
+      "default_params": {},
+      "id": "betzdorf_lu"
     },
     {
       "title": "Esch-sur-Alzette",
@@ -12493,6 +12532,14 @@
         "service": "sudwestfryslan"
       },
       "id": "hvcgroep_nl"
+    },
+    {
+      "title": "Gemeente Venlo",
+      "module": "ximmio_nl",
+      "default_params": {
+        "company": "venlo"
+      },
+      "id": "ximmio_nl"
     },
     {
       "title": "Gemeente Venray",
@@ -13565,6 +13612,12 @@
       "id": "sims_pl"
     },
     {
+      "title": "Gmina Zgierz",
+      "module": "gmina_zgierz_pl",
+      "default_params": {},
+      "id": "gmina_zgierz_pl"
+    },
+    {
       "title": "Gmina Z\u0142oty Stok",
       "module": "sims_pl",
       "default_params": {
@@ -13831,6 +13884,12 @@
   ],
   "Slovenia": [
     {
+      "title": "Komunala Kranj",
+      "module": "komunala_kranj_si",
+      "default_params": {},
+      "id": "komunala_kranj_si"
+    },
+    {
       "title": "Moji odpadki, Ljubljana",
       "module": "mojiodpadki_si",
       "default_params": {},
@@ -14053,6 +14112,12 @@
         "service_provider": "orust-kommun"
       },
       "id": "edpevent_se"
+    },
+    {
+      "title": "Pireva",
+      "module": "pireva_se",
+      "default_params": {},
+      "id": "pireva_se"
     },
     {
       "title": "Region Gotland",
@@ -14716,6 +14781,12 @@
       "id": "ics_anglesey_gov_wales"
     },
     {
+      "title": "Angus Council",
+      "module": "angus_gov_uk",
+      "default_params": {},
+      "id": "angus_gov_uk"
+    },
+    {
       "title": "Antrim and Newtownabbey",
       "module": "antrimandnewtownabbey_gov_uk",
       "default_params": {},
@@ -14946,7 +15017,19 @@
       "id": "ics_recollect"
     },
     {
+      "title": "Calderdale Council",
+      "module": "calderdale_gov_uk",
+      "default_params": {},
+      "id": "calderdale_gov_uk"
+    },
+    {
       "title": "Cambridge City Council",
+      "module": "greater_cambridge_waste_org",
+      "default_params": {},
+      "id": "greater_cambridge_waste_org"
+    },
+    {
+      "title": "Cambridge City Council (Deprecated)",
       "module": "cambridge_gov_uk",
       "default_params": {},
       "id": "cambridge_gov_uk"
@@ -15324,6 +15407,12 @@
       "id": "glasgow_gov_uk"
     },
     {
+      "title": "Greater Cambridge Waste, UK",
+      "module": "greater_cambridge_waste_org",
+      "default_params": {},
+      "id": "greater_cambridge_waste_org"
+    },
+    {
       "title": "Guildford Borough Council",
       "module": "guildford_gov_uk",
       "default_params": {},
@@ -15522,6 +15611,12 @@
       "id": "harrow_gov_uk"
     },
     {
+      "title": "London Borough of Havering",
+      "module": "havering_gov_uk",
+      "default_params": {},
+      "id": "havering_gov_uk"
+    },
+    {
       "title": "London Borough of Hounslow",
       "module": "hounslow_gov_uk",
       "default_params": {},
@@ -15644,6 +15739,12 @@
       "id": "moray_gov_uk"
     },
     {
+      "title": "Neath Port Talbot Council",
+      "module": "neath_port_talbot_gov_uk",
+      "default_params": {},
+      "id": "neath_port_talbot_gov_uk"
+    },
+    {
       "title": "Newark & Sherwood District Council",
       "module": "newark_sherwooddc_gov_uk",
       "default_params": {},
@@ -15724,6 +15825,12 @@
       "id": "nsomerset_gov_uk"
     },
     {
+      "title": "North Tyneside Council",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_northtyneside_gov_uk"
+    },
+    {
       "title": "North West Leicestershire District Council",
       "module": "nwleics_gov_uk",
       "default_params": {},
@@ -15740,6 +15847,12 @@
       "module": "northyorks_harrogate_gov_uk",
       "default_params": {},
       "id": "northyorks_harrogate_gov_uk"
+    },
+    {
+      "title": "North Yorkshire Council - Ryedale",
+      "module": "northyorks_ryedale_gov_uk",
+      "default_params": {},
+      "id": "northyorks_ryedale_gov_uk"
     },
     {
       "title": "North Yorkshire Council - Scarborough",
@@ -15794,6 +15907,12 @@
       "module": "peterborough_gov_uk",
       "default_params": {},
       "id": "peterborough_gov_uk"
+    },
+    {
+      "title": "Plymouth City Council",
+      "module": "plymouth_gov_uk",
+      "default_params": {},
+      "id": "plymouth_gov_uk"
     },
     {
       "title": "Portsmouth City Council",
@@ -15914,6 +16033,12 @@
       "id": "salford_gov_uk"
     },
     {
+      "title": "Scottish Borders Council",
+      "module": "scotborders_gov_uk",
+      "default_params": {},
+      "id": "scotborders_gov_uk"
+    },
+    {
       "title": "Sedgemoor District Council",
       "module": "iapp_itouchvision_com",
       "default_params": {
@@ -15971,6 +16096,12 @@
     },
     {
       "title": "South Cambridgeshire District Council",
+      "module": "greater_cambridge_waste_org",
+      "default_params": {},
+      "id": "greater_cambridge_waste_org"
+    },
+    {
+      "title": "South Cambridgeshire District Council (Deprecated)",
       "module": "scambs_gov_uk",
       "default_params": {},
       "id": "scambs_gov_uk"
@@ -16236,6 +16367,12 @@
       "id": "walsall_gov_uk"
     },
     {
+      "title": "Waltham Forest",
+      "module": "walthamforest_gov_uk",
+      "default_params": {},
+      "id": "walthamforest_gov_uk"
+    },
+    {
       "title": "Warrington Borough Council",
       "module": "warrington_gov_uk",
       "default_params": {},
@@ -16388,6 +16525,12 @@
       "id": "roundlookup_uk"
     },
     {
+      "title": "Wrexham County Borough Council",
+      "module": "wrexham_gov_uk",
+      "default_params": {},
+      "id": "wrexham_gov_uk"
+    },
+    {
       "title": "Wychavon",
       "module": "roundlookup_uk",
       "default_params": {
@@ -16447,6 +16590,18 @@
         "split_at": "\\, (?:and )?|(?: and )"
       },
       "id": "ics_recollect"
+    },
+    {
+      "title": "City of Chicago, IL",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_recyclebycity_com"
+    },
+    {
+      "title": "City of Flagstaff, AZ",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_recyclebycity_com"
     },
     {
       "title": "City of Gastonia, NC",
@@ -16517,6 +16672,12 @@
       "id": "ics_recollect"
     },
     {
+      "title": "Fuquay-Varina, North Carolina",
+      "module": "fuquay_varina_nc_us",
+      "default_params": {},
+      "id": "fuquay_varina_nc_us"
+    },
+    {
       "title": "Hardin Sanitation, Idaho, USA",
       "module": "ics",
       "default_params": {
@@ -16578,6 +16739,12 @@
         "split_at": "\\, (?:and )?|(?: and )"
       },
       "id": "ics_recollect"
+    },
+    {
+      "title": "Recycle By City",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_recyclebycity_com"
     },
     {
       "title": "Recycle Coach",

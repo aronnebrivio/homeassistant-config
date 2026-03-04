@@ -7,6 +7,8 @@ For more details about this platform, please refer to the documentation at
 https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers-needed/58639
 """
 
+from __future__ import annotations
+
 from datetime import timedelta
 
 from homeassistant.const import (
@@ -15,7 +17,6 @@ from homeassistant.const import (
     PERCENTAGE,
 )
 
-__version__ = "5.7.5"
 PROJECT_URL = "https://github.com/alandtse/alexa_media_player/"
 ISSUE_URL = f"{PROJECT_URL}issues"
 NOTIFY_URL = f"{PROJECT_URL}wiki/Configuration%3A-Notification-Component#use-the-notifyalexa_media-service"
@@ -53,6 +54,9 @@ CONF_SECURITYCODE = "securitycode"
 CONF_OTPSECRET = "otp_secret"
 CONF_PROXY = "proxy"
 CONF_PROXY_WARNING = "proxy_warning"
+CONF_SCAN_INTERVAL = (
+    "scan_interval"  # local definition; HA's CONF_SCAN_INTERVAL is deprecated
+)
 CONF_TOTP_REGISTER = "registered"
 CONF_OAUTH = "oauth"
 DATA_LISTENER = "listener"
@@ -115,6 +119,51 @@ ATTR_MESSAGE = "message"
 ATTR_EMAIL = "email"
 ATTR_ENTITY_ID = "entity_id"
 ATTR_NUM_ENTRIES = "entries"
+COMMON_BUCKET_COUNTS = (
+    "accounts",
+    "devices",
+    "media_players",
+    "players",
+    "notifications",
+    "entities",
+)
+COMMON_DIAGNOSTIC_BUCKETS = (
+    "account",
+    "accounts",
+    "login",
+    "logins",
+    "session",
+    "sessions",
+)
+COMMON_DIAGNOSTIC_NAMES = (
+    "name",
+    "deviceName",
+    "accountName",
+    "friendlyName",
+    "title",
+)
+DEVICE_PLAYER_BUCKETS = ("devices", "media_players", "players")
+TO_REDACT: set[str] = {
+    "email",
+    "password",
+    "access_token",
+    "refresh_token",
+    "token",
+    "csrf",
+    "cookie",
+    "cookies",
+    "session",
+    "sessionid",
+    "macDms",
+    "mac_dms",
+    "otp_secret",
+    "authorization_code",
+    "securitycode",
+    "code_verifier",
+    "adp_token",
+    "device_private_key",
+    "customerId",
+}
 STREAMING_ERROR_MESSAGE = (
     "Sorry, direct music streaming isn't supported. "
     "This limitation is set by Amazon, and not by Alexa-Media-Player, Music-Assistant, nor Home-Assistant."
@@ -122,14 +171,11 @@ STREAMING_ERROR_MESSAGE = (
 PUBLIC_URL_ERROR_MESSAGE = (
     "To send TTS, please set the public URL in integration configuration."
 )
-STARTUP = f"""
--------------------------------------------------------------------
-{DOMAIN}
-Version: {__version__}
-This is a custom component
-If you have any issues with this you need to open an issue here:
-{ISSUE_URL}
--------------------------------------------------------------------
+STARTUP_MESSAGE = """
+{name} Version Info
+{DOMAIN}: v{version}
+alexapy API: v{alexapy_version}
+If you have any issues with this custom component, you need to open an issue here: {ISSUE_URL}
 """
 
 AUTH_CALLBACK_PATH = "/auth/alexamedia/callback"
@@ -158,7 +204,7 @@ ALEXA_AIR_QUALITY_DEVICE_CLASS = {
     "Alexa.AirQuality.ParticulateMatter": "pm25",
     "Alexa.AirQuality.CarbonMonoxide": "carbon_monoxide",
     "Alexa.AirQuality.IndoorAirQuality": "aqi",
-    "Alexa.AirQuality.VolatileOrganicCompounds": "volatile_organic_compounds",
+    "Alexa.AirQuality.VolatileOrganicCompounds": "aqi",
     "Alexa.AirQuality.Humidity": "humidity",
 }
 
@@ -186,6 +232,7 @@ MODEL_IDS = {
     "A18X8OBWBCSLD8": "Samsung Soundbar",
     "A195TXHV1M5D4A": "Echo Auto",
     "A1C66CX2XD756O": "Fire Tablet HD",
+    "A1D54LQEG0OXJ2": "Denon Home 250",
     "A1EIANJ7PNB0Q7": "Echo Show 15 (Gen1)",
     "A1ENT81UXFMNNO": "Unknown",
     "A1ETW4IXK2PYBP": "Talk to Alexa",
@@ -197,6 +244,7 @@ MODEL_IDS = {
     "A1L4KDRIILU6N9": "Sony Speaker",
     "A1LOQ8ZHF4G510": "Samsung Soundbar Q990B",
     "A1M0A9L9HDBID3": "One-Link Safe and Sound",
+    "A1MKGHX5VQBDWX": "Denon Home 150",
     "A1MUORL8FP149X": "Unknown",
     "A1N9SW0I0LUX5Y": "Ford/Lincoln Alexa App",
     "A1NL4BVLQ4L3N3": "Echo Show (Gen1)",
@@ -236,6 +284,7 @@ MODEL_IDS = {
     "A2J0R2SD7G9LPA": "Lenovo SmartTab M10",
     "A2JKHJ0PX4J3L3": "Fire TV Cube (Gen2)",
     "A2LH725P8DQR2A": "Fabriq Riff",
+    "A2LLN0UXRW4N50": "Echo Show 11 (Gen1)",
     "A2LWARUGJLBYEW": "Fire TV Stick (Gen2)",
     "A2M35JJZWCQOMZ": "Echo Plus (Gen1)",
     "A2M4YX06LWP8WI": "Fire Tablet",
@@ -278,7 +327,7 @@ MODEL_IDS = {
     "A3CY98NH016S5F": "Facebook Portal Mini",
     "A3D4YURNTARP5K": "Facebook Portal TV",
     "A3EH2E0YZ30OD6": "Echo Spot (Gen2)",
-    "A3EVMLQTU6WL1W": "Fire TV (GenX)",
+    "A3EVMLQTU6WL1W": "Fire TV Stick 4K Max (Gen1)",
     "A3F1S88NTZZXS9": "Dash Wand",
     "A3FX4UWTP28V1P": "Echo (Gen3)",
     "A3GFRGUNIGG1I5": "Samsung TV QN50Q60CAGXZD",

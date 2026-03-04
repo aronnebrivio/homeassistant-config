@@ -9,7 +9,6 @@ https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers
 
 import datetime
 import logging
-from typing import List
 
 from alexapy import AlexaAPI
 from homeassistant.exceptions import ConfigEntryNotReady, NoEntitySpecifiedError
@@ -29,7 +28,7 @@ from . import (
 from .alexa_entity import parse_power_from_coordinator
 from .alexa_media import AlexaMedia
 from .const import CONF_EXTENDED_ENTITY_DISCOVERY
-from .helpers import _catch_login_errors, add_devices
+from .helpers import _catch_login_errors, add_devices, safe_get
 
 try:
     from homeassistant.components.switch import SwitchEntity as SwitchDevice
@@ -41,7 +40,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_platform(hass, config, add_devices_callback, discovery_info=None):
     """Set up the Alexa switch platform."""
-    devices = []  # type: List[DNDSwitch]
+    devices: list[DNDSwitch] = []
     SWITCH_TYPES = [  # pylint: disable=invalid-name
         ("dnd", DNDSwitch),
         ("shuffle", ShuffleSwitch),
@@ -51,7 +50,7 @@ async def async_setup_platform(hass, config, add_devices_callback, discovery_inf
     if config:
         account = config.get(CONF_EMAIL)
     if account is None and discovery_info:
-        account = discovery_info.get("config", {}).get(CONF_EMAIL)
+        account = safe_get(discovery_info, ["config", CONF_EMAIL])
     if account is None:
         raise ConfigEntryNotReady
     include_filter = config.get(CONF_INCLUDE_DEVICES, [])
@@ -59,7 +58,7 @@ async def async_setup_platform(hass, config, add_devices_callback, discovery_inf
     account_dict = hass.data[DATA_ALEXAMEDIA]["accounts"][account]
     _LOGGER.debug("%s: Loading switches", hide_email(account))
     if "switch" not in account_dict["entities"]:
-        (hass.data[DATA_ALEXAMEDIA]["accounts"][account]["entities"]["switch"]) = {}
+        hass.data[DATA_ALEXAMEDIA]["accounts"][account]["entities"]["switch"] = {}
     for key, _ in account_dict["devices"]["media_player"].items():
         if key not in account_dict["entities"]["media_player"]:
             _LOGGER.debug(
@@ -77,7 +76,7 @@ async def async_setup_platform(hass, config, add_devices_callback, discovery_inf
             for switch_key, class_ in SWITCH_TYPES:
                 if (
                     switch_key == "dnd"
-                    and not account_dict["devices"]["switch"].get(key, {}).get("dnd")
+                    and not safe_get(account_dict, ["devices", "switch", key, "dnd"])
                 ) or (
                     switch_key in ["shuffle", "repeat"]
                     and "MUSIC_SKILL"
@@ -118,7 +117,10 @@ async def async_setup_platform(hass, config, add_devices_callback, discovery_inf
                     alexa_client,
                 )
     # Add Amazon Smart Plug devices
-    switch_entities = account_dict.get("devices", {}).get("smart_switch", [])
+    switch_entities = safe_get(account_dict, ["devices", "smart_switch"], [])
+    hue_emulated_enabled = "emulated_hue" in hass.config.as_dict().get(
+        "components", set()
+    )
     if switch_entities and account_dict["options"].get(CONF_EXTENDED_ENTITY_DISCOVERY):
         for switch_entity in switch_entities:
             if not (switch_entity["is_hue_v1"] and hue_emulated_enabled):
@@ -169,17 +171,19 @@ async def async_unload_entry(hass, entry) -> bool:
 class AlexaMediaSwitch(SwitchDevice, AlexaMedia):
     """Representation of a Alexa Media switch."""
 
+    _attr_has_entity_name = True
+
     def __init__(
         self,
         client,
         switch_property: str,
         switch_function: str,
-        name="Alexa",
+        unique_id_suffix: str = "switch",
     ):
         """Initialize the Alexa Switch device."""
         # Class info
         self._client = client
-        self._name = name
+        self._unique_id_suffix = unique_id_suffix
         self._switch_property = switch_property
         self._switch_function = switch_function
         super().__init__(client, client._login)
@@ -242,7 +246,7 @@ class AlexaMediaSwitch(SwitchDevice, AlexaMedia):
             _LOGGER.debug(
                 "Requesting update of %s due to %s switch to %s",
                 self._client,
-                self._name,
+                self._unique_id_suffix,
                 state,
             )
             await self._client.async_update()
@@ -276,12 +280,7 @@ class AlexaMediaSwitch(SwitchDevice, AlexaMedia):
     @property
     def unique_id(self):
         """Return the unique ID."""
-        return self._client.unique_id + "_" + self._name
-
-    @property
-    def name(self):
-        """Return the name of the switch."""
-        return f"{self._client.name} {self._name} switch"
+        return self._client.unique_id + "_" + self._unique_id_suffix
 
     @property
     def device_class(self):
@@ -331,6 +330,8 @@ class AlexaMediaSwitch(SwitchDevice, AlexaMedia):
 class DNDSwitch(AlexaMediaSwitch):
     """Representation of a Alexa Media Do Not Disturb switch."""
 
+    _attr_translation_key = "do_not_disturb"
+
     def __init__(self, client):
         """Initialize the Alexa Switch."""
         # Class info
@@ -338,7 +339,7 @@ class DNDSwitch(AlexaMediaSwitch):
             client,
             "dnd_state",
             "set_dnd_state",
-            "do not disturb",
+            "do not disturb",  # Keep original suffix for backward compatibility
         )
 
     @property
@@ -377,6 +378,8 @@ class DNDSwitch(AlexaMediaSwitch):
 class ShuffleSwitch(AlexaMediaSwitch):
     """Representation of a Alexa Media Shuffle switch."""
 
+    _attr_translation_key = "shuffle"
+
     def __init__(self, client):
         """Initialize the Alexa Switch."""
         # Class info
@@ -395,6 +398,8 @@ class ShuffleSwitch(AlexaMediaSwitch):
 
 class RepeatSwitch(AlexaMediaSwitch):
     """Representation of a Alexa Media Repeat switch."""
+
+    _attr_translation_key = "repeat"
 
     def __init__(self, client):
         """Initialize the Alexa Switch."""
@@ -456,22 +461,37 @@ class SmartSwitch(CoordinatorEntity, SwitchDevice):
         )
         return not last_refresh_success
 
-    async def _set_state(self, power_on):
+    async def _set_state(self, power_on: bool) -> None:
         response = await AlexaAPI.set_light_state(
             self._login,
             self.alexa_entity_id,
             power_on,
         )
+
+        if not isinstance(response, dict):
+            # If something failed any state is possible, fallback to a full refresh
+            await self.coordinator.async_request_refresh()
+            return
+
         control_responses = response.get("controlResponses", [])
-        for response in control_responses:
-            if not response.get("code") == "SUCCESS":
+        for ctrl_resp in control_responses:
+            if ctrl_resp.get("code") != "SUCCESS":
                 # If something failed any state is possible, fallback to a full refresh
-                return await self.coordinator.async_request_refresh()
+                await self.coordinator.async_request_refresh()
+                return
+
         self._requested_power = power_on
         self._requested_state_at = datetime.datetime.now(
             datetime.timezone.utc
         )  # must be set last so that previous getters work properly
         self.schedule_update_ha_state()
+
+        # Confirm quickly, but debounce to avoid spamming across multiple entities.
+        account = self.hass.data[DATA_ALEXAMEDIA]["accounts"].get(self._login.email)
+        if account:
+            debouncer = account.get("confirm_refresh_debouncer")
+            if debouncer:
+                await debouncer.async_call()
 
     async def async_turn_on(self, **kwargs):
         """Turn on."""

@@ -43,4 +43,4 @@ frontend:
   package: zigbee2mqtt-windfront
 availability:
   enabled: true
-version: 4
+version: 5

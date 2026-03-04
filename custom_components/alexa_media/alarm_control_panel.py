@@ -9,7 +9,7 @@ https://community.home-assistant.io/t/echo-devices-alexa-as-media-player-testers
 
 from asyncio import sleep
 import logging
-from typing import List, Optional
+from typing import Optional
 
 from alexapy import hide_email, hide_serial
 from homeassistant.components.alarm_control_panel import AlarmControlPanelEntity
@@ -27,7 +27,7 @@ from .const import (
     DEFAULT_QUEUE_DELAY,
     DOMAIN as ALEXA_DOMAIN,
 )
-from .helpers import _catch_login_errors, add_devices
+from .helpers import _catch_login_errors, add_devices, safe_get
 
 try:
     from homeassistant.components.alarm_control_panel import AlarmControlPanelState
@@ -45,12 +45,12 @@ async def async_setup_platform(
     hass, config, add_devices_callback, discovery_info=None
 ) -> bool:
     """Set up the Alexa alarm control panel platform."""
-    devices = []  # type: List[AlexaAlarmControlPanel]
+    devices: list[AlexaAlarmControlPanel] = []
     account = None
     if config:
         account = config.get(CONF_EMAIL)
     if account is None and discovery_info:
-        account = discovery_info.get("config", {}).get(CONF_EMAIL)
+        account = safe_get(discovery_info, ["config", CONF_EMAIL])
     if account is None:
         raise ConfigEntryNotReady
     include_filter = config.get(CONF_INCLUDE_DEVICES, [])
@@ -74,7 +74,7 @@ async def async_setup_platform(
             ]
         ) = {}
     alexa_client: Optional[AlexaAlarmControlPanel] = None
-    guard_entities = account_dict.get("devices", {}).get("guard", [])
+    guard_entities = safe_get(account_dict, ["devices", "guard"], [])
     if guard_entities:
         alexa_client = AlexaAlarmControlPanel(
             account_dict["login_obj"],
@@ -83,7 +83,7 @@ async def async_setup_platform(
             guard_media_players,
         )
     else:
-        _LOGGER.debug("%s: No Alexa Guard entity found", account)
+        _LOGGER.debug("%s: No Alexa Guard entity found", hide_email(account))
     if not (alexa_client and alexa_client.unique_id):
         _LOGGER.debug(
             "%s: Skipping creation of uninitialized device: %s",
@@ -156,7 +156,9 @@ class AlexaAlarmControlPanel(AlarmControlPanelEntity, AlexaMedia, CoordinatorEnt
 
     @_catch_login_errors
     async def _async_alarm_set(
-        self, command: str = "", code=None  # pylint: disable=unused-argument
+        self,
+        command: str = "",
+        code=None,  # pylint: disable=unused-argument
     ) -> None:
         """Send command."""
         try:
@@ -174,8 +176,13 @@ class AlexaAlarmControlPanel(AlarmControlPanelEntity, AlexaMedia, CoordinatorEnt
         if available_media_players:
             _LOGGER.debug("Sending guard command to: %s", available_media_players[0])
             available_media_players[0].check_login_changes()
+            # Extract appliance ID safely to prevent IndexError if format is unexpected
+            appliance_parts = self._appliance_id.split("_")
+            appliance_id = (
+                appliance_parts[2] if len(appliance_parts) > 2 else self._appliance_id
+            )
             await available_media_players[0].alexa_api.set_guard_state(
-                self._appliance_id.split("_")[2],
+                appliance_id,
                 command_map[command],
                 queue_delay=self.hass.data[DATA_ALEXAMEDIA]["accounts"][self.email][
                     "options"
@@ -190,13 +197,15 @@ class AlexaAlarmControlPanel(AlarmControlPanelEntity, AlexaMedia, CoordinatorEnt
         await self.coordinator.async_request_refresh()
 
     async def async_alarm_disarm(
-        self, code=None  # pylint:disable=unused-argument
+        self,
+        code=None,  # pylint:disable=unused-argument
     ) -> None:
         """Send disarm command."""
         await self._async_alarm_set(STATE_ALARM_DISARMED)
 
     async def async_alarm_arm_away(
-        self, code=None  # pylint:disable=unused-argument
+        self,
+        code=None,  # pylint:disable=unused-argument
     ) -> None:
         """Send arm away command."""
         await self._async_alarm_set(STATE_ALARM_ARMED_AWAY)

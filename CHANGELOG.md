@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.16.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.15.0...v4.16.0) (2026-05-01)
+
+
+### Features
+
+* **components:** update custom components via HACS ([11cc1c6](https://github.com/aronnebrivio/homeassistant-config/commit/11cc1c6febf9cd8cf995795784a41ef96b1a1c8b))
+* update HA to 2026.4.4 ([1b93ef4](https://github.com/aronnebrivio/homeassistant-config/commit/1b93ef444ad747874fd1ed988d3a3c0a3196e37b))
+
+
+### Bug Fixes
+
+* **devices:** specify livingroom thermometer precision ([82ad5b3](https://github.com/aronnebrivio/homeassistant-config/commit/82ad5b3387e968459f06991d150320be5c70964c))
+
 ## [4.15.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.14.0...v4.15.0) (2026-03-04)
 
 

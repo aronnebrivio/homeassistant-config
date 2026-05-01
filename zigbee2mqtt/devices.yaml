@@ -6,10 +6,6 @@
   friendly_name: Casse PC
 '0x001788010961e382':
   friendly_name: Piantana Sala luce piccola
-'0x00124b0024ccfc38':
-  friendly_name: Termometro Sala
-  temperature_precision: 2
-  humidity_precision: 2
 '0x0015bc001b0226ac':
   friendly_name: Frient Energy Monitor
 '0x84fd27fffe9c5b51':
@@ -44,5 +40,7 @@
   friendly_name: Termometro Camera
 '0x00124b00292bcb3c':
   friendly_name: Termometro Bagno
+'0x00124b0024ccfc38':
+  friendly_name: Termometro Sala
 '0x00124b0022ea5144':
   friendly_name: Button 1

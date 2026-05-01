@@ -99,12 +99,12 @@
       per cercare di limitarli.
   mode: single
 - id: '1651526561767'
-  alias: '[Boiler] Turn on at 5:00 AM on working days'
-  description: Turn on boiler at 5:00 AM on working days if it was off
-  trigger:
-  - platform: time
-    at: 05:00:00
-  condition:
+  alias: '[Boiler] Turn on at 6:00 AM on working days'
+  description: Turn on boiler at 6:00 AM on working days if it was off
+  triggers:
+  - at: 06:00:00
+    trigger: time
+  conditions:
   - condition: state
     entity_id: switch.water_heater
     state: 'off'
@@ -118,11 +118,11 @@
     - fri
     - sat
     after: 01:00:00
-  action:
-  - service: switch.turn_on
-    data: {}
+  actions:
+  - data: {}
     target:
       entity_id: switch.water_heater
+    action: switch.turn_on
   mode: single
 - id: '1652082753955'
   alias: '[Notify] HA Update'

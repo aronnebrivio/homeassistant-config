@@ -2,9 +2,10 @@ import json
 import re
 from datetime import datetime, timedelta
 
-import requests
 from bs4 import BeautifulSoup
+from curl_cffi import requests
 from waste_collection_schedule import Collection
+from waste_collection_schedule.exceptions import SourceArgumentNotFound
 
 TITLE = "Hume City Council"
 DESCRIPTION = "Source for hume.vic.gov.au Waste Collection Services"
@@ -28,6 +29,8 @@ HEADERS = {
     "user-agent": "Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0",
     "accept": "application/json, text/javascript, */*; q=0.01",
     "Referer": "https://www.hume.vic.gov.au/Residents/Waste/Know-my-bin-day",
+    "Sec-Fetch-Site": "same-origin",
+    "X-Requested-With": "XMLHttpRequest",
 }
 
 ICON_MAP = {
@@ -59,9 +62,10 @@ class Source:
         return dates
 
     def fetch(self):
+        session = requests.Session(impersonate="chrome124")
         locationId = 0
         # Retrieve suburbs
-        r = requests.get(
+        r = session.get(
             API_URLS["address_search"],
             params={"keywords": self.address},
             headers=HEADERS,
@@ -75,10 +79,10 @@ class Source:
             break
 
         if locationId == 0:
-            raise Exception(f"Could not find address: {self.address}")
+            raise SourceArgumentNotFound("address", self.address)
 
         # Retrieve the upcoming collections for our property
-        r = requests.get(
+        r = session.get(
             API_URLS["collection"],
             params={"geolocationid": locationId, "ocsvclang": "en-AU"},
             headers=HEADERS,

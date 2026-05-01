@@ -110,6 +110,10 @@ TEST_CASES = {
         "street_address": "Vårgårda Herrgård, VÅRGÅRDA",
         "url": "https://edpfuture.remondis.se/EDPFutureWeb/SimpleWastePickup",
     },
+    "Vafab Miljö - Test": {
+        "street_address": "Gasverksgatan 7, Västerås",
+        "service_provider": "vafabmiljo",
+    },
 }
 
 COUNTRY = "se"
@@ -232,7 +236,12 @@ SERVICE_PROVIDERS = {
         "title": "Herrljunga & Vårgårda kommun",
         "url": "https://www.remondisrecycling.se/hushallsavfall/herrljunga-vargarda/",
         "api_url": "https://edpfuture.remondis.se/EDPFutureWeb/SimpleWastePickup",
-    }
+    },
+    "vafabmiljo": {
+        "title": "Vafab Miljö",
+        "url": "https://vafabmiljo.se",
+        "api_url": "https://services.vafabmiljo.se/FutureWebVKFHus/SimpleWastePickup",
+    },
 }
 
 EXTRA_INFO = [

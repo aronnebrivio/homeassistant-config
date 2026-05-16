@@ -339,6 +339,12 @@
       "id": "manningham_vic_gov_au"
     },
     {
+      "title": "City of Melbourne",
+      "module": "melbourne_vic_gov_au",
+      "default_params": {},
+      "id": "melbourne_vic_gov_au"
+    },
+    {
       "title": "City of Melville",
       "module": "melvillecity_com_au",
       "default_params": {},
@@ -391,6 +397,12 @@
       "module": "onkaparingacity_com",
       "default_params": {},
       "id": "onkaparingacity_com"
+    },
+    {
+      "title": "City of Parramatta",
+      "module": "cityofparramatta_nsw_gov_au",
+      "default_params": {},
+      "id": "cityofparramatta_nsw_gov_au"
     },
     {
       "title": "City of Port Adelaide Enfield",
@@ -814,6 +826,12 @@
       "id": "mrsc_vic_gov_au"
     },
     {
+      "title": "Maitland City Council",
+      "module": "maitland_nsw_gov_au",
+      "default_params": {},
+      "id": "maitland_nsw_gov_au"
+    },
+    {
       "title": "Mansfield Shire Council",
       "module": "mansfield_vic_gov_au",
       "default_params": {},
@@ -902,6 +920,12 @@
       "id": "mosman_nsw_gov_au"
     },
     {
+      "title": "Mount Alexander Shire Council",
+      "module": "mount_alexander_vic_gov_au",
+      "default_params": {},
+      "id": "mount_alexander_vic_gov_au"
+    },
+    {
       "title": "Moyne Shire Council",
       "module": "moyne_vic_gov_au",
       "default_params": {},
@@ -950,6 +974,12 @@
       "module": "northernbeaches_nsw_gov_au",
       "default_params": {},
       "id": "northernbeaches_nsw_gov_au"
+    },
+    {
+      "title": "Orange City Council",
+      "module": "orange_nsw_gov_au",
+      "default_params": {},
+      "id": "orange_nsw_gov_au"
     },
     {
       "title": "Penrith City Council",
@@ -1064,6 +1094,18 @@
       "id": "shellharbourwaste_com_au"
     },
     {
+      "title": "Shire of Dardanup",
+      "module": "dardanup_wa_gov_au",
+      "default_params": {},
+      "id": "dardanup_wa_gov_au"
+    },
+    {
+      "title": "Shire of Harvey",
+      "module": "harvey_wa_gov_au",
+      "default_params": {},
+      "id": "harvey_wa_gov_au"
+    },
+    {
       "title": "Shire of Mundaring",
       "module": "mundaring_wa_gov_au",
       "default_params": {},
@@ -1122,10 +1164,22 @@
       "id": "stonnington_vic_gov_au"
     },
     {
+      "title": "Strathfield Council",
+      "module": "strathfield_nsw_gov_au",
+      "default_params": {},
+      "id": "strathfield_nsw_gov_au"
+    },
+    {
       "title": "Sunshine Coast Queensland (QLD)",
       "module": "sunshinecoast_qld_gov_au",
       "default_params": {},
       "id": "sunshinecoast_qld_gov_au"
+    },
+    {
+      "title": "Sutherland Shire Council",
+      "module": "sutherlandshire_nsw_gov_au",
+      "default_params": {},
+      "id": "sutherlandshire_nsw_gov_au"
     },
     {
       "title": "The Flinders Ranges Council",
@@ -1278,14 +1332,6 @@
       "module": "umweltverbaende_at",
       "default_params": {
         "district": "korneuburg"
-      },
-      "id": "umweltverbaende_at"
-    },
-    {
-      "title": "Abfallverband Schwechat",
-      "module": "umweltverbaende_at",
-      "default_params": {
-        "district": "schwechat"
       },
       "id": "umweltverbaende_at"
     },
@@ -2230,6 +2276,18 @@
         "district": "stpoeltenland"
       },
       "id": "umweltverbaende_at"
+    },
+    {
+      "title": "G\u00e4nserndorf",
+      "module": "gaenserndorf_city_at",
+      "default_params": {},
+      "id": "gaenserndorf_city_at"
+    },
+    {
+      "title": "G\u00e4nserndorf City / G\u00e4nserndorf App",
+      "module": "gaenserndorf_city_at",
+      "default_params": {},
+      "id": "gaenserndorf_city_at"
     },
     {
       "title": "G\u00fcssing",
@@ -4150,6 +4208,12 @@
       "id": "citiesapps_com"
     },
     {
+      "title": "Weinitzen",
+      "module": "citiesapps_com",
+      "default_params": {},
+      "id": "citiesapps_com"
+    },
+    {
       "title": "Weitersfeld",
       "module": "citiesapps_com",
       "default_params": {},
@@ -4397,6 +4461,15 @@
       "id": "recyclecoach_com"
     },
     {
+      "title": "Brampton (ON)",
+      "module": "recyclecoach_com",
+      "default_params": {
+        "district_id": "BRAMP",
+        "project_id": "3179"
+      },
+      "id": "recyclecoach_com"
+    },
+    {
       "title": "Brantford (ON)",
       "module": "recyclecoach_com",
       "default_params": {
@@ -4406,11 +4479,29 @@
       "id": "recyclecoach_com"
     },
     {
+      "title": "Burlington (ON)",
+      "module": "recyclecoach_com",
+      "default_params": {
+        "district_id": "BURL",
+        "project_id": "3169"
+      },
+      "id": "recyclecoach_com"
+    },
+    {
       "title": "Burnaby (BC)",
       "module": "recyclecoach_com",
       "default_params": {
         "city": "Burnaby",
         "state": "British Columbia"
+      },
+      "id": "recyclecoach_com"
+    },
+    {
+      "title": "Caledon (ON)",
+      "module": "recyclecoach_com",
+      "default_params": {
+        "district_id": "CALED",
+        "project_id": "3179"
       },
       "id": "recyclecoach_com"
     },
@@ -4450,6 +4541,14 @@
       "module": "barrie_ca",
       "default_params": {},
       "id": "barrie_ca"
+    },
+    {
+      "title": "City of Beaumont, AB",
+      "module": "ics",
+      "default_params": {
+        "split_at": "\\, (?:and )?|(?: and )"
+      },
+      "id": "ics_recollect"
     },
     {
       "title": "City of Edmonton, AB",
@@ -4634,12 +4733,30 @@
       "id": "ics_recollect"
     },
     {
+      "title": "Guelph (ON)",
+      "module": "recyclecoach_com",
+      "default_params": {
+        "district_id": "GUEL",
+        "project_id": "3194"
+      },
+      "id": "recyclecoach_com"
+    },
+    {
       "title": "Halifax, NS",
       "module": "ics",
       "default_params": {
         "split_at": "\\, (?:and )?|(?: and )"
       },
       "id": "ics_recollect"
+    },
+    {
+      "title": "Halton Hills (ON)",
+      "module": "recyclecoach_com",
+      "default_params": {
+        "district_id": "HALT",
+        "project_id": "3169"
+      },
+      "id": "recyclecoach_com"
     },
     {
       "title": "Halton Region, ON",
@@ -4675,6 +4792,14 @@
         "project_id": "583"
       },
       "id": "recyclecoach_com"
+    },
+    {
+      "title": "Laval (QC)",
+      "module": "ics",
+      "default_params": {
+        "regex": "Collecte\\s*-\\s(\\w+)"
+      },
+      "id": "ics_laval_ca"
     },
     {
       "title": "London (ON)",
@@ -4716,6 +4841,24 @@
       "id": "recyclecoach_com"
     },
     {
+      "title": "Milton (ON)",
+      "module": "recyclecoach_com",
+      "default_params": {
+        "district_id": "MILT",
+        "project_id": "3169"
+      },
+      "id": "recyclecoach_com"
+    },
+    {
+      "title": "Mississauga (ON)",
+      "module": "recyclecoach_com",
+      "default_params": {
+        "district_id": "MISS",
+        "project_id": "3179"
+      },
+      "id": "recyclecoach_com"
+    },
+    {
       "title": "Montreal (QC)",
       "module": "montreal_ca",
       "default_params": {},
@@ -4726,6 +4869,12 @@
       "module": "info_collectes_ca",
       "default_params": {},
       "id": "info_collectes_ca"
+    },
+    {
+      "title": "MRC Joliette (QC)",
+      "module": "mrcjoliette_qc_ca",
+      "default_params": {},
+      "id": "mrcjoliette_qc_ca"
     },
     {
       "title": "MRC Marguerite-D'Youville",
@@ -4762,6 +4911,15 @@
       "id": "recyclecoach_com"
     },
     {
+      "title": "Oakville (ON)",
+      "module": "recyclecoach_com",
+      "default_params": {
+        "district_id": "OAKV",
+        "project_id": "3169"
+      },
+      "id": "recyclecoach_com"
+    },
+    {
       "title": "Orillia (ON)",
       "module": "recyclecoach_com",
       "default_params": {
@@ -4772,6 +4930,14 @@
     },
     {
       "title": "Ottawa, Canada",
+      "module": "ics",
+      "default_params": {
+        "split_at": "\\, (?:and )?|(?: and )"
+      },
+      "id": "ics_recollect"
+    },
+    {
+      "title": "Oxford County, ON",
       "module": "ics",
       "default_params": {
         "split_at": "\\, (?:and )?|(?: and )"
@@ -4869,6 +5035,12 @@
       "id": "ics_recollect"
     },
     {
+      "title": "Sherbrooke (QC)",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_sherbrooke_ca"
+    },
+    {
       "title": "Spruce Grove, AB",
       "module": "ics",
       "default_params": {
@@ -4899,6 +5071,15 @@
       "id": "toronto_ca"
     },
     {
+      "title": "Toronto (ON) - Circular Materials",
+      "module": "recyclecoach_com",
+      "default_params": {
+        "district_id": "TORONTO",
+        "project_id": "CIRCMATONT"
+      },
+      "id": "recyclecoach_com"
+    },
+    {
       "title": "Township of Langley (BC)",
       "module": "recyclecoach_com",
       "default_params": {
@@ -4921,6 +5102,18 @@
         "state": "Ontario"
       },
       "id": "recyclecoach_com"
+    },
+    {
+      "title": "Ville de Saguenay",
+      "module": "saguenay_ca",
+      "default_params": {},
+      "id": "saguenay_ca"
+    },
+    {
+      "title": "Ville de Saint-Basile-le-Grand",
+      "module": "villesblg_ca",
+      "default_params": {},
+      "id": "villesblg_ca"
     },
     {
       "title": "Waste Wise APPS",
@@ -5169,12 +5362,68 @@
       "id": "publidata_fr"
     },
     {
+      "title": "Ayguemorte-les-Graves",
+      "module": "cc-montesquieu_fr",
+      "default_params": {
+        "commune": "Ayguemorte-les-Graves"
+      },
+      "id": "cc-montesquieu_fr"
+    },
+    {
+      "title": "Baldersheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Baldersheim"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Bantzenheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Bantzenheim"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Battenheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Battenheim"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Beautiran",
+      "module": "cc-montesquieu_fr",
+      "default_params": {
+        "commune": "Beautiran"
+      },
+      "id": "cc-montesquieu_fr"
+    },
+    {
+      "title": "Berrwiller",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Berrwiller"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
       "title": "Blanquefort",
       "module": "opendata_bordeauxmetropole_fr",
       "default_params": {
         "city": "Blanquefort"
       },
       "id": "opendata_bordeauxmetropole_fr"
+    },
+    {
+      "title": "Bollwiller",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Bollwiller"
+      },
+      "id": "mulhouse_alsace_fr"
     },
     {
       "title": "Bordeaux",
@@ -5191,12 +5440,28 @@
       "id": "opendata_bordeauxmetropole_fr"
     },
     {
+      "title": "Bruebach",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Bruebach"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
       "title": "Bruges",
       "module": "opendata_bordeauxmetropole_fr",
       "default_params": {
         "city": "Bruges"
       },
       "id": "opendata_bordeauxmetropole_fr"
+    },
+    {
+      "title": "Brunstatt-Didenheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Brunstatt-Didenheim"
+      },
+      "id": "mulhouse_alsace_fr"
     },
     {
       "title": "B\u00e8gles",
@@ -5215,6 +5480,38 @@
       "id": "publidata_fr"
     },
     {
+      "title": "Cabanac-et-Villagrains",
+      "module": "cc-montesquieu_fr",
+      "default_params": {
+        "commune": "Cabanac-et-Villagrains"
+      },
+      "id": "cc-montesquieu_fr"
+    },
+    {
+      "title": "Cadaujac",
+      "module": "cc-montesquieu_fr",
+      "default_params": {
+        "commune": "Cadaujac"
+      },
+      "id": "cc-montesquieu_fr"
+    },
+    {
+      "title": "Castres-Gironde",
+      "module": "cc-montesquieu_fr",
+      "default_params": {
+        "commune": "Castres-Gironde"
+      },
+      "id": "cc-montesquieu_fr"
+    },
+    {
+      "title": "Chalamp\u00e9",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Chalamp\u00e9"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
       "title": "Ch\u00e2teauroux M\u00e9tropole",
       "module": "publidata_fr",
       "default_params": {
@@ -5227,6 +5524,14 @@
       "module": "cc-montesquieu_fr",
       "default_params": {},
       "id": "cc-montesquieu_fr"
+    },
+    {
+      "title": "Dietwiller",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Dietwiller"
+      },
+      "id": "mulhouse_alsace_fr"
     },
     {
       "title": "Dreux Agglom\u00e9ration",
@@ -5245,12 +5550,44 @@
       "id": "publidata_fr"
     },
     {
+      "title": "Eschentzwiller",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Eschentzwiller"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
       "title": "Eysines",
       "module": "opendata_bordeauxmetropole_fr",
       "default_params": {
         "city": "Eysines"
       },
       "id": "opendata_bordeauxmetropole_fr"
+    },
+    {
+      "title": "Feldkirch",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Feldkirch"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Flaxlanden",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Flaxlanden"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Galfingue",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Galfingue"
+      },
+      "id": "mulhouse_alsace_fr"
     },
     {
       "title": "Gradignan",
@@ -5291,6 +5628,62 @@
       "id": "publidata_fr"
     },
     {
+      "title": "Habsheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Habsheim"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Heimsbrunn",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Heimsbrunn"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Hombourg",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Hombourg"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Illzach",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Illzach"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Isle Saint-Georges",
+      "module": "cc-montesquieu_fr",
+      "default_params": {
+        "commune": "Isle Saint-Georges"
+      },
+      "id": "cc-montesquieu_fr"
+    },
+    {
+      "title": "Kingersheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Kingersheim"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "La Br\u00e8de",
+      "module": "cc-montesquieu_fr",
+      "default_params": {
+        "commune": "La Br\u00e8de"
+      },
+      "id": "cc-montesquieu_fr"
+    },
+    {
       "title": "Le Bouscat",
       "module": "opendata_bordeauxmetropole_fr",
       "default_params": {
@@ -5307,12 +5700,36 @@
       "id": "opendata_bordeauxmetropole_fr"
     },
     {
+      "title": "Le Havre Seine M\u00e9tropole",
+      "module": "publidata_fr",
+      "default_params": {
+        "instance_id": 1408
+      },
+      "id": "publidata_fr"
+    },
+    {
       "title": "Le Taillan-M\u00e9doc",
       "module": "opendata_bordeauxmetropole_fr",
       "default_params": {
         "city": "Le Taillan-M\u00e9doc"
       },
       "id": "opendata_bordeauxmetropole_fr"
+    },
+    {
+      "title": "Lutterbach",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Lutterbach"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "L\u00e9ognan",
+      "module": "cc-montesquieu_fr",
+      "default_params": {
+        "commune": "L\u00e9ognan"
+      },
+      "id": "cc-montesquieu_fr"
     },
     {
       "title": "Mairie de Mamirolle",
@@ -5327,6 +5744,37 @@
         "city": "Martignas-sur-Jalle"
       },
       "id": "opendata_bordeauxmetropole_fr"
+    },
+    {
+      "title": "Martillac",
+      "module": "cc-montesquieu_fr",
+      "default_params": {
+        "commune": "Martillac"
+      },
+      "id": "cc-montesquieu_fr"
+    },
+    {
+      "title": "Morschwiller-le-Bas",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Morschwiller-le-Bas"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Mulhouse",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Mulhouse",
+        "quartier": "Centre Ville"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Mulhouse Alsace Agglom\u00e9ration (m2A)",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {},
+      "id": "mulhouse_alsace_fr"
     },
     {
       "title": "M\u00e9motri - Agglom\u00e9ration Pau B\u00e9arn Pyr\u00e9n\u00e9es",
@@ -5357,12 +5805,28 @@
       "id": "publidata_fr"
     },
     {
+      "title": "Niffer",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Niffer"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
       "title": "Orl\u00e9ans M\u00e9tropole",
       "module": "publidata_fr",
       "default_params": {
         "instance_id": 100
       },
       "id": "publidata_fr"
+    },
+    {
+      "title": "Ottmarsheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Ottmarsheim"
+      },
+      "id": "mulhouse_alsace_fr"
     },
     {
       "title": "Parempuyre",
@@ -5381,10 +5845,80 @@
       "id": "opendata_bordeauxmetropole_fr"
     },
     {
+      "title": "Petit-Landau",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Petit-Landau"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Pfastatt",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Pfastatt"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
       "title": "Publidata generic source",
       "module": "publidata_fr",
       "default_params": {},
       "id": "publidata_fr"
+    },
+    {
+      "title": "Pulversheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Pulversheim"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Reiningue",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Reiningue"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Richwiller",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Richwiller"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Riedisheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Riedisheim"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Rixheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Rixheim"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Rueil-Malmaison",
+      "module": "rueil_malmaison_fr",
+      "default_params": {},
+      "id": "rueil_malmaison_fr"
+    },
+    {
+      "title": "Ruelisheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Ruelisheim"
+      },
+      "id": "mulhouse_alsace_fr"
     },
     {
       "title": "Saint Quentin en Yvelines",
@@ -5411,12 +5945,36 @@
       "id": "opendata_bordeauxmetropole_fr"
     },
     {
+      "title": "Saint-Morillon",
+      "module": "cc-montesquieu_fr",
+      "default_params": {
+        "commune": "Saint-Morillon"
+      },
+      "id": "cc-montesquieu_fr"
+    },
+    {
+      "title": "Saint-M\u00e9dard-d'Eyrans",
+      "module": "cc-montesquieu_fr",
+      "default_params": {
+        "commune": "Saint-M\u00e9dard-d'Eyrans"
+      },
+      "id": "cc-montesquieu_fr"
+    },
+    {
       "title": "Saint-M\u00e9dard-en-Jalles",
       "module": "opendata_bordeauxmetropole_fr",
       "default_params": {
         "city": "Saint-M\u00e9dard-en-Jalles"
       },
       "id": "opendata_bordeauxmetropole_fr"
+    },
+    {
+      "title": "Saint-Selve",
+      "module": "cc-montesquieu_fr",
+      "default_params": {
+        "commune": "Saint-Selve"
+      },
+      "id": "cc-montesquieu_fr"
     },
     {
       "title": "Saint-Vincent-de-Paul",
@@ -5427,12 +5985,34 @@
       "id": "opendata_bordeauxmetropole_fr"
     },
     {
+      "title": "Saucats",
+      "module": "cc-montesquieu_fr",
+      "default_params": {
+        "commune": "Saucats"
+      },
+      "id": "cc-montesquieu_fr"
+    },
+    {
       "title": "Saumur Val de Loire",
       "module": "publidata_fr",
       "default_params": {
         "instance_id": 159
       },
       "id": "publidata_fr"
+    },
+    {
+      "title": "Sausheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Sausheim"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "SICTOM de Lons-le-Saunier",
+      "module": "sictom_lons_le_saunier_fr",
+      "default_params": {},
+      "id": "sictom_lons_le_saunier_fr"
     },
     {
       "title": "SIVOM Rive Droite",
@@ -5449,6 +6029,22 @@
       "id": "sivom_rivedroite_fr"
     },
     {
+      "title": "Staffelfelden",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Staffelfelden"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Steinbrunn-le-Bas",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Steinbrunn-le-Bas"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
       "title": "Talence",
       "module": "opendata_bordeauxmetropole_fr",
       "default_params": {
@@ -5463,6 +6059,14 @@
         "instance_id": 65
       },
       "id": "publidata_fr"
+    },
+    {
+      "title": "Ungersheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Ungersheim"
+      },
+      "id": "mulhouse_alsace_fr"
     },
     {
       "title": "Valcobreizh",
@@ -5503,6 +6107,38 @@
         "city": "Villenave-d'Ornon"
       },
       "id": "opendata_bordeauxmetropole_fr"
+    },
+    {
+      "title": "Wittelsheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Wittelsheim"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Wittenheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Wittenheim"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Zillisheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Zillisheim"
+      },
+      "id": "mulhouse_alsace_fr"
+    },
+    {
+      "title": "Zimmersheim",
+      "module": "mulhouse_alsace_fr",
+      "default_params": {
+        "commune": "Zimmersheim"
+      },
+      "id": "mulhouse_alsace_fr"
     }
   ],
   "Generic": [
@@ -7454,10 +8090,12 @@
       "id": "ics_gelbersack_stuttgart_de"
     },
     {
-      "title": "Gelnhausen",
-      "module": "ics",
-      "default_params": {},
-      "id": "ics_mein_abfallkalender_online"
+      "title": "Gelnhausen (MyMuell App)",
+      "module": "jumomind_de",
+      "default_params": {
+        "service_id": "mymuell"
+      },
+      "id": "jumomind_de"
     },
     {
       "title": "Gelsendienste Gelsenkirchen",
@@ -7909,6 +8547,12 @@
         "service_id": "mymuell"
       },
       "id": "jumomind_de"
+    },
+    {
+      "title": "Karben",
+      "module": "ics",
+      "default_params": {},
+      "id": "ics_mein_abfallkalender_online"
     },
     {
       "title": "KECL Kommunalentsorgung Chemnitzer Land",
@@ -13636,6 +14280,12 @@
       "id": "ecoapp_ecoservice_lt"
     },
     {
+      "title": "Ekonovus",
+      "module": "ekonovus_lt",
+      "default_params": {},
+      "id": "ekonovus_lt"
+    },
+    {
       "title": "Kauno \u0161vara",
       "module": "grafikai_svara_lt",
       "default_params": {},
@@ -14234,6 +14884,12 @@
       "module": "fosenrenovasjon_no",
       "default_params": {},
       "id": "fosenrenovasjon_no"
+    },
+    {
+      "title": "Fredrikstad kommune",
+      "module": "fredrikstad_no",
+      "default_params": {},
+      "id": "fredrikstad_no"
     },
     {
       "title": "Innherred Renovasjon",
@@ -15144,6 +15800,12 @@
       "id": "sims_pl"
     },
     {
+      "title": "KOM-LUB (Lubo\u0144, PL)",
+      "module": "kom_lub_com_pl",
+      "default_params": {},
+      "id": "kom_lub_com_pl"
+    },
+    {
       "title": "KOMUS",
       "module": "sims_pl",
       "default_params": {
@@ -15336,6 +15998,14 @@
       "id": "lodz_pl"
     }
   ],
+  "Portugal": [
+    {
+      "title": "C\u00e2mara Municipal de Lisboa",
+      "module": "cm_lisboa_pt",
+      "default_params": {},
+      "id": "cm_lisboa_pt"
+    }
+  ],
   "Slovakia": [
     {
       "title": "fcc Environment",
@@ -15492,6 +16162,12 @@
       "module": "hudiksvall_se",
       "default_params": {},
       "id": "hudiksvall_se"
+    },
+    {
+      "title": "H\u00e4ssleholm Milj\u00f6",
+      "module": "hassleholm_miljo_se",
+      "default_params": {},
+      "id": "hassleholm_miljo_se"
     },
     {
       "title": "J\u00f6nk\u00f6ping - June Avfall & Milj\u00f6",
@@ -15790,6 +16466,12 @@
       "module": "vivab_se",
       "default_params": {},
       "id": "vivab_se"
+    },
+    {
+      "title": "VMAB",
+      "module": "vmab_se",
+      "default_params": {},
+      "id": "vmab_se"
     },
     {
       "title": "V\u00e4nersborg",
@@ -16543,6 +17225,14 @@
       "id": "basingstoke_gov_uk"
     },
     {
+      "title": "Bassetlaw District Council",
+      "module": "ics",
+      "default_params": {
+        "split_at": "\\, (?:and )?|(?: and )"
+      },
+      "id": "ics_recollect"
+    },
+    {
       "title": "Bath & North East Somerset Council",
       "module": "bathnes_gov_uk",
       "default_params": {},
@@ -16567,7 +17257,7 @@
       "id": "belfast_city_gov_uk"
     },
     {
-      "title": "Binzone",
+      "title": "BinDay (South & Vale)",
       "module": "binzone_uk",
       "default_params": {},
       "id": "binzone_uk"
@@ -17359,6 +18049,12 @@
       "id": "camden_gov_uk"
     },
     {
+      "title": "London Borough of Hackney",
+      "module": "hackney_gov_uk",
+      "default_params": {},
+      "id": "hackney_gov_uk"
+    },
+    {
       "title": "London Borough of Harrow",
       "module": "harrow_gov_uk",
       "default_params": {},
@@ -17723,6 +18419,12 @@
       "id": "pembrokeshire_gov_uk"
     },
     {
+      "title": "Pendle Borough Council",
+      "module": "pendle_gov_uk",
+      "default_params": {},
+      "id": "pendle_gov_uk"
+    },
+    {
       "title": "Peterborough City Council",
       "module": "peterborough_gov_uk",
       "default_params": {},
@@ -17913,6 +18615,12 @@
         "municipality": "SOMERSET WEST AND TAUNTON"
       },
       "id": "iapp_itouchvision_com"
+    },
+    {
+      "title": "South Ayrshire Council",
+      "module": "south_ayrshire_gov_uk",
+      "default_params": {},
+      "id": "south_ayrshire_gov_uk"
     },
     {
       "title": "South Cambridgeshire District Council",
@@ -18424,6 +19132,12 @@
         "state": "New Mexico"
       },
       "id": "recyclecoach_com"
+    },
+    {
+      "title": "Baton Rouge, LA",
+      "module": "baton_rouge_la_us",
+      "default_params": {},
+      "id": "baton_rouge_la_us"
     },
     {
       "title": "City of Austin, TX",

@@ -70,13 +70,12 @@ class Source:
     def __init__(
         self,
         city: str,
-        street: str,
-        number: str,
+        street: str | None = None,
+        number: str | None = None,
     ):
         self._city = city
-        self._street = street
-        self._number = str(number).strip()
-
+        self._street = street.strip() if isinstance(street, str) else None
+        self._number = number.strip() if isinstance(number, str) else None
         self._session = requests.Session()
         self._session.headers.update(
             {
@@ -119,7 +118,9 @@ class Source:
         response.raise_for_status()
         return response.json()
 
-    def _resolve_street_id(self, locality_id: str) -> str:
+    def _resolve_street_id(self, locality_id: str) -> str | None:
+        if not self._street:
+            return None
         streets = self._get_streets(locality_id)
         target = _normalize(self._street)
 
@@ -139,7 +140,9 @@ class Source:
             suggestions=suggestions,
         )
 
-    def _validate_number(self, locality_id: str, street_id: str) -> None:
+    def _validate_number(self, locality_id: str, street_id: str | None) -> None:
+        if not street_id or not self._number:
+            return
         response = self._session.get(
             f"{API_URL}/territory/localities/{locality_id}/addresses/{street_id}",
             timeout=30,
@@ -172,8 +175,8 @@ class Source:
             "queries": [
                 {
                     "localityId": locality_id,
-                    "streetId": street_id,
-                    "number": self._number,
+                    "streetId": street_id or "",
+                    "number": self._number or "",
                     "propertyType": "",
                     "buildingType": "",
                 }

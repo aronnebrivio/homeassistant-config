@@ -17,7 +17,7 @@ from dateutil.rrule import (
     rrule,
     rruleset,
 )
-from waste_collection_schedule import Collection
+from waste_collection_schedule import Collection, Icons
 from waste_collection_schedule.exceptions import SourceArgumentException
 
 TITLE = "Publidata generic source"
@@ -114,13 +114,13 @@ TEST_CASES = {
 }
 
 ICON_MAP = {
-    "omr": "mdi:trash-can",
-    "emb": "mdi:recycle",
-    "enc": "mdi:truck-remove",
-    "dv": "mdi:leaf",
-    "verre": "mdi:bottle-wine",
-    "bio": "mdi:food-apple",
-    "sapin": "mdi:pine-tree",
+    "omr": Icons.GENERAL_WASTE,
+    "emb": Icons.RECYCLING,
+    "enc": Icons.BULKY,
+    "dv": Icons.ORGANIC,
+    "verre": Icons.GLASS,
+    "bio": Icons.ORGANIC,
+    "sapin": Icons.CHRISTMAS_TREE,
 }
 
 LABEL_MAP = {
@@ -276,6 +276,11 @@ EXTRA_INFO = [
         "title": "Le Havre Seine Métropole",
         "url": "https://tripratik.lehavreseinemetropole.fr/",
         "default_params": {"instance_id": 1408},
+    },
+    {
+        "title": "Communauté de Communes Pévèle Carembault",
+        "url": "https://www.pevelecarembault.fr/",
+        "default_params": {"instance_id": 1141},
     },
 ]
 

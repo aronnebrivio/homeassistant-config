@@ -3,14 +3,14 @@ import re
 
 import requests
 from bs4 import BeautifulSoup
-from waste_collection_schedule import Collection  # type: ignore[attr-defined]
+from waste_collection_schedule import Collection, Icons  # type: ignore[attr-defined]
 
 TITLE = "South Ribble Borough Council"
 DESCRIPTION = (
     "Source for southribble.gov.uk services for South Ribble Borough Council, UK."
 )
 URL = "https://www.southribble.gov.uk"
-COUNTRY = "gb"
+COUNTRY = "uk"
 TEST_CASES = {
     "South Ribble Borough Council, Civic Centre, W Paddock, Leyland PR25 1DH": {
         "postcode": "PR25 1DH",
@@ -19,10 +19,10 @@ TEST_CASES = {
 }
 
 ICON_MAP = {
-    "Refuse": "mdi:trash-can",
-    "Recycling": "mdi:recycle",
-    "Food Waste": "mdi:food-apple",
-    "Garden Waste": "mdi:leaf",
+    "Refuse": Icons.GENERAL_WASTE,
+    "Recycling": Icons.RECYCLING,
+    "Food Waste": Icons.BIO_KITCHEN,
+    "Garden Waste": Icons.GARDEN,
 }
 
 HOW_TO_GET_ARGUMENTS_DESCRIPTION = {

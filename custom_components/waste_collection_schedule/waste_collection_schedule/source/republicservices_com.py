@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 
 import requests
-from waste_collection_schedule import Collection  # type: ignore[attr-defined]
+from waste_collection_schedule import Collection, Icons  # type: ignore[attr-defined]
 from waste_collection_schedule.exceptions import SourceArgumentNotFound
 
 TITLE = "Republic Services"
@@ -86,7 +86,7 @@ class Source:
                 "Contact Republic Services directly for your collection schedule.",
             )
 
-        service = ""
+        services: set = set()
         schedule = []
         today = date.today()
         end_date = today + timedelta(days=182)
@@ -97,10 +97,11 @@ class Source:
                     period_length = item.get("numberOfPickupsPeriodLength", 1)
                     period_unit = item.get("numberOfPickupsPeriodUnit", "")
                     service = item["containerCategory"]
+                    services.add(service)
 
                     if (
                         period_unit
-                        and period_unit.lower() == "week"
+                        and period_unit.lower() in ("w", "week")
                         and item.get("nextServiceDays")
                     ):
                         # Project recurring weekly/fortnightly schedule from seed date
@@ -137,10 +138,10 @@ class Source:
             params={"latitude": latitude, "longitude": longitude},
         )
         r2_data = r2.json().get("data", [])
-        day_offset = 0
         holidays = []
         for item in r2_data:
-            if item and item["serviceImpacted"] is True and item["LOB"] == service:
+            if item and item["serviceImpacted"] is True and item["LOB"] in services:
+                day_offset = 0
                 for delay in DELAYS:
                     if delay in item["description"]:
                         day_offset = DELAYS[delay]
@@ -179,14 +180,14 @@ class Source:
         if self._method == 1:
             for item in schedule:
                 if "RECYCLE" in item["waste_description"]:
-                    icon = "mdi:recycle"
+                    icon = Icons.RECYCLING
                 elif (
                     "YARD" in item["waste_description"]
                     or "ORGANICS" in item["waste_description"]
                 ):
-                    icon = "mdi:leaf"
+                    icon = Icons.ORGANIC
                 else:
-                    icon = "mdi:trash-can"
+                    icon = Icons.GENERAL_WASTE
                 entries.append(
                     Collection(
                         date=item["date"],
@@ -200,16 +201,16 @@ class Source:
                     "YARD" in item["waste_description"]
                     or "ORGANICS" in item["waste_description"]
                 ):
-                    icon = "mdi:leaf"
+                    icon = Icons.ORGANIC
                     waste_type = "Yard Waste"
                 elif "BULK SERVICE" in item["waste_description"]:
-                    icon = "mdi:leaf"
+                    icon = Icons.BULKY
                     waste_type = "Bulk Waste"
                 elif "RECYCLE" in item["waste_description"]:
-                    icon = "mdi:recycle"
+                    icon = Icons.RECYCLING
                     waste_type = "Recycle"
                 else:
-                    icon = "mdi:trash-can"
+                    icon = Icons.GENERAL_WASTE
                     waste_type = "Solid Waste"
 
                 entries.append(

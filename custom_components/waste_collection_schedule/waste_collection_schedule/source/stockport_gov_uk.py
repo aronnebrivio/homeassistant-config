@@ -4,7 +4,7 @@ from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
-from waste_collection_schedule import Collection  # type: ignore[attr-defined]
+from waste_collection_schedule import Collection, Icons  # type: ignore[attr-defined]
 
 TITLE = "Stockport Council"
 DESCRIPTION = "Source for bin collection services for Stockport Council, UK.\n Refactored with thanks from the Manchester equivalent"
@@ -14,10 +14,10 @@ TEST_CASES = {
 }
 
 ICON_MAP = {
-    "Black bin": "mdi:trash-can",
-    "Blue bin": "mdi:recycle",
-    "Brown bin": "mdi:glass-fragile",
-    "Green bin": "mdi:leaf",
+    "Black bin": Icons.GENERAL_WASTE,
+    "Blue bin": Icons.RECYCLING,
+    "Brown bin": Icons.BIO_KITCHEN,
+    "Green bin": Icons.ORGANIC,
 }
 
 # Regex pattern to match dates like "Thursday, 14 May 2026" or "14 May 2026"
@@ -31,8 +31,18 @@ class Source:
         self._uprn = uprn
 
     def fetch(self):
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/137.0 Safari/537.36"
+            )
+        }
+
         r = requests.get(
-            f"https://myaccount.stockport.gov.uk/bin-collections/show/{self._uprn}"
+            f"https://myaccount.stockport.gov.uk/bin-collections/show/{self._uprn}",
+            headers=headers,
+            timeout=30,
         )
 
         soup = BeautifulSoup(r.text, features="html.parser")

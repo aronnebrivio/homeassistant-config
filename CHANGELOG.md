@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.18.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.17.0...v4.18.0) (2026-06-19)
+
+
+### Features
+
+* **components:** update custom components via HACS ([ee0125b](https://github.com/aronnebrivio/homeassistant-config/commit/ee0125b9eb08a6949892eb6bdecf24c1d6c7ca9a))
+* upgrade HA to 2026.6.3 ([fd6fde1](https://github.com/aronnebrivio/homeassistant-config/commit/fd6fde1202595ae68159018a67b827a0d575aca7))
+
+
+### Bug Fixes
+
+* **devices:** relink bathroom window sensor ([a31288e](https://github.com/aronnebrivio/homeassistant-config/commit/a31288e929d5c3a29a27ccbdd86c498d89d7d5d6))
+
 ## [4.17.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.16.0...v4.17.0) (2026-05-16)
 
 

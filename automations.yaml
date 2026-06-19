@@ -253,7 +253,7 @@
     domain: binary_sensor
   - condition: numeric_state
     entity_id: sensor.termometro_camera_temperature
-    above: 26.2
+    above: 25.7
   - condition: state
     entity_id: climate.condizionatore_camera
     state: 'off'
@@ -284,7 +284,7 @@
     - sat
   - condition: numeric_state
     entity_id: sensor.termometro_camera_temperature
-    below: 25.2
+    below: 24.7
   - condition: state
     entity_id: climate.condizionatore_camera
     state: cool

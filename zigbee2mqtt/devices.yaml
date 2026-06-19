@@ -32,8 +32,6 @@
   friendly_name: Soil Sensor 1
 '0x00124b0024cce16f':
   friendly_name: Termometro Ingresso
-'0x00158d008bbeab03':
-  friendly_name: Bathroom Window Sensor
 '0x00158d008bbeace0':
   friendly_name: Kitchen Door Sensor
 '0x00158d008bc29284':
@@ -44,3 +42,5 @@
   friendly_name: Termometro Sala
 '0x00124b0022ea5144':
   friendly_name: Button 1
+'0x00158d008bbeab03':
+  friendly_name: Bathroom Window Sensor

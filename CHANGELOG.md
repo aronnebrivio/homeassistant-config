@@ -1,5 +1,21 @@
 # Changelog
 
+## [4.19.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.18.0...v4.19.0) (2026-08-18)
+
+
+### Features
+
+* **automations:** review energy automations to leverage water heater and AC statuses to lower consumption ([4a9764f](https://github.com/aronnebrivio/homeassistant-config/commit/4a9764fe44fe3325a9b4400c7a4f5090b73cc303))
+* **climate:** review SmartIR commands for AirNova AC to always use min temp for cooling and max temp for heating ([ebc941b](https://github.com/aronnebrivio/homeassistant-config/commit/ebc941b806583507795887f724587305a365b583))
+* **components:** update custom components via HACS ([90970d8](https://github.com/aronnebrivio/homeassistant-config/commit/90970d8d7df821668da811c5cb64bcba0aaf97a7))
+* upgrade HA to 2026.8.3 ([2bffc1f](https://github.com/aronnebrivio/homeassistant-config/commit/2bffc1f6f14e79e58206a86761bfa18e572a6af5))
+
+
+### Bug Fixes
+
+* **configuration:** movedeprecated yaml http configuration to UI ([5f50edf](https://github.com/aronnebrivio/homeassistant-config/commit/5f50edfe659dc949240aaf236514ce14493ec653))
+* **devices:** readd termometro bagno ([fc1f24b](https://github.com/aronnebrivio/homeassistant-config/commit/fc1f24bd083f9724e4c6a8344a6b15f590faae1f))
+
 ## [4.18.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.17.0...v4.18.0) (2026-06-19)
 
 

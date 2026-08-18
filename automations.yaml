@@ -1,25 +1,35 @@
 - id: '1644331745972'
-  alias: '[Notify][Energy] High Consumption'
+  alias: '[Notify][Energy] High Consumption for 30s'
   description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.frient_energy_monitor_power
+  triggers:
+  - entity_id:
+    - sensor.frient_energy_monitor_power
     for:
       hours: 0
       minutes: 0
-      seconds: 20
+      seconds: 30
     above: 4600
-  condition:
+    trigger: numeric_state
+  conditions:
   - condition: state
     entity_id: switch.water_heater
     state: 'off'
-  action:
+  - condition: climate.is_off
+    target:
+      entity_id:
+      - climate.condizionatore_camera
+      - climate.condizionatore_cucina
+      - climate.condizionatore_sala
+    options:
+      behavior: all
+      for: 00:00:00
+  actions:
   - device_id: cf132f484fa5f5c742094b43402043b3
     domain: mobile_app
     type: notify
     title: ⚡️ Sto consumando troppo!
-    message: I consumi hanno superato i 4.6kW per 20 secondi e il boiler è già spento,
-      se non spegni qualcosa salterà la corrente!
+    message: I consumi hanno superato i 4.6kW per 20 secondi e il boiler e il condizionatore
+      sono già spenti, se non spegni qualcosa salterà la corrente!
   mode: single
 - id: '1644433874893'
   alias: '[Notify][Proxmox] High Memory Usage'
@@ -78,19 +88,19 @@
   alias: '[Energy] High consumption -> turn water heater off'
   description: If energy consumption go below a threshold, turn the boiler off and
     send a notification
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.frient_energy_monitor_power
+  triggers:
+  - entity_id: sensor.frient_energy_monitor_power
     above: 4600
-  condition:
+    trigger: numeric_state
+  conditions:
   - condition: state
     entity_id: switch.water_heater
     state: 'on'
-  action:
-  - service: switch.turn_off
-    data: {}
+  actions:
+  - data: {}
     target:
       entity_id: switch.water_heater
+    action: switch.turn_off
   - device_id: cf132f484fa5f5c742094b43402043b3
     domain: mobile_app
     type: notify
@@ -554,4 +564,46 @@
     type: notify
     title: "\U0001F527 Wall-E si è bloccato"
     message: 'Wall-E é in errore: {{ trigger.to_state.attributes.description }}'
+  mode: single
+- id: '1786701577509'
+  alias: '[Energy] High consumption for 15s and boiler off -> turn AC off'
+  description: If energy consumption go below a threshold for 15 seconds and the boiler
+    if off, turn the AC off and send a notification
+  triggers:
+  - entity_id:
+    - sensor.frient_energy_monitor_power
+    above: 4600
+    trigger: numeric_state
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 15
+  conditions:
+  - condition: state
+    entity_id: switch.water_heater
+    state:
+    - 'off'
+  - condition: climate.is_on
+    target:
+      entity_id:
+      - climate.condizionatore_camera
+      - climate.condizionatore_sala
+      - climate.condizionatore_cucina
+    options:
+      behavior: any
+      for: 00:00:00
+  actions:
+  - action: climate.turn_off
+    target:
+      entity_id:
+      - climate.condizionatore_camera
+      - climate.condizionatore_cucina
+      - climate.condizionatore_sala
+    data: {}
+  - device_id: cf132f484fa5f5c742094b43402043b3
+    domain: mobile_app
+    type: notify
+    title: "\U000168D8 Ho spento il condizionatore per limitare i consumi"
+    message: I consumi istantanei sono ancora sopra i 4.6kW, il boiler è già spento
+      cosí ho spento il condizionatore per cercare di limitarli.
   mode: single

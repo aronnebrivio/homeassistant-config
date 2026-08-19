@@ -1,5 +1,6 @@
 - platform: smartir
   name: TV
+  unique_id: 8c0959c8-a623-4e98-baba-211ab8dc835d
   device_code: 1020
   controller_data: remote.broadlink_sala
   power_sensor: binary_sensor.firestick_state

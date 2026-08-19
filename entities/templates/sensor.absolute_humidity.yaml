@@ -1,6 +1,7 @@
 sensor:
   # External absolute humidity
   - name: "External absolute humidity"
+    unique_id: 0a591b4e-927f-40ee-bacb-a2955d4e0bd2
     state: >-
       {% from 'tools.jinja' import absolute_humidity %}
       {{ absolute_humidity('sensor.weather_temperature', 'sensor.weather_humidity') }}

@@ -1,5 +1,6 @@
 # Late Morning
 - platform: tod
   name: Tarda mattinata
+  unique_id: 3a175e68-e147-4be6-9776-953f695ce237
   after: "11:00"
   before: "13:00"

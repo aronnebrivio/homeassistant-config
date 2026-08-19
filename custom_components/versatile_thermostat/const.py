@@ -1,0 +1,712 @@
+# pylint: disable=line-too-long, disable=unused-import
+"""Constants for the Versatile Thermostat integration."""
+
+import logging
+import math
+from typing import Literal
+
+from datetime import datetime
+
+from enum import Enum
+from homeassistant.const import STATE_UNKNOWN, STATE_UNAVAILABLE
+from homeassistant.core import HomeAssistant
+from homeassistant.const import CONF_NAME, Platform
+
+from homeassistant.components.climate.const import ClimateEntityFeature  # pylint: disable=unused-import
+from homeassistant.exceptions import HomeAssistantError
+from homeassistant.util import dt as dt_util
+
+
+from vtherm_api.const import DOMAIN, VTHERM_API_NAME, DEVICE_MANUFACTURER, DEVICE_MODEL, get_tz, NowClass, EventType
+from vtherm_api.log_collector import get_vtherm_logger
+
+PROPORTIONAL_FUNCTION_TPI = "tpi"
+
+from .vtherm_preset import VThermPreset, VThermPresetWithAC, VThermPresetWithAway, VThermPresetWithACAway, PRESET_TEMP_SUFFIX, PRESET_AWAY_SUFFIX  # pylint: disable=unused-import
+from .vtherm_hvac_mode import (
+    VThermHvacMode,
+    VThermHvacMode_COOL,
+    VThermHvacMode_HEAT,
+    VThermHvacMode_DRY,
+    VThermHvacMode_OFF,
+    VThermHvacMode_HEAT_COOL,
+    VThermHvacMode_SLEEP,
+    VThermHvacMode_AUTO,
+    VThermHvacMode_FAN_ONLY,
+    to_ha_hvac_mode,
+    from_ha_hvac_mode,
+)  # pylint: disable=unused-import
+from .vtherm_state import VThermState  # pylint: disable=unused-import
+
+_LOGGER = get_vtherm_logger(__name__)
+
+CONFIG_VERSION = 2
+CONFIG_MINOR_VERSION = 3
+
+DEVICE_MANUFACTURER = "JMCOLLIN"
+DEVICE_MODEL = "Versatile Thermostat"
+
+DOMAIN = "versatile_thermostat"
+
+# The order is important.
+PLATFORMS: list[Platform] = [
+    Platform.CLIMATE,
+    Platform.SENSOR,
+    # Number should be after CLIMATE
+    Platform.NUMBER,
+    Platform.BINARY_SENSOR,
+    Platform.SWITCH,
+    # Select should be after CLIMATE
+    Platform.SELECT,
+]
+
+CONF_UNDERLYING_LIST = "underlying_entity_ids"
+CONF_HEATER_KEEP_ALIVE = "heater_keep_alive"
+CONF_TEMP_SENSOR = "temperature_sensor_entity_id"
+CONF_LAST_SEEN_TEMP_SENSOR = "last_seen_temperature_sensor_entity_id"
+CONF_EXTERNAL_TEMP_SENSOR = "external_temperature_sensor_entity_id"
+CONF_POWER_SENSOR = "power_sensor_entity_id"
+CONF_MAX_POWER_SENSOR = "max_power_sensor_entity_id"
+CONF_WINDOW_SENSOR = "window_sensor_entity_id"
+CONF_MOTION_SENSOR = "motion_sensor_entity_id"
+CONF_DEVICE_POWER = "device_power"
+CONF_CYCLE_MIN = "cycle_min"
+CONF_PROP_FUNCTION = "proportional_function"
+CONF_WINDOW_DELAY = "window_delay"
+CONF_WINDOW_OFF_DELAY = "window_off_delay"
+CONF_MOTION_DELAY = "motion_delay"
+CONF_MOTION_OFF_DELAY = "motion_off_delay"
+CONF_MOTION_PRESET = "motion_preset"
+CONF_NO_MOTION_PRESET = "no_motion_preset"
+CONF_TPI_COEF_INT = "tpi_coef_int"
+CONF_TPI_COEF_EXT = "tpi_coef_ext"
+CONF_TPI_THRESHOLD_LOW = "tpi_threshold_low"
+CONF_TPI_THRESHOLD_HIGH = "tpi_threshold_high"
+CONF_PRESENCE_SENSOR = "presence_sensor_entity_id"
+CONF_PRESET_POWER = "power_temp"
+CONF_MINIMAL_ACTIVATION_DELAY = "minimal_activation_delay"
+CONF_MINIMAL_DEACTIVATION_DELAY = "minimal_deactivation_delay"
+CONF_TEMP_MIN = "temp_min"
+CONF_TEMP_MAX = "temp_max"
+CONF_SAFETY_DELAY_MIN = "safety_delay_min"
+CONF_SAFETY_MIN_ON_PERCENT = "safety_min_on_percent"
+CONF_SAFETY_DEFAULT_ON_PERCENT = "safety_default_on_percent"
+CONF_THERMOSTAT_TYPE = "thermostat_type"
+CONF_THERMOSTAT_CENTRAL_CONFIG = "thermostat_central_config"
+CONF_THERMOSTAT_SWITCH = "thermostat_over_switch"
+CONF_THERMOSTAT_CLIMATE = "thermostat_over_climate"
+CONF_THERMOSTAT_VALVE = "thermostat_over_valve"
+CONF_USE_WINDOW_FEATURE = "use_window_feature"
+CONF_USE_MOTION_FEATURE = "use_motion_feature"
+CONF_USE_PRESENCE_FEATURE = "use_presence_feature"
+CONF_USE_POWER_FEATURE = "use_power_feature"
+CONF_USE_CENTRAL_BOILER_FEATURE = "use_central_boiler_feature"
+CONF_USE_AUTO_START_STOP_FEATURE = "use_auto_start_stop_feature"
+CONF_AC_MODE = "ac_mode"
+CONF_WINDOW_AUTO_OPEN_THRESHOLD = "window_auto_open_threshold"
+CONF_WINDOW_AUTO_CLOSE_THRESHOLD = "window_auto_close_threshold"
+CONF_WINDOW_AUTO_MAX_DURATION = "window_auto_max_duration"
+CONF_AUTO_REGULATION_MODE = "auto_regulation_mode"
+CONF_AUTO_REGULATION_NONE = "auto_regulation_none"
+CONF_AUTO_REGULATION_VALVE = "auto_regulation_valve"
+CONF_AUTO_REGULATION_SLOW = "auto_regulation_slow"
+CONF_AUTO_REGULATION_LIGHT = "auto_regulation_light"
+CONF_AUTO_REGULATION_MEDIUM = "auto_regulation_medium"
+CONF_AUTO_REGULATION_STRONG = "auto_regulation_strong"
+CONF_AUTO_REGULATION_EXPERT = "auto_regulation_expert"
+CONF_AUTO_REGULATION_DTEMP = "auto_regulation_dtemp"
+CONF_AUTO_REGULATION_PERIOD_MIN = "auto_regulation_periode_min"
+CONF_AUTO_REGULATION_USE_DEVICE_TEMP = "auto_regulation_use_device_temp"
+CONF_INVERSE_SWITCH = "inverse_switch_command"
+CONF_AUTO_FAN_MODE = "auto_fan_mode"
+CONF_AUTO_FAN_NONE = "auto_fan_none"
+CONF_AUTO_FAN_LOW = "auto_fan_low"
+CONF_AUTO_FAN_MEDIUM = "auto_fan_medium"
+CONF_AUTO_FAN_HIGH = "auto_fan_high"
+CONF_AUTO_FAN_TURBO = "auto_fan_turbo"
+CONF_STEP_TEMPERATURE = "step_temperature"
+CONF_OFFSET_CALIBRATION_LIST = "offset_calibration_entity_ids"
+CONF_OPENING_DEGREE_LIST = "opening_degree_entity_ids"
+CONF_CLOSING_DEGREE_LIST = "closing_degree_entity_ids"
+CONF_MIN_OPENING_DEGREES = "min_opening_degrees"
+CONF_MAX_OPENING_DEGREES = "max_opening_degrees"
+CONF_MAX_CLOSING_DEGREE = "max_closing_degree"
+CONF_OPENING_THRESHOLD_DEGREE = "opening_threshold_degree"
+
+CONF_SYNC_DEVICE_INTERNAL_TEMP = "sync_device_internal_temp"
+CONF_SYNC_WITH_CALIBRATION = "sync_with_calibration"
+CONF_SYNC_ENTITY_LIST = "sync_entity_ids"
+
+CONF_USE_HEATING_FAILURE_DETECTION_FEATURE = "use_heating_failure_detection_feature"
+CONF_USE_HEATING_FAILURE_DETECTION_CENTRAL_CONFIG = "use_heating_failure_detection_central_config"
+CONF_HEATING_FAILURE_THRESHOLD = "heating_failure_threshold"
+CONF_COOLING_FAILURE_THRESHOLD = "cooling_failure_threshold"
+CONF_HEATING_FAILURE_DETECTION_DELAY = "heating_failure_detection_delay"
+CONF_TEMPERATURE_CHANGE_TOLERANCE = "temperature_change_tolerance"
+CONF_FAILURE_DETECTION_ENABLE_TEMPLATE = "failure_detection_enable_template"
+
+CONF_LOCK_CODE = "lock_code"
+CONF_LOCK_USERS = "lock_users"
+CONF_LOCK_AUTOMATIONS = "lock_automations"
+CONF_AUTO_RELOCK_SEC = "auto_relock_sec"
+
+CONF_REPAIR_INCORRECT_STATE = "repair_incorrect_state"
+
+CONF_VSWITCH_ON_CMD_LIST = "vswitch_on_command"
+CONF_VSWITCH_OFF_CMD_LIST = "vswitch_off_command"
+
+# Deprecated
+CONF_HEATER = "heater_entity_id"
+CONF_HEATER_2 = "heater_entity2_id"
+CONF_HEATER_3 = "heater_entity3_id"
+CONF_HEATER_4 = "heater_entity4_id"
+CONF_CLIMATE = "climate_entity_id"
+CONF_CLIMATE_2 = "climate_entity2_id"
+CONF_CLIMATE_3 = "climate_entity3_id"
+CONF_CLIMATE_4 = "climate_entity4_id"
+CONF_VALVE = "valve_entity_id"
+CONF_VALVE_2 = "valve_entity2_id"
+CONF_VALVE_3 = "valve_entity3_id"
+CONF_VALVE_4 = "valve_entity4_id"
+
+CONF_AUTO_TPI_MODE = "auto_tpi_mode"
+CONF_AUTO_TPI_LEARNING_TYPE = "auto_tpi_learning_type"
+AUTO_TPI_LEARNING_TYPE_DISCOVERY = "discovery"
+AUTO_TPI_LEARNING_TYPE_FINE_TUNING = "fine_tuning"
+CONF_AUTO_TPI_LEARNING_TYPES = [
+    AUTO_TPI_LEARNING_TYPE_DISCOVERY,
+    AUTO_TPI_LEARNING_TYPE_FINE_TUNING,
+]
+CONF_AUTO_TPI_ENABLE_ADVANCED_SETTINGS = "auto_tpi_enable_advanced_settings"
+CONF_AUTO_TPI_HEATER_HEATING_TIME = "heater_heating_time"
+CONF_AUTO_TPI_HEATER_COOLING_TIME = "heater_cooling_time"
+CONF_AUTO_TPI_CALCULATION_METHOD = "auto_tpi_calculation_method"
+AUTO_TPI_METHOD_AVG = "average"
+AUTO_TPI_METHOD_EMA = "ema"
+CONF_AUTO_TPI_CALCULATION_METHODS = [AUTO_TPI_METHOD_AVG, AUTO_TPI_METHOD_EMA]
+CONF_AUTO_TPI_EMA_ALPHA = "auto_tpi_ema_alpha"
+CONF_AUTO_TPI_AVG_INITIAL_WEIGHT = "auto_tpi_avg_initial_weight"
+
+CONF_AUTO_TPI_HEATING_POWER = "auto_tpi_heating_rate"
+CONF_AUTO_TPI_COOLING_POWER = "auto_tpi_cooling_rate"
+CONF_AUTO_TPI_AGGRESSIVENESS = "auto_tpi_aggressiveness"
+
+CONF_AUTO_TPI_EMA_DECAY_RATE = "auto_tpi_ema_decay_rate"
+CONF_AUTO_TPI_CONTINUOUS_KEXT = "auto_tpi_continuous_kext"
+CONF_AUTO_TPI_CONTINUOUS_KEXT_ALPHA = "auto_tpi_continuous_kext_alpha"
+
+
+# Global params into configuration.yaml
+CONF_SHORT_EMA_PARAMS = "short_ema_params"
+CONF_SAFETY_MODE = "safety_mode"
+CONF_MAX_ON_PERCENT = "max_on_percent"
+CONF_LOG_BUFFER_MAX_AGE_HOURS = "log_buffer_max_age_hours"
+
+CONF_USE_MAIN_CENTRAL_CONFIG = "use_main_central_config"
+CONF_USE_TPI_CENTRAL_CONFIG = "use_tpi_central_config"
+CONF_USE_WINDOW_CENTRAL_CONFIG = "use_window_central_config"
+CONF_USE_MOTION_CENTRAL_CONFIG = "use_motion_central_config"
+CONF_USE_POWER_CENTRAL_CONFIG = "use_power_central_config"
+CONF_USE_PRESENCE_CENTRAL_CONFIG = "use_presence_central_config"
+CONF_USE_PRESETS_CENTRAL_CONFIG = "use_presets_central_config"
+CONF_USE_ADVANCED_CENTRAL_CONFIG = "use_advanced_central_config"
+CONF_USE_LOCK_CENTRAL_CONFIG = "use_lock_central_config"
+
+CONF_USE_CENTRAL_MODE = "use_central_mode"
+
+CONF_CENTRAL_BOILER_ACTIVATION_SRV = "central_boiler_activation_service"
+CONF_CENTRAL_BOILER_DEACTIVATION_SRV = "central_boiler_deactivation_service"
+CONF_CENTRAL_BOILER_ACTIVATION_DELAY_SEC = "central_boiler_activation_delay_sec"
+CONF_KEEP_ALIVE_BOILER_DELAY_SEC = "keep_alive_boiler_delay_sec"
+
+CONF_USED_BY_CENTRAL_BOILER = "used_by_controls_central_boiler"
+CONF_WINDOW_ACTION = "window_action"
+
+CONF_AUTO_START_STOP_LEVEL = "auto_start_stop_level"
+AUTO_START_STOP_LEVEL_NONE = "auto_start_stop_none"
+AUTO_START_STOP_LEVEL_VERY_SLOW = "auto_start_stop_very_slow"
+AUTO_START_STOP_LEVEL_SLOW = "auto_start_stop_slow"
+AUTO_START_STOP_LEVEL_MEDIUM = "auto_start_stop_medium"
+AUTO_START_STOP_LEVEL_FAST = "auto_start_stop_fast"
+CONF_AUTO_START_STOP_LEVELS = [
+    AUTO_START_STOP_LEVEL_NONE,
+    AUTO_START_STOP_LEVEL_VERY_SLOW,
+    AUTO_START_STOP_LEVEL_SLOW,
+    AUTO_START_STOP_LEVEL_MEDIUM,
+    AUTO_START_STOP_LEVEL_FAST,
+]
+
+# For explicit typing purpose only
+TYPE_AUTO_START_STOP_LEVELS = Literal[  # pylint: disable=invalid-name
+    AUTO_START_STOP_LEVEL_FAST,
+    AUTO_START_STOP_LEVEL_MEDIUM,
+    AUTO_START_STOP_LEVEL_SLOW,
+    AUTO_START_STOP_LEVEL_VERY_SLOW,
+    AUTO_START_STOP_LEVEL_NONE,
+]
+
+# The hvac_mode applied when the auto-start/stop feature detects a stop condition
+AUTO_START_STOP_STOP_MODE_OFF = str(VThermHvacMode_OFF)
+AUTO_START_STOP_STOP_MODE_FAN_ONLY = str(VThermHvacMode_FAN_ONLY)
+AUTO_START_STOP_STOP_MODE_DRY = str(VThermHvacMode_DRY)
+AUTO_START_STOP_STOP_MODES = [
+    AUTO_START_STOP_STOP_MODE_OFF,
+    AUTO_START_STOP_STOP_MODE_FAN_ONLY,
+    AUTO_START_STOP_STOP_MODE_DRY,
+]
+
+HVAC_OFF_REASON_NAME = "hvac_off_reason"
+HVAC_MODE_REASON_NAME = "hvac_mode_reason"
+HVAC_OFF_REASON_MANUAL = "hvac_off_manual"
+HVAC_OFF_REASON_AUTO_START_STOP = "hvac_off_auto_start_stop"
+HVAC_OFF_REASON_WINDOW_DETECTION = "hvac_off_window_detection"
+HVAC_OFF_REASON_SLEEP_MODE = "hvac_off_sleep_mode"
+HVAC_OFF_REASON_SAFETY = "hvac_off_safety_detection"
+HVAC_OFF_REASON_CENTRAL_MODE = "hvac_off_central_mode"
+HVAC_OFF_REASONS = Literal[  # pylint: disable=invalid-name
+    HVAC_OFF_REASON_MANUAL, HVAC_OFF_REASON_AUTO_START_STOP, HVAC_OFF_REASON_WINDOW_DETECTION, HVAC_OFF_REASON_SLEEP_MODE, HVAC_OFF_REASON_SAFETY
+]
+
+# The hvac_mode_reason set when the auto-start/stop feature applies a non-off stop mode
+HVAC_MODE_REASON_AUTO_START_STOP_FAN_ONLY = "hvac_fan_only_auto_start_stop"
+HVAC_MODE_REASON_AUTO_START_STOP_DRY = "hvac_dry_auto_start_stop"
+# Maps the stop mode applied by the auto-start/stop feature to the related hvac_mode_reason
+AUTO_START_STOP_HVAC_MODE_REASONS = {
+    AUTO_START_STOP_STOP_MODE_FAN_ONLY: HVAC_MODE_REASON_AUTO_START_STOP_FAN_ONLY,
+    AUTO_START_STOP_STOP_MODE_DRY: HVAC_MODE_REASON_AUTO_START_STOP_DRY,
+}
+
+DEFAULT_SHORT_EMA_PARAMS = {
+    "max_alpha": 0.5,
+    # In sec
+    "halflife_sec": 300,
+    "precision": 2,
+}
+
+CONF_PRESETS = {
+    p: f"{p}{PRESET_TEMP_SUFFIX}"
+    for p in (
+        VThermPreset.FROST,
+        VThermPreset.ECO,
+        VThermPreset.COMFORT,
+        VThermPreset.BOOST,
+    )
+}
+
+CONF_PRESETS_WITH_AC = {
+    p: f"{p}{PRESET_TEMP_SUFFIX}"
+    for p in (
+        VThermPreset.FROST,
+        VThermPreset.ECO,
+        VThermPreset.COMFORT,
+        VThermPreset.BOOST,
+        VThermPresetWithAC.ECO,
+        VThermPresetWithAC.COMFORT,
+        VThermPresetWithAC.BOOST,
+    )
+}
+
+CONF_PRESETS_AWAY = {
+    p: f"{p}{PRESET_TEMP_SUFFIX}"
+    for p in (
+        VThermPresetWithAway.FROST,
+        VThermPresetWithAway.ECO,
+        VThermPresetWithAway.COMFORT,
+        VThermPresetWithAway.BOOST,
+    )
+}
+
+CONF_PRESETS_AWAY_WITH_AC = {
+    p: f"{p}{PRESET_TEMP_SUFFIX}"
+    for p in (
+        VThermPresetWithAway.FROST,
+        VThermPresetWithAway.ECO,
+        VThermPresetWithAway.COMFORT,
+        VThermPresetWithAway.BOOST,
+        VThermPresetWithACAway.ECO,
+        VThermPresetWithACAway.COMFORT,
+        VThermPresetWithACAway.BOOST,
+    )
+}
+
+CONF_PRESETS_SELECTIONABLE = [
+    VThermPreset.FROST,
+    VThermPreset.ECO,
+    VThermPreset.COMFORT,
+    VThermPreset.BOOST,
+]
+
+CONF_PRESETS_VALUES = list(CONF_PRESETS.values())
+CONF_PRESETS_AWAY_VALUES = list(CONF_PRESETS_AWAY.values())
+CONF_PRESETS_WITH_AC_VALUES = list(CONF_PRESETS_WITH_AC.values())
+CONF_PRESETS_AWAY_WITH_AC_VALUES = list(CONF_PRESETS_AWAY_WITH_AC.values())
+
+ALL_CONF = (
+    [
+        CONF_NAME,
+        CONF_HEATER_KEEP_ALIVE,
+        CONF_TEMP_SENSOR,
+        CONF_EXTERNAL_TEMP_SENSOR,
+        CONF_POWER_SENSOR,
+        CONF_MAX_POWER_SENSOR,
+        CONF_WINDOW_SENSOR,
+        CONF_WINDOW_DELAY,
+        CONF_WINDOW_OFF_DELAY,
+        CONF_WINDOW_AUTO_OPEN_THRESHOLD,
+        CONF_WINDOW_AUTO_CLOSE_THRESHOLD,
+        CONF_WINDOW_AUTO_MAX_DURATION,
+        CONF_MOTION_SENSOR,
+        CONF_MOTION_DELAY,
+        CONF_MOTION_PRESET,
+        CONF_NO_MOTION_PRESET,
+        CONF_DEVICE_POWER,
+        CONF_CYCLE_MIN,
+        CONF_PROP_FUNCTION,
+        CONF_TPI_COEF_INT,
+        CONF_TPI_COEF_EXT,
+        CONF_TPI_THRESHOLD_LOW,
+        CONF_TPI_THRESHOLD_HIGH,
+        CONF_AUTO_TPI_HEATER_HEATING_TIME,
+        CONF_AUTO_TPI_HEATER_COOLING_TIME,
+        CONF_PRESENCE_SENSOR,
+        CONF_MINIMAL_ACTIVATION_DELAY,
+        CONF_MINIMAL_DEACTIVATION_DELAY,
+        CONF_TEMP_MIN,
+        CONF_TEMP_MAX,
+        CONF_SAFETY_DELAY_MIN,
+        CONF_SAFETY_MIN_ON_PERCENT,
+        CONF_SAFETY_DEFAULT_ON_PERCENT,
+        CONF_THERMOSTAT_TYPE,
+        CONF_THERMOSTAT_SWITCH,
+        CONF_THERMOSTAT_CLIMATE,
+        CONF_USE_WINDOW_FEATURE,
+        CONF_USE_MOTION_FEATURE,
+        CONF_USE_PRESENCE_FEATURE,
+        CONF_USE_POWER_FEATURE,
+        CONF_USE_CENTRAL_BOILER_FEATURE,
+        CONF_AC_MODE,
+        CONF_AUTO_REGULATION_MODE,
+        CONF_AUTO_REGULATION_DTEMP,
+        CONF_AUTO_REGULATION_PERIOD_MIN,
+        CONF_AUTO_REGULATION_USE_DEVICE_TEMP,
+        CONF_INVERSE_SWITCH,
+        CONF_AUTO_FAN_MODE,
+        CONF_USE_MAIN_CENTRAL_CONFIG,
+        CONF_USE_TPI_CENTRAL_CONFIG,
+        CONF_USE_PRESETS_CENTRAL_CONFIG,
+        CONF_USE_WINDOW_CENTRAL_CONFIG,
+        CONF_USE_MOTION_CENTRAL_CONFIG,
+        CONF_USE_POWER_CENTRAL_CONFIG,
+        CONF_USE_PRESENCE_CENTRAL_CONFIG,
+        CONF_USE_ADVANCED_CENTRAL_CONFIG,
+        CONF_USE_CENTRAL_MODE,
+        CONF_USED_BY_CENTRAL_BOILER,
+        CONF_CENTRAL_BOILER_ACTIVATION_SRV,
+        CONF_CENTRAL_BOILER_DEACTIVATION_SRV,
+        CONF_CENTRAL_BOILER_ACTIVATION_DELAY_SEC,
+        CONF_KEEP_ALIVE_BOILER_DELAY_SEC,
+        CONF_WINDOW_ACTION,
+        CONF_STEP_TEMPERATURE,
+        CONF_MIN_OPENING_DEGREES,
+        CONF_MAX_OPENING_DEGREES,
+        CONF_MAX_CLOSING_DEGREE,
+        CONF_OPENING_THRESHOLD_DEGREE,
+        CONF_AUTO_TPI_CALCULATION_METHOD,
+        CONF_AUTO_TPI_EMA_ALPHA,
+        CONF_AUTO_TPI_AVG_INITIAL_WEIGHT,
+        CONF_AUTO_TPI_HEATING_POWER,
+        CONF_AUTO_TPI_COOLING_POWER,
+        CONF_AUTO_TPI_EMA_DECAY_RATE,
+        CONF_AUTO_TPI_CONTINUOUS_KEXT,
+        CONF_AUTO_TPI_CONTINUOUS_KEXT_ALPHA,
+        CONF_AUTO_TPI_LEARNING_TYPE,
+        CONF_AUTO_TPI_ENABLE_ADVANCED_SETTINGS,
+        CONF_SYNC_DEVICE_INTERNAL_TEMP,
+        CONF_SYNC_WITH_CALIBRATION,
+        CONF_USE_HEATING_FAILURE_DETECTION_FEATURE,
+        CONF_USE_HEATING_FAILURE_DETECTION_CENTRAL_CONFIG,
+        CONF_HEATING_FAILURE_THRESHOLD,
+        CONF_COOLING_FAILURE_THRESHOLD,
+        CONF_HEATING_FAILURE_DETECTION_DELAY,
+        CONF_TEMPERATURE_CHANGE_TOLERANCE,
+        CONF_FAILURE_DETECTION_ENABLE_TEMPLATE,
+        CONF_REPAIR_INCORRECT_STATE,
+    ]
+    + CONF_PRESETS_VALUES
+    + CONF_PRESETS_AWAY_VALUES
+    + CONF_PRESETS_WITH_AC_VALUES
+    + CONF_PRESETS_AWAY_WITH_AC_VALUES,
+)
+
+CONF_FUNCTIONS = [
+    PROPORTIONAL_FUNCTION_TPI,
+]
+
+CONF_AUTO_REGULATION_MODES = [
+    CONF_AUTO_REGULATION_NONE,
+    CONF_AUTO_REGULATION_VALVE,
+    CONF_AUTO_REGULATION_LIGHT,
+    CONF_AUTO_REGULATION_MEDIUM,
+    CONF_AUTO_REGULATION_STRONG,
+    CONF_AUTO_REGULATION_SLOW,
+    CONF_AUTO_REGULATION_EXPERT,
+]
+
+CONF_THERMOSTAT_TYPES = [
+    CONF_THERMOSTAT_CENTRAL_CONFIG,
+    CONF_THERMOSTAT_SWITCH,
+    CONF_THERMOSTAT_CLIMATE,
+    CONF_THERMOSTAT_VALVE,
+]
+
+CONF_AUTO_FAN_MODES = [
+    CONF_AUTO_FAN_NONE,
+    CONF_AUTO_FAN_LOW,
+    CONF_AUTO_FAN_MEDIUM,
+    CONF_AUTO_FAN_HIGH,
+    CONF_AUTO_FAN_TURBO,
+]
+
+CONF_WINDOW_TURN_OFF = "window_turn_off"
+CONF_WINDOW_FAN_ONLY = "window_fan_only"
+CONF_WINDOW_FROST_TEMP = "window_frost_temp"
+CONF_WINDOW_ECO_TEMP = "window_eco_temp"
+
+CONF_WINDOW_ACTIONS = [
+    CONF_WINDOW_TURN_OFF,
+    CONF_WINDOW_FAN_ONLY,
+    CONF_WINDOW_FROST_TEMP,
+    CONF_WINDOW_ECO_TEMP,
+]
+
+SUPPORT_FLAGS = (
+    ClimateEntityFeature.TARGET_TEMPERATURE
+    | ClimateEntityFeature.TURN_OFF
+    | ClimateEntityFeature.TURN_ON
+)
+
+SERVICE_SET_PRESENCE = "set_presence"
+SERVICE_SET_SAFETY = "set_safety"
+SERVICE_SET_WINDOW_BYPASS = "set_window_bypass"
+SERVICE_SET_AUTO_REGULATION_MODE = "set_auto_regulation_mode"
+SERVICE_SET_AUTO_FAN_MODE = "set_auto_fan_mode"
+SERVICE_SET_HVAC_MODE_SLEEP = "set_hvac_mode_sleep"
+SERVICE_LOCK = "lock"
+SERVICE_UNLOCK = "unlock"
+SERVICE_SET_TPI_PARAMETERS = "set_tpi_parameters"
+SERVICE_SET_AUTO_TPI_MODE = "set_auto_tpi_mode"
+SERVICE_AUTO_TPI_CALIBRATE_CAPACITY = "auto_tpi_calibrate_capacity"
+AUTO_TPI_EVENT = "versatile_thermostat_auto_tpi_event"
+SERVICE_SET_TIMED_PRESET = "set_timed_preset"
+SERVICE_CANCEL_TIMED_PRESET = "cancel_timed_preset"
+SERVICE_RECALIBRATE_VALVES = "recalibrate_valves"
+SERVICE_DOWNLOAD_LOGS = "download_logs"
+
+DEFAULT_SAFETY_MIN_ON_PERCENT = 0.5
+DEFAULT_SAFETY_DEFAULT_ON_PERCENT = 0.1
+
+# Repair incorrect state defaults
+DEFAULT_REPAIR_INCORRECT_STATE = False
+REPAIR_MAX_ATTEMPTS = 5
+REPAIR_MIN_DELAY_AFTER_INIT_SEC = 30
+
+# Central boiler keep-alive defaults
+DEFAULT_KEEP_ALIVE_BOILER_DELAY_SEC = 0
+
+# Heating failure detection defaults
+DEFAULT_HEATING_FAILURE_THRESHOLD = 0.9  # 90%
+DEFAULT_COOLING_FAILURE_THRESHOLD = 0.0  # 0%
+DEFAULT_HEATING_FAILURE_DETECTION_DELAY = 15  # 15 minutes
+DEFAULT_TEMPERATURE_CHANGE_TOLERANCE = 0.5  # 0.5°C
+
+ATTR_TOTAL_ENERGY = "total_energy"
+ATTR_MEAN_POWER_CYCLE = "mean_cycle_power"
+
+AUTO_FAN_DTEMP_THRESHOLD = 2
+AUTO_FAN_DEACTIVATED_MODES = ["mute", "quiet", "low", "quiet", "1", "one", "speed_1", "auto"]
+
+CENTRAL_CONFIG_NAME = "Central configuration"
+
+CENTRAL_MODE_AUTO = "Auto"
+CENTRAL_MODE_STOPPED = "Stopped"
+CENTRAL_MODE_HEAT_ONLY = "Heat only"
+CENTRAL_MODE_COOL_ONLY = "Cool only"
+CENTRAL_MODE_FROST_PROTECTION = "Frost protection"
+CENTRAL_MODES = [
+    CENTRAL_MODE_AUTO,
+    CENTRAL_MODE_STOPPED,
+    CENTRAL_MODE_HEAT_ONLY,
+    CENTRAL_MODE_COOL_ONLY,
+    CENTRAL_MODE_FROST_PROTECTION,
+]
+
+ATTR_CURRENT_STATE = "current_state"
+ATTR_REQUESTED_STATE = "requested_state"
+
+MSG_OVERPOWERING_DETECTED = "overpowering_detected"
+MSG_SAFETY_DETECTED = "safety_detected"
+MSG_TARGET_TEMP_WINDOW_ECO = "target_temp_window_eco"
+MSG_TARGET_TEMP_WINDOW_FROST = "target_temp_window_frost"
+MSG_TARGET_TEMP_POWER = "target_temp_power"
+MSG_TARGET_TEMP_CENTRAL_MODE = "target_temp_central_mode"
+MSG_TARGET_TEMP_ACTIVITY_DETECTED = "target_temp_activity_detected"
+MSG_TARGET_TEMP_ACTIVITY_NOT_DETECTED = "target_temp_activity_not_detected"
+MSG_TARGET_TEMP_ABSENCE_DETECTED = "target_temp_absence_detected"
+MSG_TARGET_TEMP_TIMED_PRESET = "target_temp_timed_preset"
+MSG_NOT_INITIALIZED = "not_initialized"
+
+#  A special regulation parameter suggested by @Maia here: https://github.com/jmcollin78/versatile_thermostat/discussions/154
+class RegulationParamSlow:
+    """Light parameters for slow latency regulation"""
+
+    kp: float = (
+        0.2  # 20% of the current internal regulation offset are caused by the current difference of target temperature and room temperature
+    )
+    ki: float = (
+        0.8 / 288.0
+    )  # 80% of the current internal regulation offset are caused by the average offset of the past 24 hours
+    k_ext: float = (
+        1.0 / 25.0
+    )  # this will add 1°C to the offset when it's 25°C colder outdoor than indoor
+    offset_max: float = 2.0  # limit to a final offset of -2°C to +2°C
+    accumulated_error_threshold: float = (
+        2.0 * 288
+    )  # this allows up to 2°C long term offset in both directions
+    overheat_protection: bool = True
+
+class RegulationParamLight:
+    """Light parameters for regulation"""
+
+    kp: float = 0.2
+    ki: float = 0.05
+    k_ext: float = 0.05
+    offset_max: float = 1.5
+    accumulated_error_threshold: float = 10
+    overheat_protection: bool = True
+
+
+class RegulationParamMedium:
+    """Light parameters for regulation"""
+
+    kp: float = 0.3
+    ki: float = 0.05
+    k_ext: float = 0.1
+    offset_max: float = 2
+    accumulated_error_threshold: float = 20
+    overheat_protection: bool = True
+
+
+class RegulationParamStrong:
+    """Strong parameters for regulation
+    A set of parameters which doesn't take into account the external temp
+    and concentrate to internal temp error + accumulated error.
+    This should work for cold external conditions which else generates
+    high external_offset"""
+
+    kp: float = 0.4
+    ki: float = 0.08
+    k_ext: float = 0.0
+    offset_max: float = 5
+    accumulated_error_threshold: float = 50
+    overheat_protection: bool = True
+
+
+# Not used now
+class RegulationParamVeryStrong:
+    """Strong parameters for regulation"""
+
+    kp: float = 0.6
+    ki: float = 0.1
+    k_ext: float = 0.2
+    offset_max: float = 8
+    accumulated_error_threshold: float = 80
+    overheat_protection: bool = True
+
+def send_vtherm_event(hass, event_type: EventType, entity, data: dict):
+    """Send an event"""
+    _LOGGER.info("%s - Sending event %s with data: %s", entity, event_type, data)
+    data["entity_id"] = entity.entity_id
+    data["name"] = entity.name
+    data["state_attributes"] = entity.state_attributes
+    hass.bus.fire(event_type.value, data)
+
+
+def get_safe_float(hass, entity_id: str):
+    """Get a safe float state value for an entity.
+    Return None if entity is not available"""
+    if entity_id is None or not (state := hass.states.get(entity_id)) or state.state in [None, "None", STATE_UNAVAILABLE, STATE_UNKNOWN]:
+        return None
+    return get_safe_float_value(state.state)
+
+
+def get_safe_float_value(value):
+    """Get a safe float value.
+    Return None if value is not a valid float"""
+    try:
+        float_val = float(value)
+        return None if math.isinf(float_val) or not math.isfinite(float_val) else float_val
+    except (ValueError, TypeError):
+        return None
+
+
+class UnknownEntity(HomeAssistantError):
+    """Error to indicate there is an unknown entity_id given."""
+
+
+class WindowOpenDetectionMethod(HomeAssistantError):
+    """Error to indicate there is an error in the window open detection method given."""
+
+
+class NoCentralConfig(HomeAssistantError):
+    """Error to indicate that we try to use a central configuration but no VTherm of type CENTRAL CONFIGURATION has been found"""
+
+
+class ServiceConfigurationError(HomeAssistantError):
+    """Error in the service configuration to control the central boiler"""
+
+
+class ConfigurationNotCompleteError(HomeAssistantError):
+    """Error the configuration is not complete"""
+
+
+class ValveRegulationNbEntitiesIncorrect(HomeAssistantError):
+    """Error to indicate there is an error in the configuration of the TRV with valve regulation.
+    The number of specific entities is incorrect."""
+
+
+class SyncDeviceInternalTempNbEntitiesIncorrect(HomeAssistantError):
+    """Error to indicate there is an error in the configuration of the TRV with synchronize device internal temperature.
+    The number of specific entities is incorrect."""
+
+
+class ValveRegulationMinOpeningDegreesIncorrect(HomeAssistantError):
+    """Error to indicate that the minimal opening degrees is not a list of int separated by coma"""
+
+
+class ValveRegulationMaxOpeningDegreesIncorrect(HomeAssistantError):
+    """Error to indicate that the maximal opening degrees is not a list of int separated by coma"""
+
+
+class ValveRegulationMinMaxOpeningDegreesIncorrect(HomeAssistantError):
+    """Error to indicate that max_opening_degrees must be greater than min_opening_degrees for each underlying"""
+
+
+class VirtualSwitchConfigurationIncorrect(HomeAssistantError):
+    """Error when a virtual switch is not configured correctly"""
+
+
+class LockCodeIncorrect(HomeAssistantError):
+    """Error when a lock code is not configured correctly"""
+
+
+class overrides:  # pylint: disable=invalid-name
+    """An annotation to inform overrides"""
+
+    def __init__(self, func):
+        self.func = func
+
+    def __get__(self, instance, owner):
+        return self.func.__get__(instance, owner)
+
+    def __call__(self, *args, **kwargs):
+        raise RuntimeError(f"Method {self.func.__name__} should have been overridden")

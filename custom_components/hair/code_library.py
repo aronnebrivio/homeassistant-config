@@ -1,0 +1,539 @@
+"""Introspect the infrared-protocols codes package into a pickable tree.
+
+The "database" behind the Add Remote picker is the ``codes/`` package
+inside the infrared-protocols library Home Assistant ships (HAIR already
+imports the library in ``ir_command.py``). We discover every enum codebook
+(any ``enum.Enum`` whose members expose ``to_command()``), normalize it to
+a brand -> codebook -> function tree, and materialize a chosen entry into a
+Pronto string plus its decoded protocol identity for the Clipper to store.
+
+Everything is import- and introspection-guarded: a missing or restructured
+library degrades to an empty tree, never a crash. The discovery rule is
+behavioral ("is an Enum with a to_command method"), not a hard-coded class
+list, so codebooks the library adds upstream appear automatically and a
+codebook it reshapes drops out quietly instead of breaking the feature.
+"""
+from __future__ import annotations
+
+import enum
+import importlib
+import logging
+import os
+import re
+from typing import Any
+
+from .ir_command import raw_to_pronto
+
+_LOGGER = logging.getLogger(__name__)
+
+_CODES_PKG = "infrared_protocols.codes"
+
+
+def library_available() -> bool:
+    """Return True if the codes package can be imported."""
+    try:
+        importlib.import_module(_CODES_PKG)
+        return True
+    except Exception:
+        return False
+
+
+def _humanize_member(name: str) -> str:
+    """``POWER_ON`` -> ``Power On``."""
+    return name.replace("_", " ").strip().title() or name
+
+
+def _humanize_brand(key: str) -> str:
+    """``lg`` -> ``LG``; ``sony`` -> ``Sony``."""
+    if not key:
+        return key
+    return key.upper() if len(key) <= 3 else key.replace("_", " ").title()
+
+
+def _humanize_codebook(class_name: str) -> str:
+    """``LGTVCode`` -> ``LGTV``; ``SonyPlayStation2Code`` -> ``Sony Play Station 2``.
+
+    Strips a trailing ``Code`` and inserts spaces at camelCase and
+    letter/digit boundaries. Acronym runs (``LGTV``) stay joined, which is
+    acceptable for a dropdown label.
+    """
+    name = class_name
+    if name.endswith("Code"):
+        name = name[: -len("Code")]
+    name = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", name)
+    name = re.sub(r"(?<=[A-Za-z])(?=[0-9])", " ", name)
+    return name.strip() or class_name
+
+
+def _brand_of(module_name: str) -> str:
+    """Brand key = the path segment right after ``codes.``."""
+    tail = module_name[len(_CODES_PKG) + 1 :]
+    return tail.split(".")[0] if tail else module_name
+
+
+def _iter_codebooks():
+    """Yield ``(module_name, enum_class)`` for each codebook enum, de-duped.
+
+    A codebook is any ``enum.Enum`` subclass, defined in the module it is
+    found in, that exposes a callable ``to_command`` and has at least one
+    member. Re-exported enums are skipped via the ``__module__`` check and
+    an identity set.
+
+    Discovery walks the codes package on the filesystem rather than via
+    ``pkgutil.walk_packages``: the library ships its per-brand directories
+    (``codes/lg/``, ``codes/sony/``, ...) WITHOUT an ``__init__.py``, so the
+    pkgutil walker does not descend into them. The ``.py`` files still
+    import cleanly as implicit-namespace submodules, so a direct filesystem
+    walk plus ``import_module`` finds every codebook.
+    """
+    try:
+        pkg = importlib.import_module(_CODES_PKG)
+    except Exception:
+        return
+    seen: set[int] = set()
+    for root_path in list(getattr(pkg, "__path__", [])):
+        for dirpath, _dirs, files in os.walk(root_path):
+            rel = os.path.relpath(dirpath, root_path)
+            parts = [] if rel == os.curdir else rel.split(os.sep)
+            for fname in sorted(files):
+                if not fname.endswith(".py") or fname == "__init__.py":
+                    continue
+                module_name = ".".join(
+                    [_CODES_PKG, *parts, fname[: -len(".py")]]
+                )
+                try:
+                    mod = importlib.import_module(module_name)
+                except Exception:
+                    continue
+                for obj in vars(mod).values():
+                    if (
+                        isinstance(obj, type)
+                        and issubclass(obj, enum.Enum)
+                        and getattr(obj, "__module__", None) == module_name
+                        and callable(getattr(obj, "to_command", None))
+                        and len(obj) > 0
+                        and id(obj) not in seen
+                    ):
+                        seen.add(id(obj))
+                        yield module_name, obj
+
+
+def get_tree() -> list[dict[str, Any]]:
+    """Return the brand -> codebook -> function tree for the picker.
+
+    Each brand: ``{brand, label, codebooks: [...]}``. Each codebook:
+    ``{id, label, functions: [{id, name}], source: "library"}``. Ids are
+    stable ``module:Class`` / ``module:Class:MEMBER`` strings the import
+    endpoints resolve back to library objects.
+    """
+    brands: dict[str, dict[str, Any]] = {}
+    for module, cls in _iter_codebooks():
+        brand_key = _brand_of(module)
+        brand = brands.setdefault(
+            brand_key,
+            {"brand": brand_key, "label": _humanize_brand(brand_key), "codebooks": []},
+        )
+        functions = [
+            {
+                "id": f"{module}:{cls.__name__}:{member.name}",
+                "name": _humanize_member(member.name),
+            }
+            for member in cls
+        ]
+        brand["codebooks"].append(
+            {
+                "id": f"{module}:{cls.__name__}",
+                "label": _humanize_codebook(cls.__name__),
+                "functions": functions,
+                "source": SOURCE_LIBRARY,
+            }
+        )
+    result = sorted(brands.values(), key=lambda b: b["label"].lower())
+    for brand in result:
+        brand["codebooks"].sort(key=lambda c: c["label"].lower())
+    return result
+
+
+# --- Local wigs as a second enumeration source (v0.7.0 Big Wig) ---
+#
+# The closet (/config/hair/wigs/) surfaces through the SAME tree shape as
+# the library, tagged source "local", so the picker renders one intermixed
+# alphabet with a provenance dot instead of a second list (wigs.md
+# section 6). Wig ids use a reserved "wig:" prefix that can never collide
+# with library ids (module paths contain dots, never start with "wig:").
+
+SOURCE_LIBRARY = "library"
+SOURCE_LOCAL = "local"
+
+_WIG_ID_PREFIX = "wig:"
+_UNBRANDED_KEY = "_unbranded"
+_UNBRANDED_LABEL = "Unbranded"
+
+
+def _wig_brand_key(brand: str | None) -> str:
+    """Merge key so a wig's brand folds into the library's brand row.
+
+    Library brand keys are lowercase path segments ("lg", "sony"); a wig
+    carrying brand "LG" or "Sony" must land in the same bucket, so the
+    key is the casefolded, underscored brand name. Missing brand goes to
+    the pinned Unbranded bucket.
+    """
+    if not brand or not brand.strip():
+        return _UNBRANDED_KEY
+    return re.sub(r"\s+", "_", brand.strip().casefold())
+
+
+def wig_codebook_id(filename: str) -> str:
+    return f"{_WIG_ID_PREFIX}{filename}"
+
+
+def parse_wig_id(codebook_id: str) -> str | None:
+    """Return the wig filename from a ``wig:`` codebook id, else None."""
+    if not codebook_id.startswith(_WIG_ID_PREFIX):
+        return None
+    return codebook_id[len(_WIG_ID_PREFIX):]
+
+
+def get_combined_tree(config_dir: str) -> list[dict[str, Any]]:
+    """Library tree merged with the local wig closet, one alphabet.
+
+    Local wigs appear as codebooks with ``source: "local"`` under their
+    brand row (created if the library has no such brand). Function ids
+    are ``wig:<filename>:<index>``. Invalid wig files are omitted here;
+    the Wigs tab is where they surface with reasons.
+    """
+    from .wig_store import scan_wigs
+
+    tree = get_tree()
+    scan = scan_wigs(config_dir)
+    if not scan.wigs:
+        return tree
+
+    by_key: dict[str, dict[str, Any]] = {}
+    for brand in tree:
+        by_key[brand["brand"]] = brand
+
+    for loaded in scan.wigs:
+        wig = loaded.wig
+        key = _wig_brand_key(wig.brand)
+        brand = by_key.get(key)
+        if brand is None:
+            label = (
+                _UNBRANDED_LABEL if key == _UNBRANDED_KEY
+                else wig.brand.strip()
+            )
+            brand = {"brand": key, "label": label, "codebooks": []}
+            by_key[key] = brand
+        cb_id = wig_codebook_id(loaded.path.name)
+        brand["codebooks"].append({
+            "id": cb_id,
+            "label": wig.name,
+            "functions": [
+                {"id": f"{cb_id}:{i}", "name": sig.alias}
+                for i, sig in enumerate(wig.signals)
+            ],
+            "source": SOURCE_LOCAL,
+        })
+
+    result = sorted(by_key.values(), key=lambda b: b["label"].lower())
+    for brand in result:
+        brand["codebooks"].sort(key=lambda c: c["label"].lower())
+    return result
+
+
+def materialize_wig(
+    config_dir: str,
+    codebook_id: str,
+    function_ids: list[str] | None = None,
+    include_matrix: bool = False,
+    display_unit: str | None = None,
+) -> list[dict[str, Any]]:
+    """Materialize a local wig into Clipper-ready entries.
+
+    Raw-first contract (wigs.md section 3): the wig carries only Pronto,
+    so every signal is decoded FRESH here -- same posture as the paste
+    path -- against whatever decoders this install has. Entries carry
+    ``send_count`` (already clamped by the parser); signals whose Pronto
+    fails validation are skipped, mirroring the library materializer's
+    one-bad-code-never-breaks-the-import rule.
+
+    ``include_matrix`` (Cold Cuts second half, 2026-07-29: the gated
+    matrix clip): when True and the wig carries a climate block, the
+    power codes and EVERY cell join the flat signals as entries named
+    by the display grammar ("cool / fan: auto / 22"), each decoded
+    fresh exactly like a flat signal. Default False keeps matrix wigs
+    materializing only their flat signals, byte-for-byte the old
+    behavior -- the gate exists because 2,689 Clipper rows must be an
+    explicit choice, never a surprise.
+
+    ``display_unit`` ("C" / "F") is the install's temperature unit at
+    clip time (unit ruling 2026-07-29): cell names MINT in it, then
+    freeze -- a clipped command keeps its name forever even if the
+    install later switches units, exactly like a saved matrix command.
+    None (and matching units) names cells file-native.
+    """
+    from .ir_command import ProntoCommand
+    from .pronto_validator import validate_pronto
+    from .protocol_decode import try_decode_identity
+    from .wig_store import load_wig
+
+    filename = parse_wig_id(codebook_id)
+    if filename is None:
+        return []
+    wig = load_wig(config_dir, filename)
+    if wig is None:
+        return []
+    wanted: set[int] | None = None
+    if function_ids:
+        wanted = set()
+        for fid in function_ids:
+            index = fid.rsplit(":", 1)[-1]
+            if index.isdigit():
+                wanted.add(int(index))
+
+    def _entry(
+        name: str, pronto: str, send_count: int,
+        bypass_protocol: bool = False,
+    ) -> dict[str, Any] | None:
+        result = validate_pronto(pronto)
+        if not result.valid:
+            return None
+        code = result.normalized
+        try:
+            decode_raw = ProntoCommand(code).get_raw_timings()
+        except Exception:
+            decode_raw = None
+        identity = try_decode_identity(decode_raw)
+        return {
+            "name": name,
+            "code": code,
+            "send_count": send_count,
+            # Wig imports carry it; library codebooks have no bypass
+            # intent to carry, the same asymmetry send_count already has.
+            "bypass_protocol": bypass_protocol,
+            "decoded_protocol": identity.protocol if identity else None,
+            "decoded_address": identity.address if identity else None,
+            "decoded_command": identity.command if identity else None,
+            "decoded_fingerprint": identity.fingerprint if identity else None,
+            "decoded_extras": (
+                dict(identity.extras) if identity and identity.extras else None
+            ),
+        }
+
+    entries: list[dict[str, Any]] = []
+    for i, sig in enumerate(wig.signals):
+        if wanted is not None and i not in wanted:
+            continue
+        entry = _entry(
+            sig.alias, sig.pronto, sig.send_count, sig.bypass_protocol
+        )
+        if entry is not None:
+            entries.append(entry)
+
+    if include_matrix and wig.climate is not None:
+        from .wig_climate import cell_display_name, state_display_name
+
+        matrix = wig.climate
+        # Power codes lead the matrix block, then every cell in file
+        # order; the function_ids filter never applies here (it
+        # indexes flat signals -- the picker has no cell rows, the
+        # gate is whole-matrix or nothing).
+        power = [("off", matrix.off)]
+        if matrix.on is not None:
+            power.append(("on", matrix.on))
+        for kind, pronto in power:
+            entry = _entry(state_display_name(kind), pronto, 1)
+            if entry is not None:
+                entries.append(entry)
+        for cell in matrix.cells:
+            entry = _entry(
+                cell_display_name(
+                    cell,
+                    unit=matrix.unit,
+                    display_unit=display_unit,
+                    precision=matrix.precision,
+                ),
+                cell.pronto,
+                cell.send_count,
+            )
+            if entry is not None:
+                entries.append(entry)
+    return entries
+
+
+def build_wig_from_codebook(codebook_id: str):
+    """Snapshot a library codebook into a Wig (v0.8.1), or None.
+
+    The codebook->wig primitive behind Fit / Adopt / Download on library
+    rows: the same encoder path the Clipper's picker import uses
+    (``materialize_codebook``), captured as a portable wig. The render is
+    deterministic -- one library version always produces the same Pronto
+    bytes, so the wig's signals content hash (and any fitting recorded
+    against it) is comparable across installs. Origin is stamped
+    ``library``; the notes carry the codebook id and library version so
+    a snapshot stays traceable after the library moves on. Members that
+    fail to materialize are skipped, mirroring the import rule.
+    """
+    from .wig_format import Wig, WigSignal
+
+    try:
+        module, _class_name = codebook_id.split(":")
+    except ValueError:
+        return None
+    entries = materialize_codebook(codebook_id)
+    if not entries:
+        return None
+    try:
+        from importlib.metadata import version
+
+        lib_version = version("infrared-protocols")
+    except Exception:
+        lib_version = None
+    stamp = f"infrared-protocols {lib_version}" if lib_version else (
+        "the infrared-protocols library"
+    )
+    return Wig(
+        name=codebook_label(codebook_id) or codebook_id,
+        brand=_humanize_brand(_brand_of(module)),
+        signals=[
+            WigSignal(alias=entry["name"], pronto=entry["code"])
+            for entry in entries
+        ],
+        origin=SOURCE_LIBRARY,
+        notes=f"Rendered from {stamp} ({codebook_id}).",
+    )
+
+
+def codebook_label(codebook_id: str) -> str | None:
+    """Human label for a codebook id, e.g. for a default remote name."""
+    try:
+        _module, class_name = codebook_id.split(":")
+    except ValueError:
+        return None
+    return _humanize_codebook(class_name)
+
+
+def _resolve_member(module: str, class_name: str, member_name: str):
+    try:
+        mod = importlib.import_module(module)
+        cls = getattr(mod, class_name)
+        return cls[member_name]
+    except Exception:
+        return None
+
+
+def _to_command(member):
+    """Call ``to_command`` defensively across the library's varying shapes."""
+    try:
+        return member.to_command()
+    except TypeError:
+        try:
+            return member.to_command(repeat_count=0)
+        except Exception:
+            return None
+    except Exception:
+        return None
+
+
+def _decoded_fields(command) -> dict[str, Any]:
+    """Derive ``decoded_*`` from a Command, or all-None when unavailable.
+
+    Protocol family is the Command class name minus the ``Command`` suffix
+    (``NECCommand`` -> ``NEC``). Address and command must both be ints to
+    form the fingerprint; otherwise the entry stays Pronto-only.
+    """
+    from .protocol_decode import format_fingerprint, identity_from_command
+
+    identity = identity_from_command(command)
+    if identity is not None:
+        return {
+            "decoded_protocol": identity.protocol,
+            "decoded_address": identity.address,
+            "decoded_command": identity.command,
+            "decoded_fingerprint": identity.fingerprint,
+            "decoded_extras": dict(identity.extras) if identity.extras else None,
+        }
+    # Fallback for classes outside the registry: the pre-v0.6.0 generic
+    # derivation, so a future library class with plain address/command
+    # fields still yields a usable identity.
+    protocol = type(command).__name__.removesuffix("Command") or None
+    address = getattr(command, "address", None)
+    cmd = getattr(command, "command", None)
+    if protocol and isinstance(address, int) and isinstance(cmd, int):
+        return {
+            "decoded_protocol": protocol,
+            "decoded_address": int(address),
+            "decoded_command": int(cmd),
+            "decoded_fingerprint": format_fingerprint(
+                protocol, int(address), int(cmd)
+            ),
+            "decoded_extras": None,
+        }
+    return {
+        "decoded_protocol": None,
+        "decoded_address": None,
+        "decoded_command": None,
+        "decoded_fingerprint": None,
+        "decoded_extras": None,
+    }
+
+
+def _materialize_member(member) -> dict[str, Any] | None:
+    """Turn one enum member into a Clipper-ready entry, or None on failure."""
+    command = _to_command(member)
+    if command is None:
+        return None
+    try:
+        timings = list(command.get_raw_timings())
+        modulation = int(getattr(command, "modulation", 0) or 0) or 38000
+        code = raw_to_pronto(timings, frequency=modulation)
+    except Exception:
+        return None
+    return {"name": _humanize_member(member.name), "code": code, **_decoded_fields(command)}
+
+
+def materialize_function(function_id: str) -> dict[str, Any] | None:
+    """Materialize a single function id into a Clipper entry, or None."""
+    try:
+        module, class_name, member_name = function_id.split(":")
+    except ValueError:
+        return None
+    member = _resolve_member(module, class_name, member_name)
+    if member is None:
+        return None
+    return _materialize_member(member)
+
+
+def materialize_codebook(
+    codebook_id: str, function_ids: list[str] | None = None
+) -> list[dict[str, Any]]:
+    """Materialize a whole codebook (or a subset of its functions).
+
+    Returns a list of Clipper entries (``{name, code, decoded_*}``). Entries
+    that fail to materialize are skipped, so a single bad code never breaks
+    the import. An unknown codebook returns an empty list.
+    """
+    try:
+        module, class_name = codebook_id.split(":")
+    except ValueError:
+        return []
+    try:
+        mod = importlib.import_module(module)
+        cls = getattr(mod, class_name)
+    except Exception:
+        return []
+    wanted: set[str] | None = None
+    if function_ids:
+        wanted = set()
+        for fid in function_ids:
+            parts = fid.split(":")
+            if len(parts) == 3:
+                wanted.add(parts[2])
+    entries: list[dict[str, Any]] = []
+    for member in cls:
+        if wanted is not None and member.name not in wanted:
+            continue
+        entry = _materialize_member(member)
+        if entry is not None:
+            entries.append(entry)
+    return entries

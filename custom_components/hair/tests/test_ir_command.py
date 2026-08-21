@@ -1,0 +1,506 @@
+"""Tests for the ir_command adapter module."""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+
+from custom_components.hair.ir_command import (
+    TERMINATOR_SPACE_US,
+    Command,
+    ProntoCommand,
+    RawTimingsCommand,
+    TerminatedCommand,
+    build_command,
+    build_decoded_command,
+    raw_to_pronto,
+    snap_pronto,
+)
+from custom_components.hair.pronto_validator import validate_pronto
+
+
+class TestBuildDecodedCommand:
+    """build_decoded_command: canonical encode-from-decoded TX (Phase B)."""
+
+    def test_unsupported_protocol_returns_none(self):
+        # Returns None before any library import, so no dependency needed.
+        assert build_decoded_command("SONY", 0x1, 0x2) is None
+
+    def test_missing_field_returns_none(self):
+        assert build_decoded_command("NEC", None, 0x08) is None
+        assert build_decoded_command("NEC", 0xFB04, None) is None
+        assert build_decoded_command(None, None, None) is None
+
+    def test_nec_canonical_roundtrip(self):
+        """With the library present, NEC encodes to canonical timings that
+        match the frafall fixture's expected re-encode element-by-element."""
+        pytest.importorskip("infrared_protocols")
+        fixtures = json.loads(
+            (
+                Path(__file__).parent / "fixtures" / "nec_test_fixtures.json"
+            ).read_text()
+        )
+        frafall = fixtures["frafall_reconstructed"]
+        cmd = build_decoded_command(
+            "NEC",
+            frafall["expected_decoded_address"],
+            frafall["expected_decoded_command"],
+        )
+        assert cmd is not None
+        assert cmd.get_raw_timings() == frafall[
+            "expected_canonical_reencode_raw_timings"
+        ]
+
+# ---------------------------------------------------------------------------
+# ProntoCommand
+# ---------------------------------------------------------------------------
+
+# Minimal valid Pronto hex: learned format, freq word, 2 burst1 pairs, 0 burst2
+PRONTO_SIMPLE = "0000 006D 0002 0000 0020 0040 0020 0040"
+
+
+class TestProntoCommand:
+    """ProntoCommand adapter tests."""
+
+    def test_basic_parse(self):
+        cmd = ProntoCommand(PRONTO_SIMPLE)
+        timings = cmd.get_raw_timings()
+        # 2 pairs -> 4 raw values (mark, -space, mark, -space), minus the
+        # trailing space the smartir-trailing-gap strip drops (4a) -> 3.
+        assert len(timings) == 3
+        # All values are plain ints
+        for t in timings:
+            assert isinstance(t, int)
+
+    def test_signed_convention(self):
+        cmd = ProntoCommand(PRONTO_SIMPLE)
+        timings = cmd.get_raw_timings()
+        # Alternating positive (mark) and negative (space) -- the final
+        # (would-be) space is gone (4a strip), so this ends on a mark.
+        assert timings[0] > 0   # mark
+        assert timings[1] < 0   # space
+        assert timings[2] > 0   # mark
+        assert len(timings) == 3
+
+    def test_modulation_frequency(self):
+        # word[1] = 0x006D = 109
+        # freq = 1_000_000 / (109 * 0.241246) ~ 38028
+        cmd = ProntoCommand(PRONTO_SIMPLE)
+        assert 37000 < cmd.modulation < 39000
+
+    def test_timing_values(self):
+        cmd = ProntoCommand(PRONTO_SIMPLE)
+        timings = cmd.get_raw_timings()
+        # word[1] = 0x6D = 109, period_us = 109 * 0.241246 ~ 26.3
+        # mark = 0x20 * 26.3 ~ 841, space = 0x40 * 26.3 ~ 1683
+        assert 800 < timings[0] < 900        # mark
+        assert -1750 < timings[1] < -1600     # -space
+
+    def test_repeat_count_passthrough(self):
+        cmd = ProntoCommand(PRONTO_SIMPLE, repeat_count=3)
+        assert cmd.repeat_count == 3
+
+    def test_both_burst_sequences(self):
+        # 1 burst1 pair + 1 burst2 pair = 2 total pairs = 4 raw values,
+        # minus the trailing space (4a strip) = 3.
+        pronto = "0000 006D 0001 0001 0020 0040 0030 0050"
+        cmd = ProntoCommand(pronto)
+        assert len(cmd.get_raw_timings()) == 3
+
+    def test_too_short_raises(self):
+        with pytest.raises(ValueError, match="too short"):
+            ProntoCommand("0000 006D")
+
+    def test_zero_frequency_raises(self):
+        with pytest.raises(ValueError, match="frequency word is zero"):
+            ProntoCommand("0000 0000 0001 0000 0020 0040")
+
+    def test_insufficient_timing_words_raises(self):
+        # Claims 2 pairs but only provides 2 words (1 pair)
+        with pytest.raises(ValueError, match="pairs"):
+            ProntoCommand("0000 006D 0002 0000 0020 0040")
+
+    def test_get_raw_timings_returns_copy(self):
+        cmd = ProntoCommand(PRONTO_SIMPLE)
+        t1 = cmd.get_raw_timings()
+        t2 = cmd.get_raw_timings()
+        assert t1 == t2
+        assert t1 is not t2
+
+    def test_trailing_mark_no_zero_space(self):
+        """A pair with space_periods=0 should emit only the mark, not -0."""
+        pronto = "0000 006D 0001 0000 0020 0000"
+        cmd = ProntoCommand(pronto)
+        timings = cmd.get_raw_timings()
+        # Only the mark, no trailing -0
+        assert len(timings) == 1
+        assert timings[0] > 0
+
+    # -----------------------------------------------------------------
+    # SmartIR trailing gap (smartir-trailing-gap.md, 4a / GH #93)
+    # -----------------------------------------------------------------
+
+    def test_trailing_gap_stripped_ends_on_mark(self):
+        """A Pronto whose final pair carries a large space: the space is
+        dropped and every interior value is untouched (plan item 1)."""
+        # 3 pairs; every space is large (0x0100 periods ~ 2,630us at this
+        # carrier), well above anything that could be a zero-space skip.
+        pronto = "0000 006D 0003 0000 0020 0100 0020 0100 0020 0100"
+        cmd = ProntoCommand(pronto)
+        timings = cmd.get_raw_timings()
+        # 3 pairs -> 6 raw values, minus the trailing space -> 5.
+        assert len(timings) == 5
+        assert timings[-1] > 0  # ends on the third pair's mark
+        # The first two pairs (mark, -space) are completely unaffected.
+        assert timings[0] > 0 and timings[1] < 0
+        assert timings[2] > 0 and timings[3] < 0
+
+    def test_interior_gap_survives_only_trailing_dropped(self):
+        """The strip touches only the LAST value; an interior space of
+        the same magnitude as the trailing one survives untouched --
+        the constraint most likely to be broken (plan item 2)."""
+        pronto = "0000 006D 0002 0000 0020 0100 0020 0100"
+        cmd = ProntoCommand(pronto)
+        timings = cmd.get_raw_timings()
+        # Pre-strip would be [mark, -space, mark, -space] (4 values);
+        # post-strip is [mark, -space, mark] (3 values) -- the interior
+        # space at index 1 is identical to what the trailing one WAS.
+        assert len(timings) == 3
+        assert timings[1] < 0
+        # 0x100 space periods vs 0x20 mark periods -- the interior space
+        # is the same (large) magnitude the trailing one would have been.
+        assert abs(timings[1]) > abs(timings[0]) * 5
+        assert timings[2] > 0  # trailing space is gone; ends on the mark
+
+    def test_repeat_count_documents_stripped_array(self):
+        """repeat_count > 0 on a Pronto replay (plan item 6): this test
+        DOCUMENTS what HAIR hands the platform's own repeat mechanism --
+        the array is stripped exactly once at construction, regardless
+        of repeat_count, and repeat_count itself is a pure passthrough
+        HAIR does not interpret. Per smartir-trailing-gap.md section 5,
+        if the bench ever shows dittos misbehaving without the trailing
+        gap, that is a platform-level finding to report, not a reason to
+        improvise a separator back into this array."""
+        pronto = "0000 006D 0002 0000 0020 0100 0020 0100"
+        cmd = ProntoCommand(pronto, repeat_count=2)
+        assert cmd.repeat_count == 2
+        timings = cmd.get_raw_timings()
+        assert len(timings) == 3
+        assert timings[-1] > 0
+        # Identical array as the repeat_count=0 case -- repeat_count
+        # changes nothing about what get_raw_timings() returns.
+        assert timings == ProntoCommand(pronto).get_raw_timings()
+
+
+# ---------------------------------------------------------------------------
+# RawTimingsCommand
+# ---------------------------------------------------------------------------
+
+class TestRawTimingsCommand:
+    """RawTimingsCommand adapter tests."""
+
+    def test_positive_pairs(self):
+        cmd = RawTimingsCommand([9000, 4500, 560, 560])
+        timings = cmd.get_raw_timings()
+        # 4 normalised values, minus the trailing space (4a strip) -> 3.
+        assert len(timings) == 3
+        assert timings[0] == 9000
+        assert timings[1] == -4500
+        assert timings[2] == 560
+
+    def test_negative_space_normalised(self):
+        # Already signed input
+        cmd = RawTimingsCommand([9000, -4500, 560, -560])
+        timings = cmd.get_raw_timings()
+        assert timings[0] == 9000
+        assert timings[1] == -4500
+
+    def test_odd_timings_trailing_mark(self):
+        cmd = RawTimingsCommand([9000, -4500, 560])
+        timings = cmd.get_raw_timings()
+        assert len(timings) == 3
+        assert timings[2] == 560  # trailing mark, positive
+
+    def test_frequency_passthrough(self):
+        cmd = RawTimingsCommand([100, 200], frequency=36000)
+        assert cmd.modulation == 36000
+
+    def test_repeat_count(self):
+        cmd = RawTimingsCommand([100, 200], repeat_count=5)
+        assert cmd.repeat_count == 5
+
+    def test_all_values_are_ints(self):
+        cmd = RawTimingsCommand([9000, -4500, 560, -560, 560])
+        for t in cmd.get_raw_timings():
+            assert isinstance(t, int)
+
+    # -----------------------------------------------------------------
+    # SmartIR trailing gap (smartir-trailing-gap.md, 4a / GH #93) --
+    # same three cases as ProntoCommand, through the raw path (plan
+    # item 4: sniffed rows carry their own receiver-side trailing gaps).
+    # -----------------------------------------------------------------
+
+    def test_trailing_gap_stripped_ends_on_mark(self):
+        cmd = RawTimingsCommand([9000, 4500, 560, 3000])
+        timings = cmd.get_raw_timings()
+        # [9000, -4500, 560, -3000] pre-strip -> trailing space dropped.
+        assert len(timings) == 3
+        assert timings == [9000, -4500, 560]
+        assert timings[-1] > 0
+
+    def test_interior_gap_survives_only_trailing_dropped(self):
+        # Interior space (-4500 at index 1) must survive; only the
+        # trailing one (index 5) is dropped.
+        cmd = RawTimingsCommand([9000, 4500, 3000, 3000, 560, 560])
+        timings = cmd.get_raw_timings()
+        assert timings == [9000, -4500, 3000, -3000, 560]
+        assert timings[1] == -4500  # interior space untouched
+        assert timings[-1] > 0      # trailing space gone
+
+    def test_trailing_mark_left_alone(self):
+        """Odd-length input already ends on a mark -- nothing to strip,
+        byte-for-byte identical to the pre-strip normalisation (plan
+        item 3, raw path; see also test_odd_timings_trailing_mark)."""
+        cmd = RawTimingsCommand([9000, -4500, 560])
+        assert cmd.get_raw_timings() == [9000, -4500, 560]
+
+
+# ---------------------------------------------------------------------------
+# build_command factory
+# ---------------------------------------------------------------------------
+
+class TestBuildCommand:
+    """build_command() factory tests."""
+
+    def test_pronto_by_protocol(self):
+        cmd = build_command(protocol="PRONTO", code=PRONTO_SIMPLE)
+        assert isinstance(cmd, ProntoCommand)
+
+    def test_pronto_case_insensitive(self):
+        cmd = build_command(protocol="pronto", code=PRONTO_SIMPLE)
+        assert isinstance(cmd, ProntoCommand)
+
+    def test_pronto_by_code_prefix(self):
+        cmd = build_command(protocol=None, code=PRONTO_SIMPLE)
+        assert isinstance(cmd, ProntoCommand)
+
+    def test_raw_timings_fallback(self):
+        cmd = build_command(
+            protocol="NEC", code=None, raw_timings=[9000, -4500, 560]
+        )
+        assert isinstance(cmd, RawTimingsCommand)
+
+    def test_raw_timings_no_protocol(self):
+        cmd = build_command(raw_timings=[9000, -4500])
+        assert isinstance(cmd, RawTimingsCommand)
+
+    def test_raises_when_nothing_usable(self):
+        with pytest.raises(ValueError, match="no Pronto hex"):
+            build_command(protocol="NEC", code="0x1234")
+
+    def test_raises_no_data_at_all(self):
+        with pytest.raises(ValueError):
+            build_command()
+
+    def test_repeat_count_forwarded(self):
+        cmd = build_command(
+            protocol="PRONTO", code=PRONTO_SIMPLE, repeat_count=2
+        )
+        assert cmd.repeat_count == 2
+
+    def test_pronto_returns_list_of_int(self):
+        """Verify the v2.0 contract: get_raw_timings() returns list[int]."""
+        cmd = build_command(protocol="PRONTO", code=PRONTO_SIMPLE)
+        timings = cmd.get_raw_timings()
+        assert all(isinstance(t, int) for t in timings)
+
+    def test_raw_returns_list_of_int(self):
+        """Verify the v2.0 contract: get_raw_timings() returns list[int]."""
+        cmd = build_command(raw_timings=[9000, -4500, 560])
+        timings = cmd.get_raw_timings()
+        assert all(isinstance(t, int) for t in timings)
+
+
+# ---------------------------------------------------------------------------
+# raw_to_pronto encoder
+# ---------------------------------------------------------------------------
+
+class TestRawToPronto:
+    """Tests for raw_to_pronto() encoder."""
+
+    def test_basic_encoding(self):
+        """Encode simple timings and verify the Pronto format."""
+        pronto = raw_to_pronto([9000, -4500, 560, -560])
+        words = pronto.split()
+        assert words[0] == "0000"  # learned format
+        assert len(words) >= 8     # header(4) + 2 pairs * 2 words
+
+    def test_frequency_word(self):
+        """Verify the frequency word for 38 kHz."""
+        pronto = raw_to_pronto([1000, -1000], frequency=38000)
+        words = pronto.split()
+        freq_word = int(words[1], 16)
+        # 1_000_000 / (38000 * 0.241246) ~ 109 = 0x006D
+        assert 100 < freq_word < 120
+
+    def test_round_trip(self):
+        """Encode raw -> Pronto -> ProntoCommand -> get_raw_timings.
+
+        The round-trip should produce values close to the originals
+        (within rounding tolerance of the Pronto period quantization),
+        minus the trailing space -- ProntoCommand strips it on the way
+        back out (smartir-trailing-gap.md 4a), so the recovered list is
+        one shorter than the original whenever the original ends in a
+        space, as this one does.
+        """
+        original = [9000, -4500, 560, -560, 560, -1690]
+        pronto = raw_to_pronto(original, frequency=38000)
+
+        cmd = ProntoCommand(pronto)
+        recovered = cmd.get_raw_timings()
+
+        assert len(recovered) == len(original) - 1
+        for orig, rec in zip(original, recovered, strict=False):
+            # Rounding tolerance: Pronto period is ~26us, so values
+            # can differ by up to ~26us per quantization step.
+            assert abs(abs(orig) - abs(rec)) < 50, (
+                f"Round-trip mismatch: {orig} vs {rec}"
+            )
+
+    def test_burst1_count(self):
+        """Verify burst1_count matches the number of pairs."""
+        pronto = raw_to_pronto([100, -200, 300, -400, 500, -600])
+        words = [int(w, 16) for w in pronto.split()]
+        assert words[2] == 3  # 3 pairs in burst1
+        assert words[3] == 0  # 0 pairs in burst2
+
+    def test_odd_timings_trailing_mark(self):
+        """Odd number of timings: trailing mark gets space=0."""
+        pronto = raw_to_pronto([1000, -2000, 500])
+        words = [int(w, 16) for w in pronto.split()]
+        # 2 pairs: (1000, -2000) and (500, 0)
+        assert words[2] == 2
+
+    def test_empty_raises(self):
+        with pytest.raises(ValueError, match="empty"):
+            raw_to_pronto([])
+
+    def test_zero_frequency_raises(self):
+        with pytest.raises(ValueError, match="frequency"):
+            raw_to_pronto([100, -200], frequency=0)
+
+    def test_unsigned_timings_work(self):
+        """Unsigned (all positive) alternating timings should work."""
+        pronto = raw_to_pronto([9000, 4500, 560, 560])
+        assert pronto.startswith("0000")
+
+
+# ---------------------------------------------------------------------------
+# snap_pronto carrier re-encode
+# ---------------------------------------------------------------------------
+
+class TestSnapPronto:
+    """Tests for snap_pronto() re-encode at a standard carrier."""
+
+    def test_changes_carrier_to_target(self):
+        # Off-standard (~42 kHz) source, snap to 40 kHz.
+        src = raw_to_pronto(
+            [9000, -4500, 560, -560, 560, -1690], frequency=42000
+        )
+        snapped = snap_pronto(src, 40000)
+        assert snapped.split()[1] != src.split()[1]
+        result = validate_pronto(snapped)
+        assert result.valid
+        assert abs(result.frequency_khz - 40.0) < 0.5
+
+    def test_noop_carrier_word_when_already_target(self):
+        src = raw_to_pronto([9000, -4500, 560, -560], frequency=38000)
+        snapped = snap_pronto(src, 38000)
+        assert snapped.split()[1] == src.split()[1]
+
+    def test_preserves_burst_pair_count(self):
+        src = raw_to_pronto(
+            [9000, -4500, 560, -560, 560, -1690], frequency=42000
+        )
+        snapped = snap_pronto(src, 40000)
+        assert snapped.split()[2] == src.split()[2]
+
+    def test_snaps_to_each_standard(self):
+        src = raw_to_pronto([9000, -4500, 560, -560], frequency=41000)
+        for std in (30000, 33000, 36000, 38000, 40000, 56000):
+            snapped = snap_pronto(src, std)
+            result = validate_pronto(snapped)
+            assert result.valid
+            # Carrier word is rounded, so allow sub-kHz quantization error.
+            assert abs(result.frequency_khz - std / 1000) < 0.6
+
+
+class TestTerminatedCommand:
+    """The transmit-boundary terminator wrapper (GH #93 -> GH #98).
+
+    Parse-side classes keep the 0.9.8 strip byte-for-byte (identity
+    stability); the wire copy alone gains a bounded trailing space.
+    These pin both constraints: a space must EXIST (RM4 Pro firmware
+    garbles mark-terminated streams) and must FIT uint16 (Tuya/ZoSung
+    16-bit formats).
+    """
+
+    class _Stub(Command):
+        def __init__(self, timings, modulation=38000, repeat_count=0):
+            self._t = timings
+            super().__init__(
+                modulation=modulation, repeat_count=repeat_count
+            )
+
+        def get_raw_timings(self):
+            return list(self._t)
+
+    def test_stripped_replay_gains_terminator(self):
+        """The common case: a stripped Pronto replay ends on a mark;
+        the wrapper appends the terminator."""
+        inner = ProntoCommand("0000 006D 0002 0000 0020 0100 0020 0100")
+        wire = TerminatedCommand(inner).get_raw_timings()
+        assert wire[:-1] == inner.get_raw_timings()
+        assert wire[-1] == -TERMINATOR_SPACE_US
+
+    def test_oversized_trailing_space_clamps(self):
+        """A decoded/canonical inner ending with a huge gap clamps to
+        the cap and fits uint16 (the GH #93 pin)."""
+        wire = TerminatedCommand(
+            self._Stub([9000, -4500, 560, -100150])
+        ).get_raw_timings()
+        assert wire == [9000, -4500, 560, -TERMINATOR_SPACE_US]
+        assert max(abs(t) for t in wire) <= 0xFFFF
+
+    def test_small_trailing_space_untouched(self):
+        wire = TerminatedCommand(
+            self._Stub([9000, -4500, 560, -3000])
+        ).get_raw_timings()
+        assert wire == [9000, -4500, 560, -3000]
+
+    def test_interior_gap_never_touched(self):
+        wire = TerminatedCommand(
+            self._Stub([9000, -60000, 560])
+        ).get_raw_timings()
+        assert wire == [9000, -60000, 560, -TERMINATOR_SPACE_US]
+
+    def test_empty_inner_is_noop(self):
+        assert TerminatedCommand(self._Stub([])).get_raw_timings() == []
+
+    def test_modulation_and_repeat_ride_through(self):
+        wrapped = TerminatedCommand(
+            self._Stub([100], modulation=36000, repeat_count=3)
+        )
+        assert wrapped.modulation == 36000
+        assert wrapped.repeat_count == 3
+
+    def test_inner_command_untouched(self):
+        """The wrapper never mutates the inner array: parse-side
+        consumers of the same object stay identity-stable."""
+        inner = self._Stub([9000, -4500, 560])
+        TerminatedCommand(inner).get_raw_timings()
+        assert inner.get_raw_timings() == [9000, -4500, 560]
+
+    def test_terminator_fits_uint16(self):
+        assert TERMINATOR_SPACE_US <= 0xFFFF

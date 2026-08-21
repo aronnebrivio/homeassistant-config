@@ -1,0 +1,1763 @@
+/**
+ * The Mirror tab (v0.6.6) -- what your house transmits.
+ *
+ * Renders the synthetic Mirror catalog device (source "echo",
+ * fingerprint "hair-mirror") the SignalMonitor maintains: one row per
+ * distinct send identity, created at SEND time and enriched with
+ * heard_by when a receiver echoes it back. Every HA-originated IR
+ * transmission lands here -- HAIR device commands, catalog tests,
+ * automations, and foreign integrations caught by emitter state
+ * beacons -- with its provenance and its journey (via which emitter,
+ * heard in which areas).
+ *
+ * A log with a wipe rag: no dismiss, no reorder, no clear-all, but a
+ * per-row Delete that clears the ledger entry -- the row returns on
+ * the next send of the same identity, the same resurrection semantics
+ * the Sniffer has, so removal cannot damage the audit (owner ruling,
+ * v0.6.6 bench, reversing the earlier no-delete stance). Rows carry
+ * the Sniffer's exact action chips (Assign / Test / Trigger / Delete
+ * via the shared actionChipStyles -- this is the first tab to never
+ * own a private copy) with the v0.5.7 corner count-dots. Triggers
+ * created here are legitimate: they fire when the identity arrives
+ * from OUTSIDE Home Assistant (the echo gate keeps the house's own
+ * sends from tripping them), and the trigger dialog says so in one
+ * line (mirrorContext).
+ *
+ * "Not heard" renders neutral grey, not amber: plenty of homes are
+ * transmit-only, and normal is not an alarm. The Not heard FILTER chip
+ * keeps its amber for troubleshooting findability (the dead-LED
+ * finder). Zero-receiver homes suppress the heard clause entirely.
+ *
+ * Authoritative design: docs/internal/mockups/mirror-tab-mockup-m5.html.
+ */
+import { LitElement, html, css } from "lit";
+import { actionChipStyles } from "./ir-action-chip-styles";
+import { customElement, property, state } from "./decorators.js";
+import { t, tp } from "./localize.js";
+import {
+    ICON_TRASH,
+    TRASH_VIEWBOX,
+    editButtonStyles,
+    renderEditBtn,
+    trashButtonStyles,
+} from "./ir-icons.js";
+import { HairApi } from "./api.js";
+import { BloomTracker, bloomStyles } from "./ir-bloom-styles.js";
+import "./ir-assign-signal-dialog.js";
+import "./ir-confirm-dialog.js";
+import "./ir-signal-editor.js";
+import "./ir-test-emitter-dialog.js";
+import "./ir-trigger-dialog.js";
+import "./ir-count-dot.js";
+import "./ir-trigger-popover.js";
+import "./ir-assigned-popover.js";
+import "./ir-tx-knobs.js";
+import {
+    MIRROR_DEVICE_FP,
+    MIRROR_UNKNOWN_FP_PREFIX,
+    triggerMatchesSignal,
+} from "./types.js";
+import type {
+    AssignResult,
+    IRTrigger,
+    ReceiverInfo,
+    SignalAssignment,
+    UnknownDevice,
+    UnknownSignal,
+    UnknownSignalEvent,
+} from "./types.js";
+
+/** Relative time like "2m" (compact, for the row meta). */
+function relShort(iso: string | undefined): string {
+    if (!iso) return "";
+    try {
+        const diff = Date.now() - new Date(iso).getTime();
+        if (diff < 60_000) return t("rel.just_now");
+        if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m`;
+        if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h`;
+        return `${Math.floor(diff / 86_400_000)}d`;
+    } catch {
+        return "";
+    }
+}
+
+// Hand mirror (SVG Repo, owner-supplied images/mirror-makeup-svgrepo-com.svg),
+// rotated 45 degrees to the tool-icon diagonal (head top-right, handle
+// bottom-left, matching the clippers and tweezers) and scaled to a 24x24 box.
+const ICON_MIRROR =
+    "M 19.39,4.60 C 16.51,1.71 11.78,1.71 8.89,4.60 C 6.00,7.49 6.00,12.21 8.89,15.10 C 11.78,17.99 16.51,17.99 19.39,15.10 C 22.28,12.21 22.28,7.49 19.39,4.60 M 9.29,14.70 C 6.63,12.03 6.63,7.67 9.29,5.00 C 11.96,2.34 16.32,2.34 18.99,5.00 C 21.66,7.67 21.66,12.03 18.99,14.70 C 16.32,17.36 11.96,17.36 9.29,14.70 M 4.85,19.14 C 4.29,18.58 3.40,18.58 2.83,19.14 C 2.27,19.71 2.27,20.60 2.83,21.16 C 3.40,21.73 4.29,21.73 4.85,21.16 C 5.42,20.60 5.42,19.71 4.85,19.14 M 3.24,20.76 C 2.89,20.41 2.89,19.89 3.24,19.55 C 3.58,19.20 4.10,19.20 4.45,19.55 C 4.79,19.89 4.79,20.41 4.45,20.76 C 4.10,21.10 3.58,21.10 3.24,20.76 M 22.99,9.57 C 22.91,7.10 21.84,4.82 19.98,3.20 C 16.65,0.28 11.62,0.26 8.31,3.20 C 5.52,5.67 4.57,9.49 5.86,12.96 C 6.33,14.19 6.02,15.55 5.13,16.43 C 4.65,16.92 4.04,17.24 3.40,17.32 C 2.79,17.40 2.25,17.71 1.82,18.13 C 0.75,19.20 0.73,21.00 1.78,22.09 C 1.80,22.11 1.82,22.13 1.84,22.15 C 2.37,22.68 3.07,22.98 3.82,23.00 C 4.61,23.02 5.32,22.72 5.88,22.15 C 6.31,21.73 6.57,21.18 6.67,20.60 C 6.77,19.93 7.07,19.34 7.56,18.86 C 8.45,17.97 9.82,17.69 11.03,18.13 C 14.28,19.36 17.96,18.56 20.40,16.11 C 22.12,14.39 23.07,11.99 22.99,9.57 M 11.23,17.61 C 9.82,17.08 8.20,17.40 7.15,18.45 C 6.59,19.02 6.22,19.75 6.10,20.51 C 6.02,21.00 5.80,21.42 5.46,21.77 C 5.01,22.21 4.43,22.43 3.82,22.43 C 3.17,22.43 2.61,22.19 2.18,21.73 C 1.34,20.84 1.38,19.42 2.21,18.56 C 2.55,18.21 2.99,17.97 3.48,17.89 C 4.25,17.77 4.97,17.40 5.54,16.84 C 6.59,15.79 6.93,14.19 6.39,12.76 C 5.17,9.53 6.06,5.93 8.69,3.63 C 11.80,0.88 16.49,0.88 19.60,3.63 C 19.74,3.73 19.88,3.87 20.00,3.99 C 21.49,5.49 22.36,7.45 22.42,9.57 C 22.48,11.89 21.64,14.07 20.00,15.71 C 17.70,18.01 14.26,18.74 11.23,17.61 M 17.58,10.86 L 10.71,10.86 C 10.55,10.86 10.43,10.98 10.43,11.14 C 10.43,11.22 10.47,11.30 10.51,11.34 C 10.55,11.38 10.63,11.43 10.71,11.43 L 17.58,11.43 C 17.74,11.43 17.86,11.30 17.86,11.14 C 17.86,10.98 17.72,10.88 17.58,10.86 M 17.88,8.54 C 17.88,8.38 17.76,8.25 17.60,8.25 L 10.73,8.25 C 10.57,8.25 10.45,8.38 10.45,8.54 C 10.45,8.62 10.49,8.70 10.53,8.74 C 10.57,8.78 10.65,8.82 10.73,8.82 L 17.60,8.82 C 17.72,8.82 17.86,8.68 17.88,8.54";
+
+/** The separator record_send/_match_echo bake into echo_source. */
+const VIA_SEP = " -- via ";
+
+/** Debounce between a live push and the full device re-fetch. */
+const REFRESH_DEBOUNCE_MS = 300;
+
+interface MirrorRowView {
+    sig: UnknownSignal;
+    title: string;
+    pill: string | null;
+    pillRaw: boolean;
+    via: string;
+    viaFull: string;
+    emitters: string[];
+    chip: string;
+    heard: string | null; // null = suppress clause (zero-receiver home)
+    heardOk: boolean;
+    // Foreign send that was never heard: no code, no identity, dead
+    // action buttons. These rows swap the whole sub-line for a plain
+    // explanation (owner wording, shampoo bench) -- the row was
+    // mistaken for a bug twice because it looked broken, not honest.
+    unknownSend: boolean;
+}
+
+@customElement("ir-mirror")
+export class IrMirror extends LitElement {
+    @property({ attribute: false }) public api!: HairApi;
+    @property({ attribute: false }) public hass?: any;
+
+    @state() private _device: UnknownDevice | null = null;
+    @state() private _loading = true;
+    @state() private _error: string | null = null;
+    @state() private _triggers: IRTrigger[] = [];
+    @state() private _receivers: ReceiverInfo[] = [];
+    @state() private _hasReceivers = true;
+    @state() private _filter: string = "all"; // "all" | "notheard" | emitter name
+    @state() private _search = "";
+    /** Is the emitter dropdown showing? (punch list item 15) */
+    @state() private _emitterOpen = false;
+    @state() private _bloomIds = new Set<string>();
+    // Sequence-numbered fire tracker (ir-bloom-styles.ts, Track B bloom
+    // extraction) -- replaces the bare setTimeout+Set pair below, which
+    // let a fast repeat send's glow get cut short by the first send's
+    // still-pending timeout (the same v0.7.2 bug the trigger card had).
+    private _bloomTracker = new BloomTracker();
+
+    // Dialog / popover state (the Sniffer's row-action vocabulary)
+    @state() private _assignSignal: {
+        signal: UnknownSignal;
+        initialMode: "existing" | "new";
+    } | null = null;
+    @state() private _assignedPopover: {
+        signal: UnknownSignal;
+        top: number;
+        left: number;
+    } | null = null;
+    @state() private _triggerDialog: UnknownSignal | null = null;
+    @state() private _triggerEditDialog: IRTrigger | null = null;
+    @state() private _triggerPopover: {
+        signal: UnknownSignal;
+        top: number;
+        left: number;
+    } | null = null;
+    @state() private _confirmDeleteTriggerId: string | null = null;
+    @state() private _deleteSignal: UnknownSignal | null = null;
+    @state() private _editSignal: UnknownSignal | null = null;
+    @state() private _testDialog: UnknownSignal | null = null;
+    @state() private _testEmitters: string[] = [];
+    @state() private _testingSignalId: string | null = null;
+    @state() private _testResult: string | null = null;
+
+    private _unsubSignals: (() => Promise<void>) | null = null;
+    private _unsubUpdated: (() => Promise<void>) | null = null;
+    private _refreshTimer: number | null = null;
+
+    connectedCallback(): void {
+        super.connectedCallback();
+        void this._load();
+        void this._subscribe();
+    }
+
+    disconnectedCallback(): void {
+        super.disconnectedCallback();
+        void this._unsubscribe();
+        this._removePopoverDismiss();
+        // The emitter dropdown's outside-click and Escape listeners
+        // live on the document, so they outlive this element unless
+        // they are taken down with it (punch list item 15).
+        this._closeEmitterMenu();
+        if (this._refreshTimer !== null) {
+            clearTimeout(this._refreshTimer);
+            this._refreshTimer = null;
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // Data
+    // -----------------------------------------------------------------
+
+    private async _load(): Promise<void> {
+        this._loading = true;
+        try {
+            const [summaries, triggers, status] = await Promise.all([
+                this.api.getUnknownDevices({ source: "echo", min_hits: 0 }),
+                this.api.listTriggers(),
+                this.api.getSnifferStatus(),
+            ]);
+            this._triggers = triggers;
+            this._hasReceivers = status.has_receivers;
+            const mirror = summaries.find(
+                (d) => d.fingerprint === MIRROR_DEVICE_FP,
+            );
+            this._device = mirror
+                ? await this.api.getUnknownDevice(mirror.id)
+                : null;
+            this._error = null;
+            this.api
+                .listReceivers()
+                .then((r) => {
+                    this._receivers = r;
+                })
+                .catch(() => {
+                    this._receivers = [];
+                });
+        } catch (err) {
+            this._error = `Failed to load: ${(err as Error).message}`;
+        } finally {
+            this._loading = false;
+        }
+    }
+
+    private async _refreshDevice(): Promise<void> {
+        if (!this._device) {
+            await this._load();
+            return;
+        }
+        try {
+            this._device = await this.api.getUnknownDevice(this._device.id);
+        } catch {
+            await this._load();
+        }
+    }
+
+    private async _subscribe(): Promise<void> {
+        try {
+            this._unsubSignals = await this.api.subscribeUnknownSignals(
+                (ev) => this._onLiveSignal(ev),
+            );
+        } catch {
+            // Non-fatal.
+        }
+        try {
+            this._unsubUpdated = await this.api.subscribeSignalUpdated(() => {
+                void this._refreshDots();
+            });
+        } catch {
+            // Non-fatal.
+        }
+    }
+
+    private async _unsubscribe(): Promise<void> {
+        if (this._unsubSignals) {
+            await this._unsubSignals();
+            this._unsubSignals = null;
+        }
+        if (this._unsubUpdated) {
+            await this._unsubUpdated();
+            this._unsubUpdated = null;
+        }
+    }
+
+    /** Assignment/trigger dots changed elsewhere: refresh both. */
+    private async _refreshDots(): Promise<void> {
+        try {
+            this._triggers = await this.api.listTriggers();
+        } catch {
+            // Non-fatal.
+        }
+        await this._refreshDevice();
+    }
+
+    private _onLiveSignal(ev: UnknownSignalEvent): void {
+        // Only the house's own sends belong to this tab.
+        if (ev.device_fingerprint !== MIRROR_DEVICE_FP) return;
+
+        // Silver bloom on the touched row while you watch.
+        this._bloomTracker.trigger(
+            ev.signal_id,
+            () => {
+                this._bloomIds = new Set([...this._bloomIds, ev.signal_id]);
+            },
+            () => {
+                const next = new Set(this._bloomIds);
+                next.delete(ev.signal_id);
+                this._bloomIds = next;
+            },
+        );
+
+        // Debounced re-fetch: a dial drag can fire many sends per second.
+        if (this._refreshTimer !== null) clearTimeout(this._refreshTimer);
+        this._refreshTimer = window.setTimeout(() => {
+            this._refreshTimer = null;
+            void this._refreshDevice();
+        }, REFRESH_DEBOUNCE_MS);
+    }
+
+    // -----------------------------------------------------------------
+    // Row derivation
+    // -----------------------------------------------------------------
+
+    private _friendlyReceiver(entityId: string): string {
+        const match = this._receivers.find((r) => r.entity_id === entityId);
+        if (match?.name) return match.name;
+        const st = this.hass?.states?.[entityId];
+        return st?.attributes?.friendly_name ?? entityId;
+    }
+
+    /** Resolve a receiver's HA area name, or null (v0.5.7 machinery:
+     * entity area first, then its device's area). */
+    private _receiverArea(entityId: string): string | null {
+        const ent = this.hass?.entities?.[entityId];
+        const areaId =
+            ent?.area_id ??
+            (ent?.device_id
+                ? this.hass?.devices?.[ent.device_id]?.area_id
+                : null);
+        if (!areaId) return null;
+        return this.hass?.areas?.[areaId]?.name ?? null;
+    }
+
+    private _decodedDisplay(sig: UnknownSignal): string | null {
+        const fp = sig.decoded_fingerprint;
+        if (!fp) return null;
+        const parts = fp.split(":");
+        if (parts.length >= 3) {
+            return `${parts[0]} ${parts[1]} : ${parts.slice(2).join(":")}`;
+        }
+        return fp;
+    }
+
+    private _rowView(sig: UnknownSignal): MirrorRowView {
+        const src = sig.echo_source ?? "";
+        const sepIdx = src.indexOf(VIA_SEP);
+        const label = sepIdx >= 0 ? src.slice(0, sepIdx) : src;
+        const viaFull = sepIdx >= 0 ? src.slice(sepIdx + VIA_SEP.length) : "";
+        const emitters = viaFull ? viaFull.split(", ") : [];
+
+        let chip: string;
+        let labelTitle: string | null = null;
+        // "Manual test send[: <alias>]" is the current label for a
+        // catalog-tab Test press; "Catalog test[: <alias>]" is its
+        // pre-rename form, still present on rows persisted before the
+        // v0.6.6 bench rename. Either way the chip is the provenance and
+        // the title falls through to the identity chain below. Chips
+        // render Title Case per the owner's bench ruling.
+        const testPrefix = ["Manual test send", "Catalog test"].find((p) =>
+            label.startsWith(p),
+        );
+        // A fitting-session send: its own provenance chip so a
+        // 300-signal fitting never read as mystery traffic. Nothing
+        // writes this source any more -- the fitting dialog had its own
+        // send path and v0.9.5 deleted it, so testing now goes out
+        // through the device gate like every other press. The reader
+        // stays for the rows already on disk: a stored Mirror row does
+        // not get relabelled because the code that made it retired.
+        const fittingPrefix = label.startsWith("Fitting send")
+            ? "Fitting send"
+            : undefined;
+        // A pinned Remote drove this send (signpost 4, Track 4). It is
+        // a device send in every mechanical sense, so it would
+        // otherwise read as one; the point of its own chip is that a
+        // user watching the Mirror can tell "the handset did this"
+        // from "I pressed the button in the panel", which is the whole
+        // story a proxied press is supposed to tell.
+        const pinnedPrefix = label.startsWith("Pinned send")
+            ? "Pinned send"
+            : undefined;
+        if (label === "automation send") {
+            chip = t("mirror.chip_automation");
+        } else if (label === "integration send") {
+            chip = t("mirror.chip_integration");
+        } else if (pinnedPrefix) {
+            // The row already names the source device on the left, so
+            // the chip names what the pin IS rather than repeating the
+            // mechanism (owner bench 2026-08-19). The label carries
+            // "<device> / <command>"; the device is everything before
+            // the first separator.
+            const pinnedRest =
+                label
+                    .slice(pinnedPrefix.length)
+                    .replace(/^:\s*/, "")
+                    .trim();
+            const slash = pinnedRest.indexOf(" / ");
+            chip = t("mirror.chip_pinned", {
+                device: slash >= 0 ? pinnedRest.slice(0, slash) : pinnedRest,
+            });
+            labelTitle = pinnedRest || null;
+        } else if (fittingPrefix) {
+            chip = t("mirror.chip_fitting");
+            labelTitle =
+                label
+                    .slice(fittingPrefix.length)
+                    .replace(/^:\s*/, "")
+                    .trim() || null;
+        } else if (testPrefix) {
+            chip = t("mirror.chip_test");
+            labelTitle =
+                label.slice(testPrefix.length).replace(/^:\s*/, "").trim() ||
+                null;
+        } else if (label) {
+            chip = t("mirror.chip_device");
+            labelTitle = label;
+        } else {
+            chip = t("mirror.chip_send");
+        }
+
+        // Unknown-send rows are detected by fingerprint prefix, NOT by
+        // the title chain bottoming out: rows persisted before shampoo
+        // carry a backend-stamped alias "Unknown send" that would win
+        // the chain and defeat the detection (bench catch -- the served
+        // bundle was current and the row still rendered the old way).
+        // That legacy alias is treated as absent; a user-renamed row
+        // keeps its custom alias as the title, hint intact.
+        const unknownSend = (sig.fingerprint ?? "").startsWith(
+            MIRROR_UNKNOWN_FP_PREFIX,
+        );
+        const alias =
+            unknownSend && sig.alias === "Unknown send" ? "" : sig.alias;
+
+        // Title chain: alias > send label > decoded identity > the S/L
+        // diamonds (the panel's established unnamed-signal identity) >
+        // the unknown-send title (foreign, never heard, nothing known).
+        const chainTitle =
+            alias ||
+            labelTitle ||
+            this._decodedDisplay(sig) ||
+            (sig.sl_pattern
+                ? [...sig.sl_pattern]
+                      .map((ch) => (ch === "L" ? "◆" : "◇"))
+                      .join("")
+                : null);
+        const title = chainTitle || t("mirror.unknown_title");
+
+        const pill = sig.decoded_protocol ?? sig.protocol;
+        const pillRaw = !sig.decoded_protocol;
+
+        const via =
+            emitters.length > 2
+                ? t("mirror.via_n", { count: emitters.length })
+                : viaFull
+                  ? t("mirror.via", { name: viaFull })
+                  : "";
+
+        // Zero-receiver homes suppress the clause entirely: amber (or even
+        // grey) everywhere would be alarm without information. The clause
+        // says LAST heard (owner bench note): heard_by resets on every
+        // send and describes only the most recent one, while the row
+        // aggregates many sends -- "heard in Office" over-claimed.
+        let heard: string | null = null;
+        let heardOk = false;
+        if (this._hasReceivers) {
+            const by = sig.heard_by ?? [];
+            if (by.length === 0) {
+                heard = t("mirror.not_heard");
+            } else {
+                heardOk = true;
+                const areas = by.map((r) => this._receiverArea(r));
+                if (areas.every((a) => a !== null)) {
+                    const unique = [...new Set(areas as string[])];
+                    heard = t("mirror.heard_in", { areas: unique.join(", ") });
+                } else {
+                    const names = by.map((r) => this._friendlyReceiver(r));
+                    heard = t("mirror.heard_by", { names: names.join(", ") });
+                }
+            }
+        }
+
+        return {
+            sig,
+            title,
+            pill: pill ?? null,
+            pillRaw,
+            via,
+            viaFull,
+            emitters,
+            chip,
+            heard,
+            heardOk,
+            unknownSend,
+        };
+    }
+
+    private _rows(): MirrorRowView[] {
+        // Latest observed emission on top, always. A re-sent identity bumps
+        // its existing row back to the top rather than flashing somewhere
+        // mid-list (owner bench note). The Mirror has no manual order --
+        // recency IS its order.
+        const signals = [...(this._device?.signals ?? [])].sort((a, b) =>
+            (b.last_seen ?? "").localeCompare(a.last_seen ?? ""),
+        );
+        return signals.map((s) => this._rowView(s));
+    }
+
+    private _filteredRows(rows: MirrorRowView[]): MirrorRowView[] {
+        let out = rows;
+        if (this._filter === "notheard") {
+            out = out.filter(
+                (r) => (r.sig.heard_by ?? []).length === 0,
+            );
+        } else if (this._filter !== "all") {
+            out = out.filter((r) => r.emitters.includes(this._filter));
+        }
+        const q = this._search.trim().toLowerCase();
+        if (q) {
+            out = out.filter((r) =>
+                [
+                    r.title,
+                    r.pill ?? "",
+                    r.viaFull,
+                    r.chip,
+                    r.sig.decoded_fingerprint ?? "",
+                    r.sig.alias ?? "",
+                ]
+                    .join(" ")
+                    .toLowerCase()
+                    .includes(q),
+            );
+        }
+        return out;
+    }
+
+    // -----------------------------------------------------------------
+    // Dots (identity-aware, v0.5.8)
+    // -----------------------------------------------------------------
+
+    private _triggerCountFor(signal: UnknownSignal): number {
+        return this._triggers.filter((t) => triggerMatchesSignal(t, signal))
+            .length;
+    }
+
+    // -----------------------------------------------------------------
+    // Row actions -- the Sniffer's vocabulary, minus delete (it's a log)
+    // -----------------------------------------------------------------
+
+    private _onAssignClick(signal: UnknownSignal, ev?: Event): void {
+        if (!this._device) return;
+        if (!signal.assigned_to?.length) {
+            this._assignSignal = { signal, initialMode: "existing" };
+            return;
+        }
+        const btn = ev?.currentTarget as HTMLElement | undefined;
+        const rect = btn?.getBoundingClientRect();
+        this._assignedPopover = {
+            signal,
+            top: rect ? rect.bottom + 4 : 120,
+            left: rect ? Math.max(8, rect.right - 220) : 120,
+        };
+        this._installPopoverDismiss();
+    }
+
+    private _closeAssignedPopover(): void {
+        this._assignedPopover = null;
+        this._removePopoverDismiss();
+    }
+
+    private _onAssignedPopoverCreateNew(): void {
+        const p = this._assignedPopover;
+        this._closeAssignedPopover();
+        if (p) this._assignSignal = { signal: p.signal, initialMode: "existing" };
+    }
+
+    private _onAssignedPopoverOpen(ev: CustomEvent): void {
+        const a = ev.detail as SignalAssignment | undefined;
+        this._closeAssignedPopover();
+        if (!a) return;
+        this.dispatchEvent(
+            new CustomEvent("navigate-device", {
+                detail: a.device_id,
+                bubbles: true,
+                composed: true,
+            }),
+        );
+    }
+
+    private async _onSignalAssigned(_ev: CustomEvent<AssignResult>): Promise<void> {
+        this._assignSignal = null;
+        await this._refreshDots();
+    }
+
+    private _openTriggerDialog(signal: UnknownSignal, ev?: Event): void {
+        const matches = this._triggers.filter((t) =>
+            triggerMatchesSignal(t, signal),
+        );
+        if (matches.length === 0) {
+            this._triggerDialog = signal;
+            return;
+        }
+        const btn = ev?.currentTarget as HTMLElement | undefined;
+        const rect = btn?.getBoundingClientRect();
+        this._triggerPopover = {
+            signal,
+            top: rect ? rect.bottom + 4 : 120,
+            left: rect ? Math.max(8, rect.right - 220) : 120,
+        };
+        this._installPopoverDismiss();
+    }
+
+    private _closeTriggerPopover(): void {
+        this._triggerPopover = null;
+        this._removePopoverDismiss();
+    }
+
+    private _onPopoverCreateNew(): void {
+        const p = this._triggerPopover;
+        this._closeTriggerPopover();
+        if (p) this._triggerDialog = p.signal;
+    }
+
+    private _onPopoverEditTrigger(ev: CustomEvent): void {
+        const t = ev.detail as IRTrigger | undefined;
+        this._closeTriggerPopover();
+        if (t) this._triggerEditDialog = t;
+    }
+
+    private async _onTriggerSaved(): Promise<void> {
+        this._triggerDialog = null;
+        this._triggerEditDialog = null;
+        try {
+            this._triggers = await this.api.listTriggers();
+        } catch {
+            // Non-fatal.
+        }
+    }
+
+    private _closeTriggerDialog(): void {
+        this._triggerDialog = null;
+        this._triggerEditDialog = null;
+    }
+
+    private _requestDeleteTrigger(triggerId: string): void {
+        this._closeTriggerDialog();
+        this._confirmDeleteTriggerId = triggerId;
+    }
+
+    private async _confirmDeleteTrigger(): Promise<void> {
+        const id = this._confirmDeleteTriggerId;
+        this._confirmDeleteTriggerId = null;
+        if (!id) return;
+        try {
+            await this.api.deleteTrigger(id);
+            this._triggers = await this.api.listTriggers();
+        } catch (err) {
+            this._error = t("common.delete_failed", { message: (err as Error).message });
+        }
+    }
+
+    private _onDocClickForPopover = (ev: Event): void => {
+        const path = ev.composedPath();
+        const trig = this.shadowRoot?.querySelector("ir-trigger-popover");
+        const asgn = this.shadowRoot?.querySelector("ir-assigned-popover");
+        if ((trig && path.includes(trig)) || (asgn && path.includes(asgn))) {
+            return;
+        }
+        this._closeTriggerPopover();
+        this._closeAssignedPopover();
+    };
+
+    private _onScrollForPopover = (): void => {
+        this._closeTriggerPopover();
+        this._closeAssignedPopover();
+    };
+
+    private _installPopoverDismiss(): void {
+        setTimeout(() => {
+            document.addEventListener("click", this._onDocClickForPopover, true);
+            window.addEventListener("scroll", this._onScrollForPopover, true);
+        }, 0);
+    }
+
+    private _removePopoverDismiss(): void {
+        document.removeEventListener("click", this._onDocClickForPopover, true);
+        window.removeEventListener("scroll", this._onScrollForPopover, true);
+    }
+
+    private async _sendTest(e: CustomEvent): Promise<void> {
+        if (!this._testDialog) return;
+        const signal = this._testDialog;
+        const emitters = e.detail.emitters as string[];
+        if (emitters.length === 0) return;
+        this._testingSignalId = signal.id;
+        this._testResult = null;
+        this._testDialog = null;
+        try {
+            const results = await Promise.allSettled(
+                emitters.map((eid) => this.api.testSignal(signal.id, eid)),
+            );
+            const sent = results.filter(
+                (r) => r.status === "fulfilled" && r.value.sent,
+            ).length;
+            const total = emitters.length;
+            if (sent === total) {
+                this._testResult =
+                    total === 1
+                        ? t("mirror.sent")
+                        : t("mirror.sent_all_n", { sent, total });
+            } else if (sent === 0) {
+                this._testResult = t("mirror.failed");
+            } else {
+                this._testResult = t("mirror.sent_partial", { sent, total });
+            }
+        } catch {
+            this._testResult = t("mirror.error");
+        }
+        setTimeout(() => {
+            this._testResult = null;
+            this._testingSignalId = null;
+        }, 3000);
+    }
+
+    private async _onSignalEdited(): Promise<void> {
+        this._editSignal = null;
+        await this._refreshDevice();
+    }
+
+    /** Delete clears the ledger entry; the row returns on the next send
+     * of the same identity (uniform with the Sniffer's resurrection
+     * semantics -- delete is "clear this entry", never "never again").
+     * Added on the v0.6.6 bench, reversing the earlier no-delete ruling:
+     * stale test entries needed a way out, and resurrection makes
+     * removal harmless to the audit. */
+    private async _confirmDeleteSignal(): Promise<void> {
+        const sig = this._deleteSignal;
+        this._deleteSignal = null;
+        if (!sig || !this._device) return;
+        try {
+            await this.api.deleteSignal(this._device.id, sig.id);
+            await this._refreshDevice();
+        } catch (err) {
+            this._error = t("common.delete_failed", { message: (err as Error).message });
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // Render
+    // -----------------------------------------------------------------
+
+    render() {
+        const rows = this._rows();
+        const filtered = this._filteredRows(rows);
+
+        return html`
+            <div class="toolbar">
+                <div class="toolbar-title-group">
+                    <span class="toolbar-title">
+                        <ha-svg-icon .path=${ICON_MIRROR}></ha-svg-icon>
+                        ${t("mirror.title")}
+                        ${!this._loading
+                            ? html`<span class="toolbar-count"
+                                  >(${tp("mirror.signals", rows.length)})</span
+                              ><span class="toolbar-tagline"
+                                  >- ${t("panel.tagline.mirror")}</span
+                              >`
+                            : ""}
+                    </span>
+                </div>
+            </div>
+            ${this._error
+                ? html`<div class="error">${this._error}</div>`
+                : ""}
+            ${this._loading && !this._device
+                ? html`<div class="loading">${t("panel.loading")}</div>`
+                : rows.length === 0
+                  ? this._renderEmpty()
+                  : html`
+                        ${this._renderStats(rows)}
+                        ${this._renderToolbar(rows)}
+                        <div class="rows">
+                            ${filtered.length === 0
+                                ? html`<div class="no-match">
+                                      ${t("mirror.no_match")}
+                                  </div>`
+                                : filtered.map((r) => this._renderRow(r))}
+                        </div>
+                    `}
+            ${this._renderDialogs()}
+        `;
+    }
+
+    private _renderStats(rows: MirrorRowView[]) {
+        const notHeard = rows.filter(
+            (r) => (r.sig.heard_by ?? []).length === 0,
+        ).length;
+        const emitters = new Set<string>();
+        for (const r of rows) r.emitters.forEach((e) => emitters.add(e));
+        const last = this._device?.last_seen;
+        return html`
+            <div class="stats">
+                <div class="stat">
+                    <div class="v">${this._device?.hit_count ?? 0}</div>
+                    <div class="l">${t("mirror.stat_sends")}</div>
+                </div>
+                ${this._hasReceivers
+                    ? html`
+                          <div class="stat">
+                              <div class="v ${notHeard ? "warn" : ""}">
+                                  ${notHeard}
+                              </div>
+                              <div class="l">${t("mirror.stat_not_heard")}</div>
+                          </div>
+                      `
+                    : ""}
+                <div class="stat">
+                    <div class="v">${emitters.size}</div>
+                    <div class="l">${t("mirror.stat_emitters")}</div>
+                </div>
+                <div class="stat">
+                    <div class="v">${rows.length}</div>
+                    <div class="l">${t("mirror.stat_signals")}</div>
+                </div>
+                <span class="updated">
+                    ${this._hasReceivers
+                        ? last
+                            ? relShort(last) === t("rel.just_now")
+                                ? t("mirror.last_send_just")
+                                : t("mirror.last_send_ago", { rel: relShort(last) })
+                            : ""
+                        : t("mirror.no_receivers")}
+                </span>
+            </div>
+        `;
+    }
+
+    /** The filter header: FOUR pills, always (punch list item 15).
+     *
+     * Search, All, Not heard, and one dropdown pill carrying every
+     * emitter. The shape this replaced grew one chip per emitter, so a
+     * six-emitter house already crowded the row and a larger one wrapped
+     * it into a wall -- the row's size tracked the house's size, which
+     * is exactly what a filter header must not do. Four pills, whatever
+     * the house: only the dropdown's own list gets longer, and it
+     * scrolls internally past 280px.
+     *
+     * The FILTER ITSELF is unchanged: still the single value
+     * ``"all" | "notheard" | <emitter name>`` this component has always
+     * held, with search ANDed on top. The multi-select shapes tried in
+     * two earlier rounds were set aside deliberately -- the owner's own
+     * answer for wanting several emitters at once is the search box.
+     */
+    private _renderToolbar(rows: MirrorRowView[]) {
+        const notHeard = rows.filter(
+            (r) => (r.sig.heard_by ?? []).length === 0,
+        ).length;
+        const emitterCounts = new Map<string, number>();
+        for (const r of rows) {
+            for (const e of r.emitters) {
+                emitterCounts.set(e, (emitterCounts.get(e) ?? 0) + 1);
+            }
+        }
+        const picked =
+            this._filter !== "all" && this._filter !== "notheard"
+                ? this._filter
+                : null;
+        // The label carries the picked emitter's own count when one is
+        // picked, and the number of emitters to choose from when none
+        // is. Two different numbers, deliberately: "Emitter (6)" reads
+        // as "six to pick from", which is what the pill offers before
+        // it is used.
+        const emitterLabel = picked
+            ? picked
+            : t("mirror.filter_emitter", { count: emitterCounts.size });
+        const emitterCount = picked ? (emitterCounts.get(picked) ?? 0) : null;
+        return html`
+            <div class="filter-bar">
+                <div class="search-pill-wrap">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <line x1="20" y1="20" x2="16" y2="16"></line>
+                    </svg>
+                    <input
+                        class="search-pill"
+                        type="text"
+                        placeholder=${t("mirror.search")}
+                        .value=${this._search}
+                        @input=${(e: Event) => {
+                            this._search = (e.target as HTMLInputElement).value;
+                        }}
+                    />
+                </div>
+                <button
+                    class="fchip all-chip ${this._filter === "all" ? "on" : ""}"
+                    @click=${() => this._setFilter("all")}
+                >
+                    ${t("mirror.filter_all", { count: rows.length })}
+                </button>
+                ${this._hasReceivers
+                    ? html`
+                          <button
+                              class="fchip warnc ${this._filter === "notheard" ? "on" : ""}"
+                              @click=${() => this._setFilter("notheard")}
+                          >
+                              ${t("mirror.filter_not_heard", { count: notHeard })}
+                          </button>
+                      `
+                    : ""}
+                <div class="emitter-pill-wrap">
+                    <button
+                        class="fchip emitter-chip ${picked ? "on" : ""} ${this
+                            ._emitterOpen
+                            ? "open"
+                            : ""}"
+                        title=${picked ?? ""}
+                        aria-haspopup="listbox"
+                        aria-expanded=${this._emitterOpen ? "true" : "false"}
+                        @click=${this._toggleEmitterMenu}
+                    >
+                        <span class="emitter-chip-label">${emitterLabel}</span>
+                        ${emitterCount !== null ? html`(${emitterCount})` : ""}
+                        <svg class="chev" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.2"
+                            stroke-linecap="round" stroke-linejoin="round"
+                            aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    ${this._emitterOpen
+                        ? html`
+                              <div class="emitter-dropdown open" role="listbox">
+                                  ${[...emitterCounts.entries()].map(
+                                      ([name, count]) => html`
+                                          <button
+                                              class="emitter-option ${picked === name
+                                                  ? "picked"
+                                                  : ""}"
+                                              role="option"
+                                              aria-selected=${picked === name
+                                                  ? "true"
+                                                  : "false"}
+                                              title=${name}
+                                              @click=${() => this._pickEmitter(name)}
+                                          >
+                                              <span class="rname">${name}</span>
+                                              <span class="rcount">${count}</span>
+                                          </button>
+                                      `,
+                                  )}
+                              </div>
+                          `
+                        : ""}
+                </div>
+            </div>
+        `;
+    }
+
+    /** All / Not heard. Picking either drops any picked emitter, since
+     * only one of the three is ever the filter. */
+    private _setFilter(value: "all" | "notheard"): void {
+        this._filter = value;
+        this._closeEmitterMenu();
+    }
+
+    private _pickEmitter(name: string): void {
+        this._filter = name;
+        this._closeEmitterMenu();
+    }
+
+    private _toggleEmitterMenu(): void {
+        this._emitterOpen ? this._closeEmitterMenu() : this._openEmitterMenu();
+    }
+
+    private _openEmitterMenu(): void {
+        this._emitterOpen = true;
+        // Outside-click and Escape both close, and both are captured on
+        // the document because the click that closes can land anywhere,
+        // including inside another shadow root.
+        document.addEventListener("click", this._onDocClick, true);
+        document.addEventListener("keydown", this._onMenuKeydown, true);
+    }
+
+    private _closeEmitterMenu(): void {
+        if (!this._emitterOpen) return;
+        this._emitterOpen = false;
+        document.removeEventListener("click", this._onDocClick, true);
+        document.removeEventListener("keydown", this._onMenuKeydown, true);
+    }
+
+    /** Anything outside the pill-and-dropdown group closes the menu.
+     * composedPath is what makes this work across the shadow boundary:
+     * event.target from out here is the host, not the inner button. */
+    private _onDocClick = (e: Event): void => {
+        const wrap = this.renderRoot.querySelector(".emitter-pill-wrap");
+        if (wrap && e.composedPath().includes(wrap)) return;
+        this._closeEmitterMenu();
+    };
+
+    /** Escape closes AND hands focus back to the pill -- closing into
+     * nothing would strand a keyboard user mid-row. */
+    private _onMenuKeydown = (e: KeyboardEvent): void => {
+        if (e.key !== "Escape") return;
+        e.stopPropagation();
+        this._closeEmitterMenu();
+        const pill = this.renderRoot.querySelector(
+            ".emitter-chip",
+        ) as HTMLElement | null;
+        pill?.focus();
+    };
+
+    private _renderRow(r: MirrorRowView) {
+        const sig = r.sig;
+        const bloom = this._bloomIds.has(sig.id);
+        const actionable = !!sig.code;
+        const isTesting = this._testingSignalId === sig.id;
+        // Both counts are optional on the wire and mean 1 when absent.
+        // The indicators below only render above 1, so the fallback never
+        // reaches a tooltip; binding them here is what gives TypeScript
+        // the narrowing it cannot infer from a `??` inside the guard.
+        const sendCount = sig.send_count ?? 1;
+        const repeatCount = sig.repeat_count ?? 1;
+        return html`
+            <div class="mrow ${bloom ? "bloom" : ""}">
+                <div class="mrow-main">
+                    <div class="mrow-title">
+                        <span class="name">${r.title}</span>
+                        ${r.pill
+                            ? html`<span
+                                  class="pill ${r.pillRaw ? "raw" : ""}"
+                                  >${r.pill}</span
+                              >`
+                            : ""}
+                        <ir-tx-knobs
+                            .sendCount=${sendCount}
+                            .repeatCount=${repeatCount}
+                            .decoded=${!!sig.decoded_protocol}
+                            .sendsKey=${"mirror.sends_times"}
+                        ></ir-tx-knobs>
+                    </div>
+                    ${r.unknownSend
+                        ? html`
+                              <div class="mrow-hint">
+                                  ${t("mirror.unknown_hint").split("{name}")[0]}<em
+                                      class="hint-emitter"
+                                      >${r.emitters[0] ?? t("mirror.the_blaster")}</em
+                                  >${t("mirror.unknown_hint").split("{name}")[1] ?? ""}
+                              </div>
+                          `
+                        : html`
+                              <div class="mrow-sub">
+                                  ${r.via
+                                      ? html`<span title=${r.viaFull}
+                                            >${r.via}</span
+                                        >`
+                                      : ""}
+                                  ${r.heard !== null
+                                      ? html`
+                                            <span class="arrow"
+                                                >&#10142;</span
+                                            >
+                                            <span
+                                                class=${r.heardOk
+                                                    ? "heard"
+                                                    : "not-heard"}
+                                                >${r.heard}</span
+                                            >
+                                        `
+                                      : ""}
+                                  <span class="src-chip">${r.chip}</span>
+                              </div>
+                          `}
+                </div>
+                <div class="mrow-meta">
+                    <span class="counts"
+                        >${sig.hit_count}
+                        ${sig.hit_count === 1 ? "send" : "sends"}${sig.last_seen
+                            ? html` &middot; ${relShort(sig.last_seen)}`
+                            : ""}</span
+                    >
+                    <span class="mrow-btns">
+                    <button
+                        class="action-btn assign-btn"
+                        ?disabled=${!actionable}
+                        title=${!actionable
+                            ? t("mirror.assign_disabled")
+                            : sig.assignment_count && sig.assigned_to?.length
+                              ? sig.assignment_count === 1
+                                  ? t("mirror.assigned_one", {
+                                        device: sig.assigned_to[0].device_name,
+                                        command: sig.assigned_to[0].command_name,
+                                    })
+                                  : t("mirror.assigned_n", { count: sig.assignment_count }) + `\n- ${sig.assigned_to.map((a) => `${a.device_name} / ${a.command_name}`).join("\n- ")}`
+                              : t("mirror.assign_title")}
+                        @click=${(e: Event) => {
+                            e.stopPropagation();
+                            this._onAssignClick(sig, e);
+                        }}
+                    >${t("assign.assign")}<ir-count-dot
+                            color="green"
+                            .count=${sig.assignment_count ?? 0}
+                        ></ir-count-dot></button>
+                    <button
+                        class="action-btn test-btn"
+                        ?disabled=${!actionable || isTesting}
+                        title=${actionable
+                            ? t("mirror.test_title")
+                            : t("mirror.test_disabled")}
+                        @click=${(e: Event) => {
+                            e.stopPropagation();
+                            this._testDialog = sig;
+                        }}
+                    >${isTesting
+                        ? (this._testResult ?? t("mirror.sending"))
+                        : t("mirror.test")}</button>
+                    <button
+                        class="action-btn trigger-btn"
+                        ?disabled=${!actionable}
+                        title=${!actionable
+                            ? t("mirror.trigger_disabled")
+                            : this._triggerCountFor(sig) > 0
+                              ? t("mirror.trigger_edit")
+                              : t("mirror.trigger_create")}
+                        @click=${(e: Event) => {
+                            e.stopPropagation();
+                            this._openTriggerDialog(sig, e);
+                        }}
+                    >${t("cmdrow.trigger")}<ir-count-dot
+                            color="yellow"
+                            .count=${this._triggerCountFor(sig)}
+                        ></ir-count-dot></button>
+                    <span class="edit-trash-group">
+                        ${sig.code
+                            ? renderEditBtn((e: Event) => {
+                                  e.stopPropagation();
+                                  this._editSignal = sig;
+                              }, t("cmdrow.edit_code"))
+                            : ""}
+                        <button
+                            class="trash-btn"
+                            title=${t("mirror.delete_title")}
+                            aria-label=${t("mirror.delete_title")}
+                            @click=${(e: Event) => {
+                                e.stopPropagation();
+                                this._deleteSignal = sig;
+                            }}
+                        >
+                            <ha-svg-icon
+                                .path=${ICON_TRASH}
+                                .viewBox=${TRASH_VIEWBOX}
+                            ></ha-svg-icon>
+                        </button>
+                    </span>
+                    </span>
+                </div>
+            </div>
+        `;
+    }
+
+    private _renderEmpty() {
+        return html`
+            <div class="empty">
+                <ha-svg-icon
+                    class="empty-icon"
+                    .path=${ICON_MIRROR}
+                ></ha-svg-icon>
+                <div class="empty-title">${t("mirror.empty_title")}</div>
+                <div class="empty-sub">
+                    ${t("mirror.empty_sub")}
+                </div>
+            </div>
+        `;
+    }
+
+    private _renderDialogs() {
+        return html`
+            ${this._triggerPopover
+                ? html`<ir-trigger-popover
+                      .api=${this.api}
+                      .triggers=${this._triggers.filter((t) =>
+                          triggerMatchesSignal(t, this._triggerPopover!.signal),
+                      )}
+                      .receivers=${this._receivers}
+                      .top=${this._triggerPopover.top}
+                      .left=${this._triggerPopover.left}
+                      @create-new=${this._onPopoverCreateNew}
+                      @edit-trigger=${this._onPopoverEditTrigger}
+                  ></ir-trigger-popover>`
+                : ""}
+            ${this._assignedPopover
+                ? html`<ir-assigned-popover
+                      .assignments=${this._assignedPopover.signal.assigned_to ?? []}
+                      .top=${this._assignedPopover.top}
+                      .left=${this._assignedPopover.left}
+                      @create-new=${this._onAssignedPopoverCreateNew}
+                      @open-assignment=${this._onAssignedPopoverOpen}
+                  ></ir-assigned-popover>`
+                : ""}
+            ${this._triggerDialog
+                ? html`<ir-trigger-dialog
+                      .api=${this.api}
+                      .signalFingerprint=${this._triggerDialog.fingerprint}
+                      .byteHash=${this._triggerDialog.byte_hash ?? null}
+                      .decodedFingerprint=${this._triggerDialog.decoded_fingerprint ?? null}
+                      .protocol=${this._triggerDialog.protocol}
+                      .code=${this._triggerDialog.code}
+                      .slPattern=${this._triggerDialog.sl_pattern ?? null}
+                      .alias=${this._triggerDialog.alias || null}
+                      .mirrorContext=${true}
+                      @trigger-saved=${this._onTriggerSaved}
+                      @closed=${this._closeTriggerDialog}
+                  ></ir-trigger-dialog>`
+                : ""}
+            ${this._triggerEditDialog
+                ? html`<ir-trigger-dialog
+                      .api=${this.api}
+                      .trigger=${this._triggerEditDialog}
+                      .mirrorContext=${true}
+                      @trigger-saved=${this._onTriggerSaved}
+                      @closed=${this._closeTriggerDialog}
+                      @trigger-delete=${(e: CustomEvent) =>
+                          this._requestDeleteTrigger(e.detail.triggerId)}
+                  ></ir-trigger-dialog>`
+                : ""}
+            ${this._confirmDeleteTriggerId
+                ? html`<ir-confirm-dialog
+                      title=${t("mirror.del_trigger_title")}
+                      message=${t("mirror.del_trigger_msg")}
+                      confirmLabel=${t("common.delete")}
+                      .destructive=${true}
+                      @confirmed=${this._confirmDeleteTrigger}
+                      @closed=${() => (this._confirmDeleteTriggerId = null)}
+                  ></ir-confirm-dialog>`
+                : ""}
+            ${this._deleteSignal
+                ? html`<ir-confirm-dialog
+                      title=${t("mirror.clear_title")}
+                      message=${t("mirror.clear_msg")}
+                      confirmLabel=${t("common.delete")}
+                      .destructive=${true}
+                      @confirmed=${this._confirmDeleteSignal}
+                      @closed=${() => (this._deleteSignal = null)}
+                  ></ir-confirm-dialog>`
+                : ""}
+            ${this._assignSignal && this._device
+                ? html`<ir-assign-signal-dialog
+                      .api=${this.api}
+                      .hass=${this.hass}
+                      .unknownDeviceId=${this._device.id}
+                      .signal=${this._assignSignal.signal}
+                      .suggestedDeviceName=${""}
+                      .initialMode=${this._assignSignal.initialMode}
+                      @signal-assigned=${this._onSignalAssigned}
+                      @closed=${() => (this._assignSignal = null)}
+                  ></ir-assign-signal-dialog>`
+                : ""}
+            ${this._editSignal && this._device
+                ? html`<ir-signal-editor
+                      .api=${this.api}
+                      .deviceId=${this._device.id}
+                      .signalId=${this._editSignal.id}
+                      .initialPronto=${this._editSignal.code ?? ""}
+                      .initialAlias=${this._editSignal.alias ?? ""}
+                      .initialSendCount=${this._editSignal.send_count ?? 1}
+                      .initialDitto=${this._editSignal.repeat_count ?? 1}
+                      .initialObservedRepeatCount=${this._editSignal
+                          .observed_repeat_count ?? 0}
+                      .hasTrigger=${this._triggerCountFor(this._editSignal) > 0}
+                      @signal-edited=${this._onSignalEdited}
+                      @closed=${() => (this._editSignal = null)}
+                  ></ir-signal-editor>`
+                : ""}
+            ${this._testDialog
+                ? html`<ir-test-emitter-dialog
+                      .api=${this.api}
+                      .hass=${this.hass}
+                      .value=${this._testEmitters}
+                      @emitters-changed=${(e: CustomEvent) =>
+                          (this._testEmitters = e.detail.value)}
+                      @send=${this._sendTest}
+                      @closed=${() => (this._testDialog = null)}
+                  ></ir-test-emitter-dialog>`
+                : ""}
+        `;
+    }
+
+    static styles = [
+        actionChipStyles,
+        trashButtonStyles,
+        editButtonStyles,
+        bloomStyles,
+        css`
+            /* Edit + trash sit as one unit, hover boxes butted with
+               zero gap -- same pairing ir-command-row.ts's device-
+               detail rows use (edit-and-actions bench passes,
+               2026-08-11), rolled out here unchanged. */
+            .edit-trash-group {
+                display: inline-flex;
+                align-items: center;
+                gap: 0;
+            }
+            :host {
+                display: block;
+            }
+            .loading,
+            .no-match {
+                text-align: center;
+                color: var(--secondary-text-color);
+                padding: 24px;
+            }
+
+            /* Signpost 3, fourth revision (2026-08-16): matches
+               ir-device-list.ts's Devices/Remotes toolbar exactly
+               (owner ruling) -- icon + uppercase title + count +
+               inline dash-tagline, all one line. */
+            .toolbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .toolbar-title-group {
+                display: flex;
+            }
+            .toolbar-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 1.1rem;
+                font-weight: 500;
+                color: var(--primary-text-color);
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+            }
+            .toolbar-title ha-svg-icon {
+                --mdc-icon-size: 24px;
+                color: #607d8b;
+            }
+            .toolbar-count {
+                font-weight: 400;
+                color: var(--secondary-text-color);
+                font-size: 0.9rem;
+                text-transform: uppercase;
+            }
+            .toolbar-tagline {
+                font-size: 0.8rem;
+                font-weight: 400;
+                color: var(--secondary-text-color);
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+            }
+            .error {
+                color: var(--error-color, #db4437);
+                padding: 8px 0;
+            }
+
+            /* Stats strip: the silver sheen lives here, as texture.
+               Deliberately slim (owner bench note: less air above and
+               below) -- values and labels sit on one line per stat. */
+            .stats {
+                display: flex;
+                align-items: baseline;
+                gap: 22px;
+                background: var(--secondary-background-color);
+                border: 1px solid var(--divider-color);
+                border-radius: 8px;
+                padding: 6px 14px;
+                margin-bottom: 12px;
+                background-image: linear-gradient(
+                    105deg,
+                    transparent 42%,
+                    rgba(144, 164, 174, 0.12) 50%,
+                    transparent 58%
+                );
+            }
+            .stat {
+                display: flex;
+                align-items: baseline;
+                gap: 5px;
+            }
+            .stat .v {
+                font-size: 15px;
+                font-weight: 600;
+                color: var(--primary-text-color);
+            }
+            .stat .l {
+                font-size: 10.5px;
+                color: var(--secondary-text-color);
+                letter-spacing: 0.4px;
+            }
+            .stat .v.warn {
+                color: #e65100;
+            }
+            .stats .updated {
+                margin-left: auto;
+                font-size: 11.5px;
+                color: var(--secondary-text-color);
+            }
+
+            /* Toolbar: FOUR pills, always (punch list item 15).
+               Search, All, Not heard, Emitter -- in that order, per the
+               owner's explicit instruction, not incidentally. The row
+               cannot grow with the house because it holds a fixed four
+               regardless of how many emitters exist; only the emitter
+               dropdown's own list gets longer. */
+            /* Its own class, NOT .toolbar. That name already belongs
+               to the page header row above, whose rule declares
+               justify-content: space-between -- and with equal
+               specificity the later rule won, spreading these four
+               fixed-width pills across the full width. The old filter
+               row survived the collision only because its search input
+               was flex: 1 1 180px and ate the slack, so the
+               space-between never had anywhere to push. Fixed widths
+               made it visible. */
+            .filter-bar {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+                margin-bottom: 14px;
+                flex-wrap: wrap;
+                position: relative;
+            }
+            .fchip {
+                font-size: 12.5px;
+                padding: 6px 14px;
+                height: 32px;
+                box-sizing: border-box;
+                border-radius: 16px;
+                border: 1px solid var(--divider-color);
+                background: var(--card-background-color);
+                color: var(--secondary-text-color);
+                font-family: inherit;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                flex: none;
+                transition: background 120ms ease, border-color 120ms ease,
+                    color 120ms ease;
+            }
+            .fchip:focus-visible,
+            .emitter-option:focus-visible {
+                outline: 2px solid #4dabf7;
+                outline-offset: 2px;
+            }
+            /* All: green filled when it is the filter, green OUTLINE
+               when it is not -- it never falls to plain neutral. */
+            .fchip.all-chip.on {
+                background: #2e7d32;
+                border-color: #2e7d32;
+                color: #fff;
+                font-weight: 600;
+            }
+            .fchip.all-chip:not(.on) {
+                color: #2e7d32;
+                border-color: rgba(46, 125, 50, 0.4);
+                font-weight: 600;
+            }
+            /* Not heard keeps its amber in BOTH states. Straight from
+               this component's own earlier header note: it is the
+               dead-LED finder, and it has to read apart from a plain
+               pill at a glance whether or not it is the active filter.
+               Do not let it fall back to neutral when inactive. */
+            .fchip.warnc.on {
+                background: #e65100;
+                border-color: #e65100;
+                color: #fff;
+            }
+            .fchip.warnc:not(.on) {
+                color: #e65100;
+                border-color: #ffcf9e;
+            }
+            /* The emitter pill wears All's exact green when an emitter
+               is picked. The two then read apart only by their label,
+               which the owner saw and approved rather than had forced
+               on him. Unpicked, it is the plain neutral .fchip base
+               above -- no override. */
+            .fchip.emitter-chip {
+                max-width: 220px;
+            }
+            .fchip.emitter-chip.on {
+                background: #2e7d32;
+                border-color: #2e7d32;
+                color: #fff;
+                font-weight: 600;
+            }
+            /* An emitter's friendly name can be arbitrarily long -- the
+               bench fixture concatenates its receiver's name with its
+               emitter's. Ellipsize the NAME only so the count and the
+               chevron stay visible, with the whole name in the tooltip,
+               the same gate the card names use. The text is not
+               de-duplicated: a doubled name is a naming artifact on that
+               entity, not something to paper over here. */
+            .emitter-chip-label {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .emitter-chip .chev {
+                width: 12px;
+                height: 12px;
+                flex: none;
+                transition: transform 120ms ease;
+            }
+            .emitter-chip.open .chev {
+                transform: rotate(180deg);
+            }
+            .emitter-pill-wrap {
+                position: relative;
+                flex: none;
+            }
+            /* Only this list ever grows, and past 280px only it
+               scrolls -- never the pill row above it. */
+            .emitter-dropdown {
+                position: absolute;
+                top: calc(100% + 6px);
+                left: 0;
+                min-width: 260px;
+                /* The rows ellipsize their name, which needs something
+                   to ellipsize AGAINST. Without an upper bound the
+                   panel just grows to the longest name instead -- and
+                   the bench fixture's longest is a receiver name
+                   concatenated with its emitter's, which spanned half
+                   the page. The full name stays in each row's title. */
+                max-width: 420px;
+                max-height: 280px;
+                overflow-y: auto;
+                background: var(--card-background-color);
+                border: 1px solid var(--divider-color);
+                border-radius: 10px;
+                box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+                z-index: 30;
+                padding: 6px;
+            }
+            /* A real button per row, not a click-only div: Tab reaches
+               each one and Enter or Space activates it for free. */
+            .emitter-option {
+                width: 100%;
+                padding: 7px 10px;
+                border: none;
+                border-radius: 6px;
+                background: none;
+                cursor: pointer;
+                font-size: 12.5px;
+                font-family: inherit;
+                color: var(--primary-text-color);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                text-align: left;
+            }
+            .emitter-option:hover,
+            .emitter-option:focus-visible {
+                background: var(--secondary-background-color);
+            }
+            .emitter-option .rname {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .emitter-option .rcount {
+                color: var(--secondary-text-color);
+                font-size: 11.5px;
+                flex: none;
+            }
+            .emitter-option.picked {
+                color: #2e7d32;
+                font-weight: 600;
+            }
+            .emitter-option.picked .rcount {
+                color: rgba(46, 125, 50, 0.7);
+            }
+            /* Search is the same pill height and rounding as the other
+               three so all four read as one family, at a fixed width
+               that neither grows nor gets squeezed. */
+            .search-pill-wrap {
+                position: relative;
+                flex: 0 0 190px;
+            }
+            .search-pill-wrap .search-icon {
+                position: absolute;
+                left: 11px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 13px;
+                height: 13px;
+                color: var(--secondary-text-color);
+                pointer-events: none;
+            }
+            .search-pill {
+                width: 100%;
+                height: 32px;
+                box-sizing: border-box;
+                border-radius: 16px;
+                border: 1px solid var(--divider-color);
+                background: var(--card-background-color);
+                color: var(--primary-text-color);
+                font-family: inherit;
+                font-size: 12.5px;
+                padding: 0 12px 0 30px;
+            }
+            .search-pill:focus {
+                outline: none;
+                border-color: #607d8b;
+            }
+
+            /* Rows: each send is its own rounded card (owner bench note),
+               matching the card language of the Devices, Sniffer, and
+               Clipper surfaces instead of a welded table. */
+            .rows {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .mrow {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 16px;
+                border: 1px solid var(--divider-color);
+                border-radius: 10px;
+                background: var(--card-background-color);
+                /* Carries the soft exit after the bloom class drops --
+                   same durations as the trigger card. */
+                transition: box-shadow 300ms ease, border-color 300ms ease,
+                            background 400ms ease;
+            }
+            .mrow:hover {
+                background: var(--secondary-background-color);
+            }
+            /* The silver bloom a send makes while you watch: the WHOLE
+               card glows and fades (owner bench note -- the old left-edge
+               chip read as a sliver). Now rides the shared .bloom class
+               (ir-bloom-styles.ts, Track B bloom extraction) -- same
+               shape and timing the trigger row/card use, silver here via
+               these three custom-property overrides instead of the
+               module's gold default. The old mirror-bloom keyframes and
+               the .mrow.bloom border/background "snap-back" base rule
+               (a one-more-pass-before-fade flourish) are retired with
+               it: the shared module doesn't reproduce that nuance for
+               any of its three consumers, trading a small polish detail
+               for one real animation instead of three drifting copies. */
+            .mrow.bloom {
+                --bloom-rgb: 144, 164, 174;
+                --bloom-peak: #b0bec5;
+                --bloom-edge: #90a4ae;
+            }
+            .mrow-main {
+                min-width: 0;
+            }
+            .mrow-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+            }
+            .mrow-title .name {
+                font-weight: 500;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .pill {
+                font-size: 10px;
+                letter-spacing: 0.4px;
+                font-weight: 500;
+                padding: 2px 7px;
+                border-radius: 9px;
+                background: rgba(33, 150, 243, 0.12);
+                color: #1565c0;
+                white-space: nowrap;
+            }
+            .pill.raw {
+                background: rgba(230, 140, 60, 0.12);
+                color: #b87333;
+            }
+            /* TX-knob indicators, same anatomy as the command rows'. */
+            .mrow-sub {
+                margin-top: 4px;
+                font-size: 12px;
+                color: var(--secondary-text-color);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+            /* Unknown-send explanation: replaces the whole sub-line on
+               foreign never-heard rows (owner wording). Plain prose, so
+               it wraps like a sentence rather than flexing like chips. */
+            .mrow-hint {
+                margin-top: 4px;
+                font-size: 12px;
+                color: var(--secondary-text-color);
+                line-height: 1.45;
+                max-width: 46em;
+            }
+            /* The emitter's name reads as part of the sentence without
+               a marker (owner bench note); italic says "this is YOUR
+               device's name, not our words." */
+            .mrow-hint .hint-emitter {
+                font-style: italic;
+            }
+            .arrow {
+                color: #b0bec5;
+            }
+            .heard {
+                color: #2e7d32;
+            }
+            /* Neutral grey, not amber: one-way homes are normal. */
+            .not-heard {
+                color: #90a4ae;
+            }
+            .src-chip {
+                font-size: 10.5px;
+                padding: 1px 8px;
+                border-radius: 8px;
+                background: rgba(96, 125, 139, 0.12);
+                color: #546e7a;
+                white-space: nowrap;
+            }
+            .mrow-meta {
+                margin-left: auto;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                white-space: nowrap;
+            }
+            /* The action buttons group at the signal-row tolerance
+               (4px, owner ruling 2026-07-28: one button rhythm
+               everywhere); the 10px meta gap stays for the counts
+               and code glyph around them. */
+            .mrow-btns {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            .counts {
+                font-size: 12px;
+                color: var(--secondary-text-color);
+            }
+            /* Empty state: the feature explaining itself. */
+            .empty {
+                text-align: center;
+                padding: 44px 20px 52px;
+            }
+            .empty-icon {
+                --mdc-icon-size: 44px;
+                color: #607d8b;
+                margin-bottom: 12px;
+            }
+            .empty-title {
+                font-size: 15px;
+                font-weight: 500;
+                color: var(--primary-text-color);
+            }
+            .empty-sub {
+                font-size: 12.5px;
+                color: var(--secondary-text-color);
+                margin-top: 6px;
+                max-width: 420px;
+                margin-left: auto;
+                margin-right: auto;
+                line-height: 1.5;
+            }
+        `,
+    ];
+}
+
+declare global {
+    interface HTMLElementTagNameMap {
+        "ir-mirror": IrMirror;
+    }
+}

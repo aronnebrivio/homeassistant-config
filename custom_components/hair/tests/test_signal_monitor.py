@@ -1,0 +1,2203 @@
+"""Tests for the SignalMonitor always-on listener."""
+from __future__ import annotations
+
+import asyncio
+import time
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
+
+from custom_components.hair.const import (
+    EVENT_DISMISS_ACTIVITY,
+    EVENT_SIGNAL_DETECTED,
+    LEGACY_ESPHOME_IR_EVENT,
+    SIGNAL_CLUSTER_THRESHOLD,
+    SIGNAL_RATE_LIMIT_PER_SEC,
+    SIGNAL_REPEAT_SUPPRESS_MS,
+    SIGNAL_WS_PUSH_RATE_LIMIT,
+)
+from custom_components.hair.event_parser import EventParser
+from custom_components.hair.models import (
+    IRCommand,
+    IRDevice,
+    TriggerRemote,
+    UnknownDevice,
+    UnknownSignal,
+)
+from custom_components.hair.protocol_decode import DecodedIdentity
+from custom_components.hair.signal_monitor import SignalMonitor
+from custom_components.hair.signal_store import SignalStore
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+
+def _make_hass():
+    """Create a minimal mock HomeAssistant.
+
+    ``async_create_task`` is configured to return the coroutine it
+    receives unmodified. That way, tests exercising sync ``@callback``
+    handlers that schedule async work can drain the pending coroutine
+    via ``await hass.async_create_task.call_args[0][0]`` rather than
+    leaving it as an un-awaited RuntimeWarning.
+    """
+    hass = MagicMock()
+    hass.loop = MagicMock()
+    hass.loop.call_later = MagicMock(return_value=MagicMock())
+    hass.async_create_task = MagicMock(side_effect=lambda coro: coro)
+    hass.bus = MagicMock()
+    hass.bus.async_listen = MagicMock(return_value=MagicMock())
+    hass.bus.async_fire = MagicMock()
+    hass.services = MagicMock()
+    hass.services.async_call = AsyncMock()
+    hass.states = MagicMock()
+    # Default: entity exists (returns a mock state).
+    hass.states.get = MagicMock(return_value=MagicMock())
+    return hass
+
+
+def _make_signal_store(hass):
+    store = SignalStore(hass)
+    store._loaded = True
+    return store
+
+
+def _make_hair_store():
+    hair_store = MagicMock()
+    hair_store.get_all_devices = MagicMock(return_value=[])
+    hair_store.get_device = MagicMock(return_value=None)
+    hair_store.async_save = AsyncMock()
+    # Default: no signal matches an assigned command. Tests that exercise
+    # the known-command skip set this to return a (device_id, command_id).
+    hair_store.match_command = MagicMock(return_value=None)
+    return hair_store
+
+
+def _make_event(data: dict, user_id: str | None = None):
+    event = MagicMock()
+    event.data = data
+    # Real ESPHome bus events carry no user context; the S1 forge guard in
+    # ``_on_ir_event`` drops events whose ``context.user_id`` is not None.
+    # Default to None so legacy-path tests flow through; pass a user_id to
+    # simulate an API-forged event.
+    event.context.user_id = user_id
+    return event
+
+
+def _nec_event(code: str = "0x1234", protocol: str = "NEC") -> dict:
+    return {"protocol": protocol, "code": code}
+
+
+def _raw_event(timings: list[int] | None = None) -> dict:
+    return {"raw": timings or [9000, -4500, 560, -560, 560, -1690]}
+
+
+# ---------------------------------------------------------------------------
+# Decode-at-capture (Phase A) and S1 forge guard
+# ---------------------------------------------------------------------------
+
+
+class TestDecodeAtCaptureAndForgeGuard:
+    """v0.4.0 commit 1: decoded fields land on stored signals, and the
+    legacy handler drops API-forged events (S1)."""
+
+    @pytest.mark.asyncio
+    async def test_decoded_fields_stored_on_capture(self):
+        """A decode result is wired onto the stored signal.
+
+        Patches ``decode_to_fields`` so the wiring is verified without the
+        library; real decode correctness lives in test_protocol_decode.
+        """
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        await monitor.async_start()
+        with patch(
+            "custom_components.hair.signal_monitor.try_decode_identity",
+            return_value=DecodedIdentity(
+                protocol="NEC", address=0xFB04, command=0x08,
+                fingerprint="NEC:0xfb04:0x08", extras=None, source="upstream",
+            ),
+        ):
+            await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+        devices = store.get_all_devices()
+        assert devices
+        sig = devices[0].signals[0]
+        assert sig.decoded_protocol == "NEC"
+        assert sig.decoded_address == 0xFB04
+        assert sig.decoded_command == 0x08
+        assert sig.decoded_fingerprint == "NEC:0xfb04:0x08"
+
+    @pytest.mark.asyncio
+    async def test_undecodable_signal_has_no_decoded_fields(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        await monitor.async_start()
+        with patch(
+            "custom_components.hair.signal_monitor.try_decode_identity",
+            return_value=None,
+        ):
+            await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+        sig = store.get_all_devices()[0].signals[0]
+        assert sig.decoded_protocol is None
+        assert sig.decoded_address is None
+        assert sig.decoded_command is None
+        assert sig.decoded_fingerprint is None
+
+    @pytest.mark.asyncio
+    async def test_forged_event_with_user_context_dropped(self):
+        """S1: an event carrying a user_id (API-forged) is ignored before
+        trigger matching or storage."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        trigger_mgr = MagicMock()
+        monitor = SignalMonitor(
+            hass, store, _make_hair_store(), trigger_mgr
+        )
+        await monitor.async_start()
+        await monitor._on_ir_event(
+            _make_event(_nec_event("0x1234"), user_id="attacker")
+        )
+        assert store.get_all_devices() == []
+        trigger_mgr.on_signal_captured.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_esphome_event_without_user_context_processed(self):
+        """ESPHome-originated events (user_id None) still flow through."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        await monitor.async_start()
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+        assert store.get_all_devices()
+
+
+class TestHasReceivers:
+    """has_receivers drives the Sniffer no-receiver empty state (Addition C)."""
+
+    def test_false_when_no_native_and_no_bridge(self):
+        hass = _make_hass()
+        monitor = SignalMonitor(hass, _make_signal_store(hass), _make_hair_store())
+        assert monitor.has_receivers is False
+
+    def test_true_when_a_receiver_is_subscribed(self):
+        hass = _make_hass()
+        monitor = SignalMonitor(hass, _make_signal_store(hass), _make_hair_store())
+        monitor._receiver_subs["infrared.rx"] = MagicMock()
+        assert monitor.has_receivers is True
+
+    def test_false_in_native_mode_with_zero_receivers(self):
+        """v0.5.8 hot-plug: native mode with nothing subscribed genuinely
+        cannot receive, so the Sniffer empty state must say so."""
+        hass = _make_hass()
+        monitor = SignalMonitor(hass, _make_signal_store(hass), _make_hair_store())
+        monitor._native_mode = True
+        assert monitor.has_receivers is False
+
+    def test_true_when_a_bridge_has_fired(self):
+        hass = _make_hass()
+        monitor = SignalMonitor(hass, _make_signal_store(hass), _make_hair_store())
+        monitor._bridge_active_device_ids.add("dev-1")
+        assert monitor.has_receivers is True
+
+
+@pytest.mark.asyncio
+async def test_import_manual_remote_creates_remote_with_signals():
+    """The picker import builds a manual remote, carries decoded fields and
+    aliases, and skips invalid/duplicate codes."""
+    hass = _make_hass()
+    store = _make_signal_store(hass)
+    monitor = SignalMonitor(hass, store, _make_hair_store())
+    code = (
+        "0000 006D 0006 0000 00E0 0070 0014 000D 0014 002E "
+        "0014 000D 0014 000D 0014 0400"
+    )
+    entries = [
+        {
+            "name": "Power",
+            "code": code,
+            "decoded_protocol": "NEC",
+            "decoded_address": 0xFB04,
+            "decoded_command": 0x08,
+            "decoded_fingerprint": "NEC:0xfb04:0x08",
+        },
+        {"name": "Bad", "code": "not a pronto code"},
+        # Byte-identical to Power: collapses under the in-batch
+        # duplicate guard (one code per remote).
+        {"name": "Power Again", "code": code},
+    ]
+    result = await monitor.import_manual_remote("LG TV", entries)
+    assert result["imported"] == 1
+    # skipped keeps its historical invalid+duplicate meaning; duplicates
+    # breaks out the duplicate-guard subset so the matrix-clip receipt
+    # can explain the up-to-N shortfall (2026-07-28).
+    assert result["skipped"] == 2
+    assert result["duplicates"] == 1
+
+    devices = store.get_all_devices()
+    assert len(devices) == 1
+    dev = devices[0]
+    assert dev.source == "manual"
+    assert dev.label == "LG TV"
+    assert dev.fingerprint.startswith("manual:")
+    sig = dev.signals[0]
+    assert sig.alias == "Power"
+    assert sig.decoded_fingerprint == "NEC:0xfb04:0x08"
+
+
+@pytest.mark.asyncio
+async def test_import_manual_remote_merge_collapses_reimport():
+    """Wig re-imports collapse onto the same-named clipped remote (tiered
+    duplicate guard) instead of minting a twin; new signals still land.
+    Library-style imports (merge_existing=False) keep minting."""
+    hass = _make_hass()
+    store = _make_signal_store(hass)
+    monitor = SignalMonitor(hass, store, _make_hair_store())
+    code_a = (
+        "0000 006D 0006 0000 00E0 0070 0014 000D 0014 002E "
+        "0014 000D 0014 000D 0014 0400"
+    )
+    # Differ well beyond byte-hash quantization so the tiered guard sees
+    # a genuinely distinct signal, not a jittered copy.
+    code_b = code_a.replace("002E", "0060").replace("00E0 0070", "00A0 0050")
+    first = await monitor.import_manual_remote(
+        "Foxtel IQ", [{"name": "Power", "code": code_a, "send_count": 3}],
+        merge_existing=True,
+    )
+    assert first["merged"] is False
+    assert store.get_all_devices()[0].signals[0].send_count == 3
+
+    again = await monitor.import_manual_remote(
+        "Foxtel IQ",
+        [
+            {"name": "Power", "code": code_a},
+            {"name": "Mute", "code": code_b},
+        ],
+        merge_existing=True,
+    )
+    assert again["merged"] is True
+    assert again["imported"] == 1  # only Mute is new
+    assert again["skipped"] == 1
+    # The re-imported Power collapsed onto its existing row: a
+    # duplicate, not an invalid code (2026-07-28).
+    assert again["duplicates"] == 1
+    devices = store.get_all_devices()
+    assert len(devices) == 1
+    assert len(devices[0].signals) == 2
+
+    twin = await monitor.import_manual_remote(
+        "Foxtel IQ", [{"name": "Power", "code": code_a}],
+        merge_existing=False,
+    )
+    assert twin["merged"] is False
+    assert len(store.get_all_devices()) == 2
+
+
+@pytest.mark.asyncio
+async def test_delete_sniffed_remote_source_guard():
+    """The Sniffer's delete-remote removes sniffed devices only; clipped
+    remotes (and by extension the Mirror's echo device) are refused."""
+    hass = _make_hass()
+    store = _make_signal_store(hass)
+    monitor = SignalMonitor(hass, store, _make_hair_store())
+    sniffed = UnknownDevice(label="Remote 1", source="sniffed")
+    store.add_device(sniffed)
+    manual = UnknownDevice(label="Clipped", source="manual")
+    store.add_device(manual)
+
+    result = await monitor.delete_sniffed_remote(sniffed.id)
+    assert result["success"] is True
+    assert store.get_device(sniffed.id) is None
+
+    refused = await monitor.delete_sniffed_remote(manual.id)
+    assert refused["success"] is False
+    assert refused["code"] == "not_sniffed"
+    assert store.get_device(manual.id) is not None
+
+    missing = await monitor.delete_sniffed_remote("nope")
+    assert missing["success"] is False
+
+
+# ---------------------------------------------------------------------------
+# Lifecycle tests
+# ---------------------------------------------------------------------------
+
+
+class TestLifecycle:
+
+    @pytest.mark.asyncio
+    async def test_start_subscribes_to_bus(self):
+        """Legacy fallback subscribes esphome.remote_received; the Mirror
+        (v0.6.6) additionally subscribes the emitter state beacons."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        await monitor.async_start()
+        events = [c[0][0] for c in hass.bus.async_listen.call_args_list]
+        assert LEGACY_ESPHOME_IR_EVENT in events
+        assert "state_changed" in events
+
+    @pytest.mark.asyncio
+    async def test_start_legacy_fallback_sets_native_mode_false(self):
+        """In test env, native import fails so legacy path activates."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        await monitor.async_start()
+        assert not monitor.native_mode
+
+    @pytest.mark.asyncio
+    async def test_start_loads_store_if_not_loaded(self):
+        hass = _make_hass()
+        store = SignalStore(hass)
+        with patch.object(store, "_store") as mock_inner:
+            mock_inner.async_load = AsyncMock(return_value=None)
+            monitor = SignalMonitor(hass, store, _make_hair_store())
+            await monitor.async_start()
+        assert store.loaded
+
+    @pytest.mark.asyncio
+    async def test_stop_unsubscribes_and_flushes(self):
+        hass = _make_hass()
+        unsub = MagicMock()
+        hass.bus.async_listen.return_value = unsub
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        await monitor.async_start()
+        await monitor.async_stop()
+        # Both subscriptions (legacy event + Mirror beacon) release.
+        assert unsub.call_count == 2
+
+
+# ---------------------------------------------------------------------------
+# Event handling -- basic flow
+# ---------------------------------------------------------------------------
+
+
+class TestEventHandling:
+
+    @pytest.mark.asyncio
+    async def test_parseable_event_creates_device_and_signal(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+
+        assert store.device_count == 1
+        devices = store.get_all_devices()
+        assert len(devices) == 1
+        assert devices[0].hit_count == 1
+        assert len(devices[0].signals) == 1
+        assert devices[0].signals[0].hit_count == 1
+
+    @pytest.mark.asyncio
+    async def test_unparseable_event_ignored(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        await monitor._on_ir_event(_make_event({}))
+        assert store.device_count == 0
+
+    @pytest.mark.asyncio
+    async def test_nec_repeat_ignored(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        await monitor._on_ir_event(_make_event({
+            "protocol": "NEC", "repeat": True,
+        }))
+        assert store.device_count == 0
+
+    @pytest.mark.asyncio
+    async def test_duplicate_signal_increments_counts(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        # First event.
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+        # Clear repeat suppression so second event goes through.
+        monitor._last_seen_times.clear()
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+
+        assert store.device_count == 1
+        device = store.get_all_devices()[0]
+        assert device.hit_count == 2
+        assert device.signals[0].hit_count == 2
+
+    @pytest.mark.asyncio
+    async def test_different_signals_same_device(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        # Two different codes from the same NEC device address (0x12).
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+        await monitor._on_ir_event(_make_event(_nec_event("0x1256")))
+
+        assert store.device_count == 1
+        device = store.get_all_devices()[0]
+        assert len(device.signals) == 2
+        assert device.hit_count == 2
+
+    @pytest.mark.asyncio
+    async def test_fires_ha_event(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+
+        hass.bus.async_fire.assert_called_once()
+        args = hass.bus.async_fire.call_args
+        assert args[0][0] == EVENT_SIGNAL_DETECTED
+        summary = args[0][1]
+        assert "device_id" in summary
+        assert "signal_fingerprint" in summary
+        assert summary["protocol"] == "NEC"
+        assert summary["code"] == "0x1234"
+
+    @pytest.mark.asyncio
+    async def test_notifies_subscribers(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        received = []
+        monitor.subscribe(lambda data: received.append(data))
+
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+
+        assert len(received) == 1
+        assert received[0]["protocol"] == "NEC"
+
+
+# ---------------------------------------------------------------------------
+# Known command check
+# ---------------------------------------------------------------------------
+
+
+class TestKnownCommandCheck:
+
+    @pytest.mark.asyncio
+    async def test_known_command_no_longer_skips(self):
+        """Heard means shown (v0.6.6): a human pressing an assigned button
+        is Sniffer activity like any other press. The v0.4.0 suppression
+        is gone; the row lands / bumps regardless of assignment. (The
+        house's OWN sends stay out via the echo claim, covered in
+        test_mirror.)"""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        hair_store = _make_hair_store()
+        hair_store.match_command.return_value = ("dev-1", "cmd-1")
+
+        monitor = SignalMonitor(hass, store, hair_store)
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+
+        assert store.device_count == 1
+
+    @pytest.mark.asyncio
+    async def test_does_not_skip_unknown_command(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        hair_store = _make_hair_store()
+        # Default match_command returns None -> not a known command.
+
+        monitor = SignalMonitor(hass, store, hair_store)
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+
+        assert store.device_count == 1
+
+    @pytest.mark.asyncio
+    async def test_raw_signal_not_checked_against_known(self):
+        """Raw-only signals have no protocol/code so can't match known commands."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        await monitor._on_ir_event(_make_event(_raw_event()))
+        assert store.device_count == 1
+
+
+# ---------------------------------------------------------------------------
+# Dismiss list
+# ---------------------------------------------------------------------------
+
+
+class TestDismissCheck:
+
+    @pytest.mark.asyncio
+    async def test_dismissed_device_skipped(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        # First, let a signal create a device.
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+        assert store.device_count == 1
+
+        device = store.get_all_devices()[0]
+        monitor.dismiss_device(device.id)
+
+        # Clear repeat suppression.
+        monitor._last_seen_times.clear()
+
+        # New signal from the same device should be skipped.
+        await monitor._on_ir_event(_make_event(_nec_event("0x1256")))
+        # Device should still have only 1 signal.
+        device = store.get_device(device.id)
+        assert device.hit_count == 1
+
+    @pytest.mark.asyncio
+    async def test_undismiss_allows_events_again(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+        device = store.get_all_devices()[0]
+        monitor.dismiss_device(device.id)
+        monitor.undismiss_device(device.id)
+
+        monitor._last_seen_times.clear()
+        await monitor._on_ir_event(_make_event(_nec_event("0x1256")))
+
+        device = store.get_device(device.id)
+        assert device.hit_count == 2
+
+
+# ---------------------------------------------------------------------------
+# Dismiss-activity bus event push
+#
+# Step 4 of ``_process_parsed_signal`` early-returns when a signal arrives
+# from a dismissed device, but it also fires an ``EVENT_DISMISS_ACTIVITY``
+# bus event (rate-limited) so the Sniffer's "Show Dismissed" button can
+# glow and surface a dot indicator. The signal itself stays out of the
+# live feed -- only the bus event fires.
+# ---------------------------------------------------------------------------
+
+
+def _dismiss_event_fires(hass) -> list[tuple[str, dict]]:
+    """Return all ``EVENT_DISMISS_ACTIVITY`` fire calls recorded on the bus."""
+    return [
+        call.args
+        for call in hass.bus.async_fire.call_args_list
+        if call.args and call.args[0] == EVENT_DISMISS_ACTIVITY
+    ]
+
+
+class TestDismissActivityPush:
+
+    @pytest.mark.asyncio
+    async def test_dismissed_signal_fires_activity_event(self):
+        """A signal from a dismissed device fires the activity bus event."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        # Create and dismiss a device.
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+        device = store.get_all_devices()[0]
+        dev_fp = device.fingerprint
+        monitor.dismiss_device(device.id)
+        monitor._last_seen_times.clear()
+        hass.bus.async_fire.reset_mock()
+
+        # New signal from the same (now dismissed) device.
+        await monitor._on_ir_event(_make_event(_nec_event("0x1256")))
+
+        fires = _dismiss_event_fires(hass)
+        assert len(fires) == 1
+        event_name, payload = fires[0]
+        assert event_name == EVENT_DISMISS_ACTIVITY
+        assert payload == {"device_fingerprint": dev_fp}
+
+    @pytest.mark.asyncio
+    async def test_non_dismissed_signal_does_not_fire_activity_event(self):
+        """A signal from a NON-dismissed device must not fire the event."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+        # No dismiss. Send another signal.
+        monitor._last_seen_times.clear()
+        hass.bus.async_fire.reset_mock()
+        await monitor._on_ir_event(_make_event(_nec_event("0x1256")))
+
+        assert _dismiss_event_fires(hass) == []
+
+    @pytest.mark.asyncio
+    async def test_dismissed_signal_does_not_reach_storage(self):
+        """Activity event is informational only; signal is still dropped."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+        device = store.get_all_devices()[0]
+        monitor.dismiss_device(device.id)
+        monitor._last_seen_times.clear()
+
+        await monitor._on_ir_event(_make_event(_nec_event("0x1256")))
+
+        # Device still has only its original signal -- the dismissed
+        # second arrival did not add a new one or bump the hit_count.
+        device = store.get_device(device.id)
+        assert device.hit_count == 1
+
+    @pytest.mark.asyncio
+    async def test_dismissed_activity_rate_limited(self):
+        """Held-down dismissed button does not flood the bus."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+        device = store.get_all_devices()[0]
+        monitor.dismiss_device(device.id)
+        monitor._last_seen_times.clear()
+        hass.bus.async_fire.reset_mock()
+
+        # Blast well past the push budget.
+        for _ in range(SIGNAL_WS_PUSH_RATE_LIMIT + 10):
+            monitor._last_seen_times.clear()
+            await monitor._on_ir_event(_make_event(_nec_event("0x1256")))
+
+        # Capped at the WS push budget.
+        assert len(_dismiss_event_fires(hass)) <= SIGNAL_WS_PUSH_RATE_LIMIT
+
+    def test_dismiss_push_rate_window_expires(self):
+        """Dismiss-push bucket empties after the sliding window."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        # Fill the dismiss-push bucket.
+        for _ in range(SIGNAL_WS_PUSH_RATE_LIMIT):
+            assert monitor._check_dismiss_push_rate("dev_fp_1")
+
+        # Should be blocked now.
+        assert not monitor._check_dismiss_push_rate("dev_fp_1")
+
+        # Push the bucket's timestamps past the 1-second window.
+        monitor._dismiss_push_buckets["dev_fp_1"] = [
+            time.monotonic() - 2.0
+        ] * SIGNAL_WS_PUSH_RATE_LIMIT
+
+        # Window expired -- should accept again.
+        assert monitor._check_dismiss_push_rate("dev_fp_1")
+
+    def test_dismiss_push_per_fingerprint_isolation(self):
+        """Each device fingerprint has its own dismiss-push budget."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        for _ in range(SIGNAL_WS_PUSH_RATE_LIMIT):
+            assert monitor._check_dismiss_push_rate("dev_fp_A")
+        # A is exhausted.
+        assert not monitor._check_dismiss_push_rate("dev_fp_A")
+
+        # B starts fresh.
+        assert monitor._check_dismiss_push_rate("dev_fp_B")
+
+
+# ---------------------------------------------------------------------------
+# Rate limiting
+# ---------------------------------------------------------------------------
+
+
+class TestRateLimiting:
+
+    @pytest.mark.asyncio
+    async def test_rate_limit_drops_excess(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        # Blast more than SIGNAL_RATE_LIMIT_PER_SEC events.
+        for _ in range(SIGNAL_RATE_LIMIT_PER_SEC + 5):
+            monitor._last_seen_times.clear()
+            await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+
+        device = store.get_all_devices()[0]
+        # Should be capped at the rate limit.
+        assert device.hit_count <= SIGNAL_RATE_LIMIT_PER_SEC
+
+    def test_rate_limit_window_expires(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        # Fill the bucket.
+        for _ in range(SIGNAL_RATE_LIMIT_PER_SEC):
+            assert monitor._check_rate_limit("fp1")
+
+        # Should be blocked now.
+        assert not monitor._check_rate_limit("fp1")
+
+        # Simulate time passing (clear the bucket manually).
+        monitor._rate_buckets["fp1"] = [
+            time.monotonic() - 2.0
+        ] * SIGNAL_RATE_LIMIT_PER_SEC
+
+        # Should pass again after old entries expire.
+        assert monitor._check_rate_limit("fp1")
+
+
+# ---------------------------------------------------------------------------
+# Repeat suppression
+# ---------------------------------------------------------------------------
+
+
+class TestRepeatSuppression:
+
+    @pytest.mark.asyncio
+    async def test_repeat_within_window_suppressed(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        # First event goes through.
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+        assert store.get_all_devices()[0].hit_count == 1
+
+        # Immediate repeat should be suppressed.
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+        assert store.get_all_devices()[0].hit_count == 1
+
+    def test_repeat_check_passes_after_window(self):
+        hass = _make_hass()
+        monitor = SignalMonitor(hass, _make_signal_store(hass), _make_hair_store())
+
+        assert monitor._check_repeat("fp1")
+        assert not monitor._check_repeat("fp1")
+
+        # Simulate time beyond suppression window. The suppression map is
+        # keyed per (strongest identity, receiver) since v0.5.8 unified
+        # identity: a bare-fingerprint capture keys at identity tier 3 --
+        # (3, fingerprint) -- with the "__legacy__" receiver sentinel
+        # (v0.5.7 per-receiver suppression).
+        monitor._last_seen_times[((3, "fp1"), "__legacy__")] = (
+            time.monotonic() - (SIGNAL_REPEAT_SUPPRESS_MS / 1000.0) - 0.01
+        )
+        assert monitor._check_repeat("fp1")
+
+    def test_different_fingerprints_not_suppressed(self):
+        hass = _make_hass()
+        monitor = SignalMonitor(hass, _make_signal_store(hass), _make_hair_store())
+
+        assert monitor._check_repeat("fp1")
+        assert monitor._check_repeat("fp2")
+
+
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
+
+
+class TestPublicAPI:
+
+    def test_get_unknown_devices_sorted_by_order(self):
+        """Sorted by manual order (ascending), not hit_count (v0.3.2)."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        d1 = UnknownDevice(id="d1", fingerprint="fp1", hit_count=5)
+        d2 = UnknownDevice(id="d2", fingerprint="fp2", hit_count=20)
+        d3 = UnknownDevice(id="d3", fingerprint="fp3", hit_count=10)
+        store.add_device(d1)
+        store.add_device(d2)
+        store.add_device(d3)
+        # Manual order wins over hit_count. Set it explicitly after add.
+        d1.order, d2.order, d3.order = 2, 0, 1
+
+        result = monitor.get_unknown_devices(min_hits=0)
+        assert [d.id for d in result] == ["d2", "d3", "d1"]
+
+    @pytest.mark.asyncio
+    async def test_new_manual_signal_inserts_on_top(self):
+        """A freshly added clipped signal lands at the top of the remote."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        with patch.object(store, "async_save", AsyncMock()):
+            device = await monitor.create_manual_remote("R")
+            first = await monitor.create_manual_signal(
+                device.id, "0000 006D 0002 0000 0010 0010 0010 0010"
+            )
+            # Second code must have a DIFFERENT S/L pattern (a long pulse,
+            # >= 0x30) so its fingerprint differs -- otherwise the new
+            # duplicate guard would (correctly) reject it. The long word
+            # must not be the TRAILING one: the trailing gap is stripped
+            # on the way to the wire, so two codes differing only there
+            # are one signal (identity.py's canonical-form block).
+            second = await monitor.create_manual_signal(
+                device.id, "0000 006D 0002 0000 0040 0010 0010 0010"
+            )
+
+        assert first["success"] and second["success"]
+        # Newest is index 0; the first-added is now below it.
+        assert device.signals[0].fingerprint == second["signal"]["fingerprint"]
+        assert device.signals[1].fingerprint == first["signal"]["fingerprint"]
+
+    @pytest.mark.asyncio
+    async def test_decode_on_paste_populates_decoded_fields(self):
+        """A pasted code is decoded on save (wiring; real decode lives in
+        test_protocol_decode). Mirrors the Sniffer capture path."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        with patch.object(store, "async_save", AsyncMock()), patch(
+            "custom_components.hair.signal_monitor.try_decode_identity",
+            return_value=DecodedIdentity(
+                protocol="NEC", address=0xFB04, command=0x08,
+                fingerprint="NEC:0xfb04:0x08", extras=None, source="upstream",
+            ),
+        ):
+            device = await monitor.create_manual_remote("R")
+            res = await monitor.create_manual_signal(
+                device.id, "0000 006D 0002 0000 0010 0010 0010 0010"
+            )
+        assert res["success"]
+        sig = device.signals[0]
+        assert sig.decoded_protocol == "NEC"
+        assert sig.decoded_address == 0xFB04
+        assert sig.decoded_command == 0x08
+        assert sig.decoded_fingerprint == "NEC:0xfb04:0x08"
+
+    @pytest.mark.asyncio
+    async def test_paste_non_nec_leaves_decoded_none(self):
+        """An undecodable paste keeps the decoded fields None."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        with patch.object(store, "async_save", AsyncMock()), patch(
+            "custom_components.hair.signal_monitor.try_decode_identity",
+            return_value=None,
+        ):
+            device = await monitor.create_manual_remote("R")
+            res = await monitor.create_manual_signal(
+                device.id, "0000 006D 0002 0000 0010 0010 0010 0010"
+            )
+        assert res["success"]
+        sig = device.signals[0]
+        assert sig.decoded_protocol is None
+        assert sig.decoded_fingerprint is None
+
+    @pytest.mark.asyncio
+    async def test_duplicate_manual_signal_rejected(self):
+        """Pasting a Pronto already on the remote is refused, not twinned."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        code = "0000 006D 0002 0000 0010 0010 0010 0010"
+        with patch.object(store, "async_save", AsyncMock()):
+            device = await monitor.create_manual_remote("R")
+            first = await monitor.create_manual_signal(device.id, code)
+            dup = await monitor.create_manual_signal(device.id, code)
+
+        assert first["success"] is True
+        assert dup["success"] is False
+        assert dup["code"] == "duplicate_signal"
+        # Only the original signal remains; no twin was appended.
+        assert len(device.signals) == 1
+
+    @pytest.mark.asyncio
+    async def test_distinct_codes_sharing_fingerprint_are_independent(self):
+        """SNMetamorph (#13) regression: two Panasonic codes that collapse to
+        the same S/L fingerprint paste as two distinct signals, and alias and
+        delete by id act on only one of them (not both)."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        power = ("0000 006D 0006 0000 00E0 0070 0014 000D 0014 002E "
+                 "0014 000D 0014 000D 0014 0400")
+        volup = ("0000 006D 0006 0000 00E0 0070 0014 002E 0014 000D "
+                 "0014 000D 0014 002E 0014 0400")
+        with patch.object(store, "async_save", AsyncMock()):
+            device = await monitor.create_manual_remote("Panasonic")
+            r1 = await monitor.create_manual_signal(device.id, power, "Power")
+            r2 = await monitor.create_manual_signal(device.id, volup, "Volume Up")
+
+            assert r1["success"] is True
+            assert r2["success"] is True
+            # Both stored: same S/L fingerprint, different byte hash.
+            assert len(device.signals) == 2
+            assert device.signals[0].fingerprint == device.signals[1].fingerprint
+            assert device.signals[0].byte_hash != device.signals[1].byte_hash
+
+            power_id = r1["signal"]["id"]
+            volup_id = r2["signal"]["id"]
+            # Aliasing one by id leaves the other untouched.
+            await monitor.set_signal_alias(device.id, volup_id, "VOL")
+            assert device.get_signal_by_id(volup_id).alias == "VOL"
+            assert device.get_signal_by_id(power_id).alias == "Power"
+            # Deleting one by id leaves the other in place.
+            await monitor.delete_signal(device.id, power_id)
+            assert device.get_signal_by_id(power_id) is None
+            assert device.get_signal_by_id(volup_id) is not None
+
+    def test_get_unknown_devices_filters_dismissed(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        d1 = UnknownDevice(id="d1", fingerprint="fp1", hit_count=10)
+        d2 = UnknownDevice(id="d2", fingerprint="fp2", hit_count=5, dismissed=True)
+        store.add_device(d1)
+        store.add_device(d2)
+
+        result = monitor.get_unknown_devices(min_hits=0)
+        assert len(result) == 1
+        assert result[0].id == "d1"
+
+        # With include_dismissed.
+        result = monitor.get_unknown_devices(include_dismissed=True, min_hits=0)
+        assert len(result) == 2
+
+    def test_get_unknown_devices_min_hits_default(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        d1 = UnknownDevice(id="d1", fingerprint="fp1", hit_count=1)
+        d2 = UnknownDevice(id="d2", fingerprint="fp2", hit_count=SIGNAL_CLUSTER_THRESHOLD)
+        store.add_device(d1)
+        store.add_device(d2)
+
+        # Default min_hits = SIGNAL_CLUSTER_THRESHOLD.
+        result = monitor.get_unknown_devices()
+        assert len(result) == 1
+        assert result[0].id == "d2"
+
+    def test_get_unknown_devices_noise_filter_skips_non_sniffed_source(self):
+        """Punch list item 1 (signpost 3 bench round, 2026-08-17): a
+        Clipper/Plucker remote's hit_count is 0 by nature (it is authored
+        by hand, not accumulated by repeated hits). Asking for its source
+        explicitly must not run it through the sniffed noise filter, or
+        every manual/plucked remote vanishes from its own tab."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        clipped = UnknownDevice(
+            id="c1", fingerprint="fpc", hit_count=0, source="manual"
+        )
+        plucked = UnknownDevice(
+            id="p1", fingerprint="fpp", hit_count=0, source="plucked"
+        )
+        sniffed_below_threshold = UnknownDevice(
+            id="s1", fingerprint="fps", hit_count=1, source="sniffed"
+        )
+        store.add_device(clipped)
+        store.add_device(plucked)
+        store.add_device(sniffed_below_threshold)
+
+        # Explicit non-sniffed source: noise filter skipped, zero-hit
+        # remotes come back.
+        result = monitor.get_unknown_devices(source="manual")
+        assert [d.id for d in result] == ["c1"]
+
+        result = monitor.get_unknown_devices(source="plucked")
+        assert [d.id for d in result] == ["p1"]
+
+        # Explicit sniffed source: noise filter still applies.
+        result = monitor.get_unknown_devices(source="sniffed")
+        assert result == []
+
+        # No source (mixed list): noise filter still applies to
+        # EVERY device uniformly, unchanged from before this fix --
+        # this fix only touches the explicit non-sniffed-source path.
+        # All three fixtures are below SIGNAL_CLUSTER_THRESHOLD (3),
+        # so the mixed list comes back empty, same as pre-fix.
+        result = monitor.get_unknown_devices()
+        assert result == []
+
+    def test_get_unknown_devices_min_hits_explicit_zero_still_skips_filter_by_source(
+        self,
+    ):
+        """min_hits=0 already bypasses the filter outright; confirms the
+        new source gate does not interfere with that existing override."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        d = UnknownDevice(id="s1", fingerprint="fps", hit_count=0, source="sniffed")
+        store.add_device(d)
+
+        result = monitor.get_unknown_devices(source="sniffed", min_hits=0)
+        assert [dv.id for dv in result] == ["s1"]
+
+    def test_get_unknown_device(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        d = UnknownDevice(id="d1", fingerprint="fp1")
+        store.add_device(d)
+
+        assert monitor.get_unknown_device("d1") is d
+        assert monitor.get_unknown_device("nonexistent") is None
+
+    def test_dismiss_device(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        d = UnknownDevice(id="d1", fingerprint="fp1", hit_count=5)
+        store.add_device(d)
+
+        assert monitor.dismiss_device("d1")
+        assert d.dismissed
+        assert store.is_dismissed("fp1")
+
+    def test_dismiss_nonexistent_returns_false(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        assert not monitor.dismiss_device("nope")
+
+    def test_undismiss_device(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        d = UnknownDevice(id="d1", fingerprint="fp1", hit_count=5)
+        store.add_device(d)
+        monitor.dismiss_device("d1")
+        assert monitor.undismiss_device("d1")
+        assert not d.dismissed
+        assert not store.is_dismissed("fp1")
+
+    def test_clear_all(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        store.add_device(UnknownDevice(id="d1", fingerprint="fp1"))
+        monitor.clear_all()
+        assert store.device_count == 0
+
+
+# ---------------------------------------------------------------------------
+# Assign signal
+# ---------------------------------------------------------------------------
+
+
+class TestAssignSignal:
+
+    @pytest.mark.asyncio
+    async def test_assign_creates_command_and_keeps_signal(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        hair_store = _make_hair_store()
+        monitor = SignalMonitor(hass, store, hair_store)
+
+        # Set up an unknown device with a signal.
+        sig = UnknownSignal(
+            id="sig_fp", fingerprint="sig_fp", protocol="NEC", code="0x1234",
+            frequency=38000, hit_count=5,
+        )
+        device = UnknownDevice(
+            id="ud1", fingerprint="dev_fp", signals=[sig], hit_count=5,
+        )
+        store.add_device(device)
+
+        # Set up target HAIR device.
+        hair_device = IRDevice(id="hd1", name="TV")
+        hair_store.get_device.return_value = hair_device
+
+        result = await monitor.assign_signal(
+            "ud1", "sig_fp", "hd1", "Power", "custom",
+        )
+        assert result["success"] is True
+        assert "command_id" in result
+        assert len(hair_device.commands) == 1
+        assert hair_device.commands[0].name == "Power"
+        assert hair_device.commands[0].protocol == "NEC"
+        assert hair_device.commands[0].code == "0x1234"
+        # The signal is COPIED, not consumed -- it stays assignable.
+        remaining = store.get_device("ud1")
+        assert remaining is not None
+        assert remaining.get_signal("sig_fp") is not None
+
+    @pytest.mark.asyncio
+    async def test_assign_sets_send_count(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        hair_store = _make_hair_store()
+        monitor = SignalMonitor(hass, store, hair_store)
+
+        sig = UnknownSignal(
+            id="sig_fp", fingerprint="sig_fp", protocol="NEC", code="0x1234",
+            frequency=38000, hit_count=1,
+        )
+        store.add_device(
+            UnknownDevice(id="ud1", fingerprint="dev_fp", signals=[sig])
+        )
+        hair_device = IRDevice(id="hd1", name="TV")
+        hair_store.get_device.return_value = hair_device
+
+        result = await monitor.assign_signal(
+            "ud1", "sig_fp", "hd1", "Power", "custom", send_count=3,
+        )
+        assert result["success"] is True
+        assert hair_device.commands[0].send_count == 3
+
+    @pytest.mark.asyncio
+    async def test_assign_from_dismissed_device_keeps_device(self):
+        """Assigning a signal no longer consumes it, so a dismissed device
+        stays put and its (legitimate) dismiss entry is retained.
+
+        The GitHub #9 orphan-dismiss regression is now covered on the
+        delete path (see TestDeleteSignal), the only path that still
+        removes a device.
+        """
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        hair_store = _make_hair_store()
+        monitor = SignalMonitor(hass, store, hair_store)
+
+        sig = UnknownSignal(
+            id="sig_fp", fingerprint="sig_fp", protocol="NEC", code="0x1234",
+            frequency=38000, hit_count=5,
+        )
+        device = UnknownDevice(
+            id="ud1", fingerprint="dev_fp", signals=[sig], hit_count=5,
+            dismissed=True,
+        )
+        store.add_device(device)
+        store.add_dismissed("dev_fp")
+        assert store.is_dismissed("dev_fp")
+
+        hair_device = IRDevice(id="hd1", name="TV")
+        hair_store.get_device.return_value = hair_device
+
+        result = await monitor.assign_signal(
+            "ud1", "sig_fp", "hd1", "Power", "custom",
+        )
+        assert result["success"] is True
+        # Assign copies the signal -- the dismissed device stays put.
+        assert store.get_device("ud1") is not None
+        # Its dismiss entry is legitimate (the device still exists), so it
+        # is correctly retained rather than treated as an orphan.
+        assert store.is_dismissed("dev_fp")
+
+    @pytest.mark.asyncio
+    async def test_signal_arrival_after_delete_last_from_dismissed_device_reaches_storage(
+        self,
+    ):
+        """End-to-end regression: after deleting the last signal of a
+        dismissed device, the next IR arrival from the same physical
+        remote must actually land in the Sniffer instead of being
+        silently dropped by an orphan dismiss entry.
+
+        This is the user-visible repro of GitHub issue #9. Assigning no
+        longer removes the device, so delete is now the path that can form
+        the orphan.
+        """
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        hair_store = _make_hair_store()
+        monitor = SignalMonitor(hass, store, hair_store)
+
+        # Seed: dismissed device with one signal, ready to be assigned.
+        sig = UnknownSignal(
+            id="sig_fp_first", fingerprint="sig_fp_first", protocol="NEC", code="0x1234",
+            frequency=38000, hit_count=1,
+        )
+        device = UnknownDevice(
+            id="ud1", fingerprint="dev_fp", signals=[sig], hit_count=1,
+            dismissed=True,
+        )
+        store.add_device(device)
+        store.add_dismissed("dev_fp")
+
+        # 1. Delete the last signal (this triggered the original bug).
+        await monitor.delete_signal("ud1", "sig_fp_first")
+
+        # 2. Press a DIFFERENT button on the same physical remote.
+        # _process_parsed_signal computes the same device_fingerprint
+        # because the device-grouping is by carrier-frequency + preamble,
+        # not by the per-button signal fingerprint. We simulate this by
+        # patching the device_fingerprint computation to return the same
+        # value as the original device.
+        with patch.object(
+            EventParser, "device_fingerprint", return_value="dev_fp"
+        ):
+            await monitor._on_ir_event(_make_event(_nec_event("0x5678")))
+
+        # The Sniffer should now show a fresh unknown device for the
+        # second button press. Without the fix, this assertion fails
+        # because the orphan dismiss entry silently dropped the signal
+        # at step 4.
+        devices_after = store.get_all_devices()
+        assert len(devices_after) == 1
+        # And the fingerprint must NOT be in _dismissed any more.
+        assert not store.is_dismissed("dev_fp")
+
+    @pytest.mark.asyncio
+    async def test_assign_keeps_device_with_remaining_signals(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        hair_store = _make_hair_store()
+        monitor = SignalMonitor(hass, store, hair_store)
+
+        sig1 = UnknownSignal(id="sig1", fingerprint="sig1", protocol="NEC", code="0x1234")
+        sig2 = UnknownSignal(id="sig2", fingerprint="sig2", protocol="NEC", code="0x5678")
+        device = UnknownDevice(
+            id="ud1", fingerprint="dev_fp", signals=[sig1, sig2],
+        )
+        store.add_device(device)
+
+        hair_device = IRDevice(id="hd1", name="TV")
+        hair_store.get_device.return_value = hair_device
+
+        result = await monitor.assign_signal(
+            "ud1", "sig1", "hd1", "Power", "custom",
+        )
+        assert result["success"] is True
+        # Assign copies the signal -- both signals remain in the device.
+        remaining = store.get_device("ud1")
+        assert remaining is not None
+        assert len(remaining.signals) == 2
+        assert remaining.get_signal("sig1") is not None
+        assert remaining.get_signal("sig2") is not None
+
+    @pytest.mark.asyncio
+    async def test_assign_unknown_device_not_found(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        result = await monitor.assign_signal(
+            "nope", "sig", "hd1", "Power", "custom",
+        )
+        assert result["success"] is False
+        assert result["code"] == "device_not_found"
+
+    @pytest.mark.asyncio
+    async def test_assign_signal_not_found(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        device = UnknownDevice(id="ud1", fingerprint="dev_fp")
+        store.add_device(device)
+
+        result = await monitor.assign_signal(
+            "ud1", "nonexistent", "hd1", "Power", "custom",
+        )
+        assert result["success"] is False
+        assert result["code"] == "signal_not_found"
+
+    @pytest.mark.asyncio
+    async def test_assign_hair_device_not_found(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        hair_store = _make_hair_store()
+        monitor = SignalMonitor(hass, store, hair_store)
+
+        sig = UnknownSignal(id="sig_fp", fingerprint="sig_fp", protocol="NEC", code="0x1234")
+        device = UnknownDevice(id="ud1", fingerprint="dev_fp", signals=[sig])
+        store.add_device(device)
+
+        # hair_store.get_device returns None by default.
+        result = await monitor.assign_signal(
+            "ud1", "sig_fp", "hd1", "Power", "custom",
+        )
+        assert result["success"] is False
+        assert result["code"] == "target_not_found"
+
+
+# ---------------------------------------------------------------------------
+# Test signal
+# ---------------------------------------------------------------------------
+
+
+class TestTestSignal:
+
+    @pytest.mark.asyncio
+    async def test_sends_decoded_signal(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        sig = UnknownSignal(
+            id="sig_fp", fingerprint="sig_fp", protocol="NEC", code="0x1234",
+            raw_timings=[9000, -4500, 560, -560],
+        )
+        device = UnknownDevice(id="ud1", fingerprint="fp", signals=[sig])
+        store.add_device(device)
+
+        mock_ir_send = AsyncMock()
+        import sys
+        ir_mod = sys.modules["homeassistant.components.infrared"]
+        orig = ir_mod.async_send_command
+        ir_mod.async_send_command = mock_ir_send
+        try:
+            result = await monitor.test_signal("sig_fp", "remote.ir_blaster")
+        finally:
+            ir_mod.async_send_command = orig
+        assert result["success"] is True
+        mock_ir_send.assert_awaited_once()
+        call_args = mock_ir_send.call_args
+        assert call_args[0][0] is hass
+        assert call_args[0][1] == "remote.ir_blaster"
+        assert hasattr(call_args[0][2], "get_raw_timings")
+
+    @pytest.mark.asyncio
+    async def test_signal_not_found_returns_false(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        result = await monitor.test_signal("nonexistent", "remote.ir_blaster")
+        assert result["success"] is False
+        assert result["code"] == "signal_not_found"
+
+
+# ---------------------------------------------------------------------------
+# Subscriber management
+# ---------------------------------------------------------------------------
+
+
+class TestSubscribers:
+
+    def test_subscribe_and_unsubscribe(self):
+        hass = _make_hass()
+        monitor = SignalMonitor(hass, _make_signal_store(hass), _make_hair_store())
+
+        cb = MagicMock()
+        monitor.subscribe(cb)
+        assert cb in monitor._subscribers
+
+        monitor.unsubscribe(cb)
+        assert cb not in monitor._subscribers
+
+    def test_unsubscribe_nonexistent_safe(self):
+        hass = _make_hass()
+        monitor = SignalMonitor(hass, _make_signal_store(hass), _make_hair_store())
+        monitor.unsubscribe(MagicMock())  # Should not raise.
+
+    def test_duplicate_subscribe_ignored(self):
+        hass = _make_hass()
+        monitor = SignalMonitor(hass, _make_signal_store(hass), _make_hair_store())
+
+        cb = MagicMock()
+        monitor.subscribe(cb)
+        monitor.subscribe(cb)
+        assert monitor._subscribers.count(cb) == 1
+
+    @pytest.mark.asyncio
+    async def test_subscriber_error_does_not_break_processing(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        bad_cb = MagicMock(side_effect=RuntimeError("boom"))
+        good_cb = MagicMock()
+        monitor.subscribe(bad_cb)
+        monitor.subscribe(good_cb)
+
+        await monitor._on_ir_event(_make_event(_nec_event("0x1234")))
+
+        bad_cb.assert_called_once()
+        good_cb.assert_called_once()
+
+
+# ---------------------------------------------------------------------------
+# Idempotency guard
+# ---------------------------------------------------------------------------
+
+
+class TestAssignIdempotency:
+
+    @pytest.mark.asyncio
+    async def test_duplicate_signal_allowed(self):
+        """Assigning the same signal to a device more than once is allowed
+        (no duplicate guard) -- it just creates another command."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        hair_store = _make_hair_store()
+        monitor = SignalMonitor(hass, store, hair_store)
+
+        sig = UnknownSignal(
+            id="sig_fp", fingerprint="sig_fp", protocol="NEC", code="0x1234",
+            frequency=38000, hit_count=5,
+        )
+        device = UnknownDevice(
+            id="ud1", fingerprint="dev_fp", signals=[sig], hit_count=5,
+        )
+        store.add_device(device)
+
+        # Target device already has a command with same protocol+code.
+        existing_cmd = IRCommand(
+            name="Existing", protocol="NEC", code="0x1234",
+        )
+        hair_device = IRDevice(id="hd1", name="TV", commands=[existing_cmd])
+        hair_store.get_device.return_value = hair_device
+
+        result = await monitor.assign_signal(
+            "ud1", "sig_fp", "hd1", "Power", "custom",
+        )
+        assert result["success"] is True
+        # Now two commands with the same code -- the user's prerogative.
+        assert len(hair_device.commands) == 2
+        # And the signal is still present (copied, not consumed).
+        assert store.get_device("ud1") is not None
+        assert len(store.get_device("ud1").signals) == 1
+
+
+# ---------------------------------------------------------------------------
+# Delete signal
+# ---------------------------------------------------------------------------
+
+
+class TestDeleteSignal:
+
+    @pytest.mark.asyncio
+    async def test_delete_removes_signal_and_fires_event(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        sig1 = UnknownSignal(id="sig1", fingerprint="sig1", protocol="NEC", code="0x1")
+        sig2 = UnknownSignal(id="sig2", fingerprint="sig2", protocol="NEC", code="0x2")
+        device = UnknownDevice(
+            id="ud1", fingerprint="fp", signals=[sig1, sig2],
+        )
+        store.add_device(device)
+
+        result = await monitor.delete_signal("ud1", "sig1")
+        assert result["success"] is True
+        assert result["device_removed"] is False
+
+        # Signal removed, device still exists.
+        remaining = store.get_device("ud1")
+        assert remaining is not None
+        assert len(remaining.signals) == 1
+        assert remaining.signals[0].fingerprint == "sig2"
+
+        # Event bus fired.
+        hass.bus.async_fire.assert_called()
+        fire_args = hass.bus.async_fire.call_args
+        assert fire_args[0][0] == "hair_signal_removed"
+        assert fire_args[0][1]["signal_id"] == "sig1"
+
+    @pytest.mark.asyncio
+    async def test_delete_last_signal_removes_device(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        sig = UnknownSignal(id="sig1", fingerprint="sig1", protocol="NEC", code="0x1")
+        device = UnknownDevice(id="ud1", fingerprint="fp", signals=[sig])
+        store.add_device(device)
+
+        result = await monitor.delete_signal("ud1", "sig1")
+        assert result["success"] is True
+        assert result["device_removed"] is True
+        assert store.get_device("ud1") is None
+
+    @pytest.mark.asyncio
+    async def test_delete_last_signal_from_dismissed_device_clears_dismiss_set(
+        self,
+    ):
+        """Deleting the last signal of a dismissed device also discards
+        the fingerprint from _dismissed.
+
+        Regression for GitHub issue #9 (parallel to the assign path).
+        Same orphan formation, same fix in signal_store.remove_device().
+        """
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        sig = UnknownSignal(id="sig1", fingerprint="sig1", protocol="NEC", code="0x1")
+        device = UnknownDevice(
+            id="ud1", fingerprint="fp_dismissed", signals=[sig],
+            dismissed=True,
+        )
+        store.add_device(device)
+        store.add_dismissed("fp_dismissed")
+        assert store.is_dismissed("fp_dismissed")
+
+        result = await monitor.delete_signal("ud1", "sig1")
+        assert result["success"] is True
+        assert result["device_removed"] is True
+        assert store.get_device("ud1") is None
+        assert not store.is_dismissed("fp_dismissed")
+
+    @pytest.mark.asyncio
+    async def test_delete_device_not_found(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        result = await monitor.delete_signal("nope", "sig")
+        assert result["success"] is False
+        assert result["code"] == "device_not_found"
+
+    @pytest.mark.asyncio
+    async def test_delete_signal_not_found(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        device = UnknownDevice(id="ud1", fingerprint="fp")
+        store.add_device(device)
+
+        result = await monitor.delete_signal("ud1", "nonexistent")
+        assert result["success"] is False
+        assert result["code"] == "signal_not_found"
+
+
+# ---------------------------------------------------------------------------
+# Assign to new device
+# ---------------------------------------------------------------------------
+
+
+class TestAssignToNewDevice:
+
+    @pytest.mark.asyncio
+    async def test_creates_device_and_assigns(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        hair_store = _make_hair_store()
+        monitor = SignalMonitor(hass, store, hair_store)
+
+        sig = UnknownSignal(
+            id="sig_fp", fingerprint="sig_fp", protocol="NEC", code="0x1234",
+            frequency=38000, hit_count=5,
+        )
+        device = UnknownDevice(
+            id="ud1", fingerprint="dev_fp", signals=[sig], hit_count=5,
+        )
+        store.add_device(device)
+
+        result = await monitor.assign_to_new_device(
+            device_id="ud1",
+            signal_id="sig_fp",
+            device_name="Living Room TV",
+            device_type="media_player",
+            emitter_entity_ids=["remote.ir_blaster"],
+            command_name="Power",
+            command_category="power",
+        )
+        assert result["success"] is True
+        assert "device_id" in result
+        assert "command_id" in result
+        assert result["device"].name == "Living Room TV"
+        assert len(result["device"].commands) == 1
+        assert result["device"].commands[0].name == "Power"
+
+        # Signal is copied into the new device, not consumed.
+        remaining = store.get_device("ud1")
+        assert remaining is not None
+        assert remaining.get_signal("sig_fp") is not None
+
+    @pytest.mark.asyncio
+    async def test_assign_to_new_device_from_dismissed_keeps_device(
+        self,
+    ):
+        """Assigning a signal to a NEW HAIR device no longer consumes it,
+        so the dismissed source device stays put with its dismiss entry.
+        """
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        hair_store = _make_hair_store()
+        monitor = SignalMonitor(hass, store, hair_store)
+
+        sig = UnknownSignal(
+            id="sig_fp", fingerprint="sig_fp", protocol="NEC", code="0x1234",
+            frequency=38000, hit_count=1,
+        )
+        device = UnknownDevice(
+            id="ud1", fingerprint="dev_fp", signals=[sig], hit_count=1,
+            dismissed=True,
+        )
+        store.add_device(device)
+        store.add_dismissed("dev_fp")
+        assert store.is_dismissed("dev_fp")
+
+        result = await monitor.assign_to_new_device(
+            device_id="ud1",
+            signal_id="sig_fp",
+            device_name="Living Room TV",
+            device_type="media_player",
+            emitter_entity_ids=["remote.ir_blaster"],
+            command_name="Power",
+            command_category="power",
+        )
+        assert result["success"] is True
+        # Copied, not consumed -- the dismissed source device stays put
+        # with its (legitimate) dismiss entry.
+        assert store.get_device("ud1") is not None
+        assert store.is_dismissed("dev_fp")
+
+        # HAIRStore should have been saved.
+        hair_store.async_save.assert_called()
+
+    @pytest.mark.asyncio
+    async def test_invalid_device_type(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        sig = UnknownSignal(id="sig_fp", fingerprint="sig_fp", protocol="NEC", code="0x1")
+        device = UnknownDevice(id="ud1", fingerprint="fp", signals=[sig])
+        store.add_device(device)
+
+        result = await monitor.assign_to_new_device(
+            "ud1", "sig_fp", "Test", "invalid_type",
+            "remote.ir", "Power", "power",
+        )
+        assert result["success"] is False
+        assert result["code"] == "invalid_device_type"
+
+    @pytest.mark.asyncio
+    async def test_rollback_on_hair_store_failure(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        hair_store = _make_hair_store()
+        hair_store.async_save = AsyncMock(side_effect=OSError("disk full"))
+        monitor = SignalMonitor(hass, store, hair_store)
+
+        sig = UnknownSignal(id="sig_fp", fingerprint="sig_fp", protocol="NEC", code="0x1")
+        device = UnknownDevice(id="ud1", fingerprint="fp", signals=[sig])
+        store.add_device(device)
+
+        result = await monitor.assign_to_new_device(
+            "ud1", "sig_fp", "Test", "media_player",
+            "remote.ir", "Power", "power",
+        )
+        assert result["success"] is False
+        assert result["code"] == "save_failed"
+        # Signal should still exist.
+        assert store.get_device("ud1") is not None
+        assert len(store.get_device("ud1").signals) == 1
+
+
+# ---------------------------------------------------------------------------
+# Test signal - structured errors
+# ---------------------------------------------------------------------------
+
+
+class TestTestSignalErrors:
+
+    @pytest.mark.asyncio
+    async def test_entity_not_found(self):
+        hass = _make_hass()
+        hass.states.get.return_value = None  # Entity doesn't exist.
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        result = await monitor.test_signal("sig_fp", "remote.nonexistent")
+        assert result["success"] is False
+        assert result["code"] == "entity_not_found"
+
+    @pytest.mark.asyncio
+    async def test_send_timeout(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        sig = UnknownSignal(
+            id="sig_fp", fingerprint="sig_fp", protocol="NEC", code="0x1234",
+            raw_timings=[9000, -4500, 560, -560],
+        )
+        device = UnknownDevice(id="ud1", fingerprint="fp", signals=[sig])
+        store.add_device(device)
+
+        # Make the ir_send call hang.
+        async def _hang(*a, **kw):
+            await asyncio.sleep(999)
+
+        # Patch timeout to 0.1s so test doesn't wait 10s.
+        import sys
+        ir_mod = sys.modules["homeassistant.components.infrared"]
+        orig = ir_mod.async_send_command
+        ir_mod.async_send_command = _hang
+        try:
+            with patch(
+                "custom_components.hair.signal_monitor.ASSIGN_SERVICE_TIMEOUT_S",
+                0.1,
+            ):
+                result = await monitor.test_signal("sig_fp", "remote.ir_blaster")
+        finally:
+            ir_mod.async_send_command = orig
+        assert result["success"] is False
+        assert result["code"] == "send_timeout"
+
+    @pytest.mark.asyncio
+    async def test_send_failed(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        sig = UnknownSignal(
+            id="sig_fp", fingerprint="sig_fp", protocol="NEC", code="0x1234",
+            raw_timings=[9000, -4500, 560, -560],
+        )
+        device = UnknownDevice(id="ud1", fingerprint="fp", signals=[sig])
+        store.add_device(device)
+
+        import sys
+        ir_mod = sys.modules["homeassistant.components.infrared"]
+        orig = ir_mod.async_send_command
+        ir_mod.async_send_command = AsyncMock(side_effect=RuntimeError("hardware error"))
+        try:
+            result = await monitor.test_signal("sig_fp", "remote.ir_blaster")
+        finally:
+            ir_mod.async_send_command = orig
+        assert result["success"] is False
+        assert result["code"] == "send_failed"
+
+
+# ---------------------------------------------------------------------------
+# Native receiver path (HA 2026.6+)
+# ---------------------------------------------------------------------------
+
+
+class _FakeTiming:
+    """Minimal stand-in for ``infrared_protocols.Timing``."""
+
+    def __init__(self, high_us: int, low_us: int) -> None:
+        self.high_us = high_us
+        self.low_us = low_us
+
+
+class _FakeReceivedSignal:
+    """Minimal stand-in for ``InfraredReceivedSignal``."""
+
+    def __init__(
+        self,
+        timings: list[_FakeTiming],
+        modulation: int = 38000,
+    ) -> None:
+        self.timings = timings
+        self.modulation = modulation
+
+
+class TestNativeReceiverLifecycle:
+    """Tests for the native ``InfraredReceiverEntity`` subscription path."""
+
+    @pytest.mark.asyncio
+    async def test_native_mode_activates_when_api_available(self):
+        """When the native API is importable, native mode activates and the
+        receiver subscription lands in _receiver_subs (v0.5.8 hot-plug)."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        mock_unsub = MagicMock()
+
+        def fake_get_receivers(_hass):
+            return ["infrared.living_room_rx"]
+
+        def fake_subscribe(_hass, entity_id, callback):
+            return mock_unsub
+
+        with patch.dict(
+            "sys.modules",
+            {
+                "homeassistant.components.infrared": MagicMock(
+                    async_get_receivers=fake_get_receivers,
+                    async_subscribe_receiver=fake_subscribe,
+                ),
+            },
+        ):
+            monitor._start_native_tracking()
+
+        assert monitor.native_mode
+        assert set(monitor._receiver_subs) == {"infrared.living_room_rx"}
+        assert monitor._receiver_subs["infrared.living_room_rx"] is mock_unsub
+
+    @pytest.mark.asyncio
+    async def test_native_no_receivers_stays_native(self):
+        """FLIPPED (v0.5.8 hot-plug): zero receivers at start no longer
+        latches legacy mode. HAIR stays on the native path, subscribes
+        nothing, and waits for a receiver to appear -- the old fallback
+        listened on a bus our shipped YAML does not emit, permanently,
+        which was blalor's post-#85 cold-boot bug."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        def fake_get_receivers(_hass):
+            return []
+
+        with patch.dict(
+            "sys.modules",
+            {
+                "homeassistant.components.infrared": MagicMock(
+                    async_get_receivers=fake_get_receivers,
+                    async_subscribe_receiver=MagicMock(),
+                ),
+            },
+        ):
+            monitor._start_native_tracking()
+
+        assert monitor.native_mode
+        assert monitor._receiver_subs == {}
+        # The legacy signal-processing path must NOT be wired: the only
+        # bus listener a bare _start_native_tracking may create is the
+        # started-once re-scan, never _on_ir_event.
+        for call in hass.bus.async_listen.call_args_list:
+            assert call.args[1] != monitor._on_ir_event
+
+    @pytest.mark.asyncio
+    async def test_native_stop_cleans_up_all_unsubs(self):
+        """async_stop() should call all native unsubs."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        unsub1 = MagicMock()
+        unsub2 = MagicMock()
+        monitor._unsubs = [unsub1, unsub2]
+        monitor._native_mode = True
+
+        await monitor.async_stop()
+
+        unsub1.assert_called_once()
+        unsub2.assert_called_once()
+        assert len(monitor._unsubs) == 0
+
+
+async def _run_native_signal(monitor, hass, signal):
+    """Invoke the sync native callback and drain the scheduled async pipeline.
+
+    ``_on_received_signal`` is a sync ``@callback`` (per the 2026.6 API).
+    It schedules ``_process_parsed_signal`` via ``hass.async_create_task``.
+    The test ``_make_hass`` passes that coroutine through unchanged, so
+    we can await it here to actually run the processing pipeline.
+    """
+    monitor._on_received_signal(signal)
+    if hass.async_create_task.called:
+        coro = hass.async_create_task.call_args[0][0]
+        if hasattr(coro, "__await__"):
+            await coro
+        hass.async_create_task.reset_mock()
+
+
+class TestNativeSignalProcessing:
+    """Tests for _on_received_signal processing path."""
+
+    @pytest.mark.asyncio
+    async def test_native_signal_creates_device_and_signal(self):
+        """A native signal should create an unknown device and signal."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        # Native API delivers timings as list[int] (signed microseconds).
+        # 8 ints exceeds the repeat threshold (<= 6).
+        signal = _FakeReceivedSignal(
+            timings=[9000, -4500, 560, -560, 560, -1690, 560, -560],
+            modulation=38000,
+        )
+
+        await _run_native_signal(monitor, hass, signal)
+
+        assert store.device_count == 1
+        devices = store.get_all_devices()
+        assert len(devices) == 1
+        assert devices[0].hit_count == 1
+        assert len(devices[0].signals) == 1
+        # Signal should be stored as PRONTO protocol.
+        assert devices[0].signals[0].protocol == "PRONTO"
+
+    @pytest.mark.asyncio
+    async def test_native_repeat_frame_filtered(self):
+        """Short signals (<=3 timing pairs) should be filtered as repeats."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        # Only 4 raw values (<= 6 threshold) -- repeat frame.
+        signal = _FakeReceivedSignal(
+            timings=[9000, -2250, 560, -560],
+            modulation=38000,
+        )
+
+        await _run_native_signal(monitor, hass, signal)
+        assert store.device_count == 0
+
+    @pytest.mark.asyncio
+    async def test_native_signal_fires_ha_event(self):
+        """Native path should fire hair_signal_detected event."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        # Native API delivers timings as list[int] (signed microseconds).
+        # 8 ints exceeds the repeat threshold (<= 6).
+        signal = _FakeReceivedSignal(
+            timings=[9000, -4500, 560, -560, 560, -1690, 560, -560],
+            modulation=38000,
+        )
+
+        await _run_native_signal(monitor, hass, signal)
+
+        hass.bus.async_fire.assert_called_once()
+        args = hass.bus.async_fire.call_args
+        assert args[0][0] == EVENT_SIGNAL_DETECTED
+
+    @pytest.mark.asyncio
+    async def test_native_signal_notifies_subscribers(self):
+        """Native path should notify WebSocket subscribers."""
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+
+        received = []
+        monitor.subscribe(lambda data: received.append(data))
+
+        # Native API delivers timings as list[int] (signed microseconds).
+        # 8 ints exceeds the repeat threshold (<= 6).
+        signal = _FakeReceivedSignal(
+            timings=[9000, -4500, 560, -560, 560, -1690, 560, -560],
+            modulation=38000,
+        )
+
+        await _run_native_signal(monitor, hass, signal)
+        assert len(received) == 1
+        assert "signal_fingerprint" in received[0]
+
+
+class TestEditSignalPronto:
+    """edit_signal_pronto: re-evaluate a stored signal's code as a capture."""
+
+    _A = "0000 006D 0002 0000 0010 0010 0010 0010"
+    _B = "0000 006D 0002 0000 0010 0040 0010 0010"
+
+    @pytest.mark.asyncio
+    async def test_recomputes_identity_and_reevaluates_timings(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        with patch.object(store, "async_save", AsyncMock()):
+            device = await monitor.create_manual_remote("R")
+            created = await monitor.create_manual_signal(device.id, self._A)
+            sid = created["signal"]["id"]
+            old_fp = device.signals[0].fingerprint
+            res = await monitor.edit_signal_pronto(device.id, sid, self._B)
+        assert res["success"] is True
+        sig = device.get_signal_by_id(sid)
+        assert sig.code == self._B
+        assert sig.fingerprint != old_fp
+        # Re-evaluated as a capture: raw timings now derive from the new code.
+        assert sig.raw_timings
+
+    @pytest.mark.asyncio
+    async def test_edit_to_same_code_allowed_no_rewire(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        tm = MagicMock()
+        tm.rewire = AsyncMock(return_value={"rewired": [], "skipped": []})
+        monitor = SignalMonitor(hass, store, _make_hair_store(), tm)
+        with patch.object(store, "async_save", AsyncMock()):
+            device = await monitor.create_manual_remote("R")
+            created = await monitor.create_manual_signal(device.id, self._A)
+            res = await monitor.edit_signal_pronto(
+                device.id, created["signal"]["id"], self._A
+            )
+        assert res["success"] is True  # self is excluded from the collision guard
+        tm.rewire.assert_not_awaited()  # fingerprint unchanged
+
+    @pytest.mark.asyncio
+    async def test_collision_with_other_signal_rejected(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        with patch.object(store, "async_save", AsyncMock()):
+            device = await monitor.create_manual_remote("R")
+            a = await monitor.create_manual_signal(device.id, self._A)
+            await monitor.create_manual_signal(device.id, self._B)
+            res = await monitor.edit_signal_pronto(
+                device.id, a["signal"]["id"], self._B
+            )
+        assert res["success"] is False
+        assert res["code"] == "duplicate_signal"
+
+    @pytest.mark.asyncio
+    async def test_rewires_triggers_on_fingerprint_change(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        tm = MagicMock()
+        tm.rewire = AsyncMock(return_value={"rewired": ["TV"], "skipped": []})
+        monitor = SignalMonitor(hass, store, _make_hair_store(), tm)
+        with patch.object(store, "async_save", AsyncMock()):
+            device = await monitor.create_manual_remote("R")
+            created = await monitor.create_manual_signal(device.id, self._A)
+            sid = created["signal"]["id"]
+            old_fp = device.signals[0].fingerprint
+            res = await monitor.edit_signal_pronto(device.id, sid, self._B)
+        assert res["success"] is True
+        tm.rewire.assert_awaited_once()
+        call_args = tm.rewire.await_args[0]
+        assert call_args[0] == old_fp
+        assert call_args[2] == "PRONTO"
+        assert call_args[3] == self._B
+        assert res["triggers"] == {"rewired": ["TV"], "skipped": []}
+
+    @pytest.mark.asyncio
+    async def test_missing_signal_errors(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        with patch.object(store, "async_save", AsyncMock()):
+            device = await monitor.create_manual_remote("R")
+            res = await monitor.edit_signal_pronto(device.id, "nope", self._A)
+        assert res["success"] is False
+        assert res["code"] == "signal_not_found"
+
+    @pytest.mark.asyncio
+    async def test_invalid_pronto_rejected(self):
+        hass = _make_hass()
+        store = _make_signal_store(hass)
+        monitor = SignalMonitor(hass, store, _make_hair_store())
+        with patch.object(store, "async_save", AsyncMock()):
+            device = await monitor.create_manual_remote("R")
+            created = await monitor.create_manual_signal(device.id, self._A)
+            res = await monitor.edit_signal_pronto(
+                device.id, created["signal"]["id"], "garbage zz"
+            )
+        assert res["success"] is False
+        assert res["code"] == "invalid_pronto"
+
+
+@pytest.mark.asyncio
+async def test_mark_promoted_stamps_and_survives_missing():
+    """The identity promote link (v0.7.0): stamped on promote, no-op on
+    an unknown remote id."""
+    hass = _make_hass()
+    store = _make_signal_store(hass)
+    monitor = SignalMonitor(hass, store, _make_hair_store())
+    remote = UnknownDevice(label="Remote 1", source="sniffed")
+    store.add_device(remote)
+    await monitor.mark_promoted(remote.id, "hd42")
+    assert store.get_device(remote.id).promoted_to == "hd42"
+    await monitor.mark_promoted("nope", "hd42")
+
+
+@pytest.mark.asyncio
+async def test_copy_signals_to_device_names_and_provenance():
+    """Make HAIR Device copies every catalog signal in as a command,
+    named by the row title chain, leaving the catalog untouched."""
+    hass = _make_hass()
+    store = _make_signal_store(hass)
+    hair_store = _make_hair_store()
+    monitor = SignalMonitor(hass, store, hair_store)
+    remote = UnknownDevice(label="LG TV", source="manual")
+    remote.signals.append(UnknownSignal(
+        fingerprint="S1L2", protocol="PRONTO",
+        code="0000 006D 0001 0000 00E0 0070", frequency=38000,
+        alias="Power", send_count=3,
+    ))
+    remote.signals.append(UnknownSignal(
+        fingerprint="S3L4", protocol="PRONTO",
+        code="0000 006D 0001 0000 00A0 0050", frequency=38000,
+        alias="",
+    ))
+    store.add_device(remote)
+
+    from custom_components.hair.models import DeviceType, IRDevice
+    device = IRDevice(name="LG TV", device_type=DeviceType.MEDIA_PLAYER)
+    hair_store.get_device = MagicMock(return_value=device)
+
+    result = await monitor.copy_signals_to_device(remote.id, device.id)
+    assert result["success"] is True
+    assert result["copied"] == 2
+    names = [c.name for c in device.commands]
+    assert names == ["Power", "Signal 2"]
+    assert device.commands[0].send_count == 3
+    # Catalog untouched: signals are copied, never moved.
+    assert len(store.get_device(remote.id).signals) == 2
+
+    missing = await monitor.copy_signals_to_device("nope", device.id)
+    assert missing["success"] is False
+
+
+@pytest.mark.asyncio
+async def test_mark_promoted_remote_stamps_and_survives_missing():
+    """The identity promote link's REMOTE half (signpost 3, Track 2
+    item 2): stamped on promote, no-op on an unknown catalog id."""
+    hass = _make_hass()
+    store = _make_signal_store(hass)
+    monitor = SignalMonitor(hass, store, _make_hair_store())
+    remote = UnknownDevice(label="Remote 1", source="sniffed")
+    store.add_device(remote)
+    await monitor.mark_promoted_remote(remote.id, "tr42")
+    assert store.get_device(remote.id).promoted_to_remote == "tr42"
+    await monitor.mark_promoted_remote("nope", "tr42")
+
+
+@pytest.mark.asyncio
+async def test_copy_signals_to_trigger_remote_names_order_and_provenance():
+    """USE as a Remote (Sniffer promote / Clipper / Plucker door):
+    every catalog signal becomes a named trigger in capture order,
+    origin "remote", the catalog left untouched."""
+    hass = _make_hass()
+    store = _make_signal_store(hass)
+    hair_store = _make_hair_store()
+    monitor = SignalMonitor(hass, store, hair_store)
+    remote = UnknownDevice(label="Samsung TV", source="sniffed")
+    remote.signals.append(UnknownSignal(
+        fingerprint="S1L2", protocol="PRONTO",
+        code="0000 006D 0001 0000 00E0 0070", frequency=38000,
+        alias="Power", byte_hash="bh1", decoded_fingerprint="df1",
+    ))
+    remote.signals.append(UnknownSignal(
+        fingerprint="S3L4", protocol="PRONTO",
+        code="0000 006D 0001 0000 00A0 0050", frequency=38000,
+        alias="",
+    ))
+    store.add_device(remote)
+
+    trigger_remote = TriggerRemote(name="Samsung TV")
+    hair_store.get_trigger_remote = MagicMock(return_value=trigger_remote)
+    added: list = []
+    hair_store.add_trigger = MagicMock(side_effect=added.append)
+
+    result = await monitor.copy_signals_to_trigger_remote(
+        remote.id, trigger_remote.id
+    )
+    assert result["success"] is True
+    names = [t.name for t in result["triggers"]]
+    assert names == ["Power", "Signal 2"]
+    # Capture order preserved via insertion order (order field is left
+    # to HAIRStore.add_trigger's own sequential assignment in real use;
+    # this test's mocked add_trigger just records call order).
+    assert added == result["triggers"]
+    for trig in result["triggers"]:
+        assert trig.trigger_remote_id == trigger_remote.id
+        assert trig.origin == "remote"
+    assert result["triggers"][0].byte_hash == "bh1"
+    assert result["triggers"][0].decoded_fingerprint == "df1"
+    # Catalog untouched: signals are copied, never moved.
+    assert len(store.get_device(remote.id).signals) == 2
+
+    missing = await monitor.copy_signals_to_trigger_remote(
+        "nope", trigger_remote.id
+    )
+    assert missing["success"] is False
+    assert missing["code"] == "device_not_found"
+
+    hair_store.get_trigger_remote = MagicMock(return_value=None)
+    no_target = await monitor.copy_signals_to_trigger_remote(
+        remote.id, "ghost"
+    )
+    assert no_target["success"] is False
+    assert no_target["code"] == "target_not_found"

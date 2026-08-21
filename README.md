@@ -12,8 +12,8 @@ I regularly update my configuration files. You can check my current Home Assista
 
 Description | value
 -- | --
-Number of entities | 582
-Number of sensors | 299
+Number of entities | 686
+Number of sensors | 338
 
 
 ## My installed extensions:
@@ -36,11 +36,12 @@ Number of sensors | 299
 - [Alexa Media Player](https://github.com/alandtse/alexa_media_player)
 - [Generate Readme](https://github.com/custom-components/readme)
 - [HACS](https://github.com/hacs/integration)
-- [Openrgb](https://github.com/openrgb-ha/openrgb-ha)
+- [HAIR](https://github.com/DAB-LABS/HAIR)
 - [Smartir](https://github.com/smartHomeHub/SmartIR)
 - [Spook 👻 Your Homie](https://github.com/frenck/spook)
 - [Spotcast](https://github.com/fondberg/spotcast)
 - [Thermal Comfort](https://github.com/dolezsa/thermal_comfort)
+- [Versatile Thermostat](https://github.com/jmcollin78/versatile_thermostat)
 - [Waste Collection Schedule](https://github.com/mampfes/hacs_waste_collection_schedule)
 
 ### Lovelace plugins

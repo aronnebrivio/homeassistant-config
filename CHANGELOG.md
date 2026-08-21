@@ -1,5 +1,15 @@
 # Changelog
 
+## [4.20.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.19.0...v4.20.0) (2026-08-21)
+
+
+### Features
+
+* **climate:** use versatile thermostat to manage AC ([fa23ebf](https://github.com/aronnebrivio/homeassistant-config/commit/fa23ebf3d7c64f88464b5e0e25818cb7c006cb02))
+* **components:** add HAIR custom components ([eb21303](https://github.com/aronnebrivio/homeassistant-config/commit/eb21303c57cf983e8f79ff464b6386c02e87088f))
+* **entities:** add missing unique ids ([41ca00b](https://github.com/aronnebrivio/homeassistant-config/commit/41ca00b434f1d1c2a67ce2f3a6ce5a809550f770))
+* **entities:** fix warning logs due to multiple data returned by influxdb ([02d8d7d](https://github.com/aronnebrivio/homeassistant-config/commit/02d8d7d98dfc83ea3c543018c0d4e88cc86729e7))
+
 ## [4.19.0](https://github.com/aronnebrivio/homeassistant-config/compare/v4.18.0...v4.19.0) (2026-08-18)
 
 

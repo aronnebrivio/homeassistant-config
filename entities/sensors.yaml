@@ -14,6 +14,7 @@
       query: >
         filter(fn: (r) => r._measurement == "cpustat")
         |> filter(fn: (r) => r._field == "cpu")
+        |> group()
         |> map(fn: (r) => ({_time: r._time, _value: r._value * 100.0}))
       unit_of_measurement: "%"
       value_template: "{{ value | float }}"
@@ -23,25 +24,28 @@
       range_start: -5m
       query: >
         filter(fn: (r) => r._measurement == "memory" and r._field == "memused")
+        |> group()
         |> map(fn: (r) => ({r with _value: float(v: r._value) / 1073741824.0}))
       unit_of_measurement: "GB"
       value_template: "{{ value | float }}"
-    # Proxmox storage usage
+    # Proxmox storage usage (root disk)
     - name: proxmox.raw_storage_usage
-      group_function: mean
+      group_function: last
       range_start: -5m
       query: >
         filter(fn: (r) => r._measurement == "system")
         |> filter(fn: (r) => r._field == "used")
+        |> filter(fn: (r) => r.host == "local-lvm")
       unit_of_measurement: "GB"
       value_template: "{{ value | float }}"
-    # Proxmox storage total
+    # Proxmox storage total (root disk)
     - name: proxmox.raw_storage_total
-      group_function: mean
+      group_function: last
       range_start: -5m
       query: >
         filter(fn: (r) => r._measurement == "system")
         |> filter(fn: (r) => r._field == "total")
+        |> filter(fn: (r) => r.host == "local-lvm")
       unit_of_measurement: "GB"
       value_template: "{{ value | float }}"
 # Garbage collection
